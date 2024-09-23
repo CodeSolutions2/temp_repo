@@ -142,9 +142,7 @@ input, select, textarea {
 			font-weight: 400;
 		}
 
-		.icon > .label {
-			display: none;
-		}
+		.icon > .label { display: block; }
 
 		.icon.solid:before {
 			font-weight: 900;
