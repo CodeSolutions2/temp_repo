@@ -1,6 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,900");
 
-
 /*
 	Aerial by HTML5 UP
 	html5up.net | @ajlkn
@@ -20,13 +19,9 @@ section, summary, time, mark, audio, video {
 	font: inherit;
 	vertical-align: baseline;}
 
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-	display: block;}
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
 
-body { line-height: 1; }
-
-ol, ul { list-style: none; color: #000000; }
+ol, ul { list-style: none; }
 
 blockquote, q { quotes: none; }
 
@@ -40,9 +35,6 @@ table {
 	border-spacing: 0;
 }
 
-body {
-	-webkit-text-size-adjust: none;
-}
 
 mark {
 	background-color: transparent;
@@ -72,6 +64,8 @@ html { box-sizing: border-box; }
 }
 
 body {
+	line-height: 1;
+	-webkit-text-size-adjust: none;
 	background: #fff;
 	overflow: hidden;
 }
@@ -137,23 +131,13 @@ a:hover { border-color: transparent; }
 
 /* Wrapper */
 @-moz-keyframes wrapper {
-	0% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
+	0% { opacity: 0; }
+	100% { opacity: 1; }
 }
 
 @-webkit-keyframes wrapper {
-	0% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
+	0% { opacity: 0; }
+	100% { opacity: 1; }
 }
 
 @-ms-keyframes wrapper {
@@ -278,63 +262,53 @@ a:hover { border-color: transparent; }
 
 
 /* Overlay */
-	@-moz-keyframes overlay {
-		0% {
-			opacity: 0;
-		}
-
-		100% {
-			opacity: 1;
-		}
-	}
-
-	@-webkit-keyframes overlay {
-		0% {
-			opacity: 0;
-		}
-
-		100% {
-			opacity: 1;
-		}
-	}
-
-	@-ms-keyframes overlay {
-		0% {
-			opacity: 0;
-		}
-
-		100% {
-			opacity: 1;
-		}
-	}
-
-	@keyframes overlay {
-		0% {
-			opacity: 0;
-		}
-
-		100% {
-			opacity: 1;
-		}
-	}
-
-	#overlay {
-		-moz-animation: overlay 1.5s 1.5s forwards;
-		-webkit-animation: overlay 1.5s 1.5s forwards;
-		-ms-animation: overlay 1.5s 1.5s forwards;
-		animation: overlay 1.5s 1.5s forwards;
-		background-attachment: fixed, fixed;
-		background-image: url("images/overlay-pattern.png"), url("images/overlay.svg");
-		background-position: top left, center center;
-		background-repeat: repeat, no-repeat;
-		background-size: auto, cover;
-		height: 100%;
-		left: 0;
+@-moz-keyframes overlay {
+	0% {
 		opacity: 0;
-		position: fixed;
-		top: 0;
-		width: 100%;
 	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+@-webkit-keyframes overlay {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+@-ms-keyframes overlay {
+	0% { opacity: 0; }
+	100% { opacity: 1; }
+}
+
+@keyframes overlay {
+	0% { opacity: 0; }
+	100% { opacity: 1; }
+}
+
+#overlay {
+	-moz-animation: overlay 1.5s 1.5s forwards;
+	-webkit-animation: overlay 1.5s 1.5s forwards;
+	-ms-animation: overlay 1.5s 1.5s forwards;
+	animation: overlay 1.5s 1.5s forwards;
+	background-attachment: fixed, fixed;
+	background-image: url("images/overlay-pattern.png"), url("images/overlay.svg");
+	background-position: top left, center center;
+	background-repeat: repeat, no-repeat;
+	background-size: auto, cover;
+	height: 100%;
+	left: 0;
+	opacity: 0;
+	position: fixed;
+	top: 0;
+	width: 100%;
+}
 
 
 
@@ -711,13 +685,9 @@ a:hover { border-color: transparent; }
 @media screen and (max-width: 1680px) {
 
 	/* Basic */
-
-		body, input, select, textarea {
-			font-size: 13pt;
-		}
+	body, input, select, textarea { font-size: 13pt; }
 
 	/* BG */
-
 		@-moz-keyframes bg {
 			0% {
 				-moz-transform: translate3d(0,0,0);
