@@ -140,17 +140,8 @@ input, select, textarea {
 	}
 
 	.icon > .label { display: block; }
-
-	.icon.solid:before { font-weight: 900;
-		}
-
-	.icon.brands:before {
-			font-family: 'Font Awesome 5 Brands';
-		}
-
-	.fa-envelope:before{ content:"Email" }
-
-	.fa-github:before{ content:"Github" }
+	.icon.solid:before { font-weight: 900; }
+	.icon.brands:before { font-family: 'Font Awesome 5 Brands'; }
 
 
 
