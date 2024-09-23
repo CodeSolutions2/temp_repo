@@ -152,6 +152,10 @@ input, select, textarea {
 			font-family: 'Font Awesome 5 Brands';
 		}
 
+.fa-envelope:before{ content:✉️ }
+
+
+
 /* Wrapper */
 
 	@-moz-keyframes wrapper {
