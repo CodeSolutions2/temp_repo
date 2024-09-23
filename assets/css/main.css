@@ -148,7 +148,7 @@ input, select, textarea {
 			font-family: 'Font Awesome 5 Brands';
 		}
 
-	.fa-envelope:before{ content:✉️ }
+	.fa-envelope:before{ content:"Email" }
 
 	.fa-github:before{ content:"Github" }
 
