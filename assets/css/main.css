@@ -126,8 +126,8 @@ a:hover { border-color: transparent; }
 	text-transform: none !important;
 	font-family: 'Font Awesome 5 Free';
 	font-weight: 400;
+	color: #000000
 }
-
 .icon > .label { display: block; }
 .icon.solid:before { font-weight: 900; }
 .icon.brands:before { font-family: 'Font Awesome 5 Brands'; }
@@ -157,23 +157,13 @@ a:hover { border-color: transparent; }
 }
 
 @-ms-keyframes wrapper {
-	0% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
+	0% { opacity: 0; }
+	100% { opacity: 1; }
 }
 
 @keyframes wrapper {
-	0% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
+	0% { opacity: 0; }
+	100% { opacity: 1; }
 }
 
 #wrapper {
@@ -206,7 +196,7 @@ a:hover { border-color: transparent; }
 	-webkit-transform: translate3d(0,0,0);
 	-ms-transform: translate3d(0,0,0);
 	transform: translate3d(0,0,0);
-	background: #215423 url("images/bg_resized1900by500.png") top left;
+	background: #215423 url("images/bg_resized1500by500.png") top left;
 	background-repeat: repeat-x;
 	height: 100%;
 	left: 0;
@@ -350,24 +340,23 @@ a:hover { border-color: transparent; }
 
 
 /* Main */
+#main {
+	height: 100%;
+	left: 0;
+	position: fixed;
+	text-align: center;
+	top: 0;
+	width: 100%;
+}
 
-	#main {
+	#main:before {
+		content: '';
+		display: inline-block;
 		height: 100%;
-		left: 0;
-		position: fixed;
-		text-align: center;
-		top: 0;
-		width: 100%;
+		margin-right: 0;
+		vertical-align: middle;
+		width: 1px;
 	}
-
-		#main:before {
-			content: '';
-			display: inline-block;
-			height: 100%;
-			margin-right: 0;
-			vertical-align: middle;
-			width: 1px;
-		}
 
 
 
