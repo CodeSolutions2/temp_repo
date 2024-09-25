@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+    
+<body>
+
+<h3>C. Modify/Play an existing audio and/or video file from file</h3>
+
+<!-- Dropdown: select a video and/or audio modification -->
+<label for="select_video_andor_audio_file">Select a video and/or audio modification:</label>
+<select name="video_andor_audio" id="video_andor_audio" style="display:block">
+  <option value="---">Select an option</option>
+  <option value="Obtain a video frame at a specific time">Obtain a video frame at a specific time</option>
+</select>
+
+<!-- Select a video and/or audio -->
+<label for="select_video" id="select_video" style="display:none">Select an video:</label>
+<input type="file" id="upload_video_file0" accept="video/*" style="display:none">
+<input type="file" id="upload_video_file1" accept="video/*" style="display:none">
+	
+<button type="button" id="modify_existing_audio_and_or_video_from_file" onclick="modify_existing_audio_and_or_video_from_file()" style="display:block">get_image_from_video_at_a_specific_time</button>
+
+<!-- ---------------------------------------- -->
+	
+<div id="data_display" style="display:block; text-align: left; width: 600px;">
+<div id="notification"></div>
+<div id="error"></div>
+
+<!-- ---------------------------------------- -->
+
+<script>
+
+window.addEventListener('beforeunload', function() {
+	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+	document.getElementById("video_andor_audio").selectedIndex = 0;
+});
+	
+// -------------------------------------------------
+
+document.getElementById("video_andor_audio").addEventListener("change", processEvent_video_andor_audio, false);
+
+async function processEvent_video_andor_audio(event) {
+
+	// there is nothing in event that tells which drop down was selected
+	// console.log('event: ', event);
+
+	const element = document.getElementById("video_andor_audio");
+	
+	console.log('element.selectedIndex: ', element.selectedIndex);
+	
+	if (document.getElementById("video_andor_audio").selectedIndex == 1) {
+    // Obtain a video frame at a specific time
+		document.getElementById("select_video").style.display = 'block';
+    document.getElementById("upload_video_file0").style.display = 'block';
+    document.getElementById("upload_video_file1").style.display = 'none';
+
+	} 
+	
+}
+
+
+// -------------------------------------------------
+// C. Modify an existing audio and/or video file from file
+// -------------------------------------------------
+async function modify_existing_audio_and_or_video_from_file() {
+	
+	// --------------------------
+  
+	var modification_type = document.getElementById("video_andor_audio").value;
+
+	// --------------------------
+	
+	if (modification_type == 'Obtain a video frame at a specific time') {
+		
+		// Video to image
+		const url_video0 = await fetch_file(base64_string_video0, file_name_video0, "video/webm");
+		console.log('url_video0: ', url_video0);
+    
+		const videoElement = await load_video_from_url(url_video0, mode="nocors");
+    
+		await transform_video_to_image(videoElement);
+} else {
+		document.getElementById('notification').innerHTML = "Please select an audio and/or video modification type."; 
+	}
+
+}
+
+
+// -------------------------------------------------
+// Basic functions to manipulate audio and video data
+// -------------------------------------------------
+
+// -------------------------------------------------
+// 0. Obtain video frames: transform video to images
+// -------------------------------------------------
+async function transform_video_to_image(videoElement) {
+
+	// Print video frame on a canvas
+	var w = 224;
+	const ctx = await create_dynamic_canvasElement(w);
+	
+	// This should plot the video frame on the canvas
+	ctx.drawImage(videoElement, 0, 0, w, w);
+
+	// Get the image data plotted on the canvas
+	var imageData_OR_videoframe = ctx.getImageData(0, 0, w, w);
+	// console.log('imageData_OR_videoframe: ', imageData_OR_videoframe);
+
+	// -----------------------------------------------
+	
+	// Create a 4D array from the imageData_OR_videoframe
+	// The oneD_array is interleaved with 4 components at each spatial data point (red, green, blue, alpha)
+	var oneD_array = imageData_OR_videoframe.data; // data is a 1D array
+	console.log('oneD_array: ', oneD_array);
+	
+	var red = [];
+	var green = []; 
+	var blue = [];
+	var alpha = [];
+	for (var i=0; i<len; i++) {
+		red.push(oneD_array[i*4+0]); 		// Red component
+		green.push(oneD_array[i*4+1]);	// Green component
+		blue.push(oneD_array[i*4+2]);		// Blue component
+		alpha.push(oneD_array[i*4+3]);	// Alpha component
+	}
+	
+	// JavaScript 
+	// shape (r, g, b, alpha)
+	const fourD_array_javascript = await convert_four_1Darrays_to_one_4Darr(red, green, blue, alpha);
+	console.log('fourD_array_javascript: ', fourD_array_javascript);
+	
+	// Tensorflow.js
+	// the output shape of the matrix has 1 batch, 4 width, 4 height and 4 depth
+	const data = [red, green, blue, alpha];
+	const fourD_array_tensorflowjs = tf.tensor4d(data, [1, 4, 4, 4]);
+	console.log('fourD_array_tensorflowjs: ', fourD_array_tensorflowjs);
+	
+	// -----------------------------------------------
+	
+	// Print modified video frame on a canvas
+	const ctx_mod = await create_dynamic_canvasElement(w);
+
+	// Manipulate image data, change the alpha component
+	// Way 0: use the 4D data array
+	let imageDataArray = new Uint8ClampedArray(28 * 28 * 4);
+	for (let i = 0; i < 28 * 28; i++) {
+	     let value = fourD_array_tensorflowjs.dataSync()[i];
+	     imageDataArray[i * 4] = value > 0.5 ? 255 : 0; // Red component
+	     imageDataArray[i * 4 + 1] = value > 0.5 ? 255 : 0; // Green component
+	     imageDataArray[i * 4 + 2] = value > 0.5 ? 255 : 0; // Blue component
+	     imageDataArray[i * 4 + 3] = 255; // Alpha component, set to 255 to make it fully opaque
+	}
+
+	// Print the manipulated image data on another canvas
+	let imageData = new ImageData(imageDataArray, 28, 28);
+	
+	// Draw the image data onto the canvas
+	ctx_mod.putImageData(imageData, 0, 0);
+
+	// OR
+	
+	// Way 1: take the image directly from canvas ctx
+	var len = imageData_OR_videoframe.data.length/4;
+	for (var i=0; i<len; i++) {
+		var r = imageData_OR_videoframe.data[i*4+0];	// Red component
+		var g = imageData_OR_videoframe.data[i*4+1];	// Green component
+		var b = imageData_OR_videoframe.data[i*4+2];	// Blue component
+		// Alpha component, set to 0 to make it not opaque
+		if (r<10 && g<10 && b<10){
+			imageData_OR_videoframe.data[i*4+3] = 0;
+		}
+	}
+	
+	// Draw the image data onto the canvas
+	ctx_mod.putImageData(imageData_OR_videoframe, 0, 0);
+
+}
+
+// -------------------------------------------------
+	
+async function convert_four_1Darrays_to_one_4Darr(arr0, arr1, arr2, arr3) {
+	const cut_val = arr0.length/4;
+	const stop_index = Array.from({ length: arr0.length }, (_, i) => (i+1)*cut_val);
+	return javascript_4D_arr = [[
+		[stop_index.map((val, ind) => { return arr0.slice(val-cut_val, val) })],
+				    [stop_index.map((val, ind) => { return arr1.slice(val-cut_val, val) })],
+				    [stop_index.map((val, ind) => { return arr2.slice(val-cut_val, val) })],
+				    [stop_index.map((val, ind) => { return arr3.slice(val-cut_val, val) })]
+	]];
+}
+
+
+
+
+// -------------------------------------------------
+// IMAGE SUBFUNCTIONS
+// -------------------------------------------------
+async function create_dynamic_canvasElement(w) {
+
+  	const index = 0;
+  
+	// Create a canvas element
+	var canvasElement = document.createElement('canvas');
+
+	// Set the width and height of the canvas
+	canvasElement.width = w;
+	canvasElement.height = canvasElement.width;
+	      
+	// Get the 2D rendering context of the canvas
+	var ctx = canvasElement.getContext("2d");
+	
+	if (index == 0) {
+		canvasElement.style.left = 40+'px';
+	} else {
+		let tot = index*canvasElement.width + 40;
+		canvasElement.style.left = tot+'px';
+	}
+	
+	// Add the canvas to the document body or any other desired element
+	document.getElementById('data_display').appendChild(canvasElement);
+
+	return ctx;
+}
+
+
+</script>
+</body>
+</html>
