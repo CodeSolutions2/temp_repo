@@ -1,3 +1,3 @@
 # temp_repo
 
-An empty repository for testing javascript code.
+A repository for testing javascript code.
