@@ -227,6 +227,30 @@ async function create_dynamic_canvasElement(w) {
 }
 
 
+
+// -------------------------------------------------
+// DATA LOADING SUBFUNCTIONS
+// -------------------------------------------------
+async function fetch_file(base64_string, file_name, file_type) {
+
+	// console.log('base64_string: ', base64_string.slice(0,20));
+	
+	return await fetch(base64_string)
+		.then(response => response.blob())
+		.then(async function(blob_object) {
+			// console.log('blob_object: ', blob_object);
+			return new File ([blob_object], file_name, {type: file_type});
+		})
+		.then(async function(file_blob_object) {
+			// console.log('file_blob_object: ', file_blob_object);
+			return URL.createObjectURL(file_blob_object);
+		})
+		.catch(error => { document.getElementById('error').innerHTML = error; });
+}
+
+// -------------------------------------------------
+
+	
 </script>
 </body>
 </html>
