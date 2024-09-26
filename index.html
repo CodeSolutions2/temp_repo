@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+<h1>Instruction guide for calling this GitHub REST API encryption key library</h1>
+GitHub REST API requires that a GitHub repository key is used to validate the REST API request. However, on the frontend, it is considered unsafe to put a key in the code. Thus, this library was created to obtain a GitHub repository key by performing a REST API GET (a process that does not require a key) on the frontend, on an encrypted repository file to obtain an encrypted GitHub repository key. The library then decrypts the encrypted key and performs the needed GitHub REST API requests (PUT, DELETE, etc).
+<ol type="A">
+	<li>Select a package import method for how to call the library using the dropdown.</li>
+	<li>Enter text in the textarea.</li>
+  	<li>Click Run selection. This example uses the encrypted GitHub key from another repository (RepoB=library_encryption_class), and saves the textarea message in a folder called library_to_run_GitHub_Actions in RepoB.</li>
+</ol>
+
+<!-- Drop down menu -->
+<label for="select_package_import_methods">Select a package import method for how to call the library:</label>
+<select name="package_import_methods" id="package_import_methods" style="display:block">
+  <option value="---">Select an option</option>
+  <option value="Way 0: src dist/library_to_run_GitHub_Actions.js">Way 0: src dist/library_to_run_GitHub_Actions.js</option>
+  <option value="Way 1a: module .dist/library_to_run_GitHub_Actions.js">Way 1a: module .dist/library_to_run_GitHub_Actions.js</option>
+  <option value="Way 1b: module https://codesolutions2.github.io/library_to_run_GitHub_Actions/dist/library_to_run_GitHub_Actions.js">Way 1b: module https://codesolutions2.github.io/library_to_run_GitHub_Actions/dist/library_to_run_GitHub_Actions.js</option>
+  <option value="Way 2: module ./index.js">Way 2: module ./index.js</option>
+  <option value="Way 3: module https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/dist/library_to_run_GitHub_Actions.js">Way 3: module https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/dist/library_to_run_GitHub_Actions.js</option>
+</select>
+	
+<input id="input_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;">
+<button id="run_selection" onclick="run_selection()">Run Selection</button>
+<br>
+<div id="notification"></div>
+<br>
+<div id="error"></div>
+
+<!-- --------------------------------------------------- -->
+<!-- CSS -->
+<style>
+div { padding: 10px; display:block; font-family:courier; font-size:15px; }
+div#notification { position: relative; color: #3236a8; }
+div#error { position: relative; color: #bd1f17; }
+</style>
+
+<!-- --------------------------------------------------- -->
+
+<!-- Way 0: WORKS! -->
+<script type="text/javascript" src="dist/library_to_run_GitHub_Actions.js"></script>
+
+<!-- Way 1a: WORKS! -->
+<script type="module">
+import { run_backend_process } from "./dist/library_to_run_GitHub_Actions.js";
+module1a.run_backend_process = run_backend_process;
+</script>
+
+<!-- Way 1b: WORKS! -->
+<script type="module" redirect="follow" mode="no-cors">
+import { run_backend_process } from "https://codesolutions2.github.io/library_to_run_GitHub_Actions/dist/library_to_run_GitHub_Actions.js";
+module1b.run_backend_process = run_backend_process;
+</script>
+
+<!-- Way 2: WORKS! -->
+<script type="module" src="./index.js"></script>
+
+<!-- Way 3 -->
+<script type="module" crossorigin="*" redirect="follow" mode="cors">
+import { run_backend_process } from "https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js";
+module3.run_backend_process = run_backend_process;
+</script>
+
+<!-- --------------------------------------------------- -->	  
+	
+<script>
+
+// -----------------------------------------------
+	
+window.addEventListener('beforeunload', function() {
+	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+	
+	document.getElementById("package_import_methods").selectedIndex = 0;
+	document.getElementById("input_text").value = "";
+});
+  
+// -----------------------------------------------
+
+const module1a = {};
+const module1b = {};
+const module3 = {};
+
+
+// -----------------------------------------------
+
+async function run_selection() {
+
+	// This function creates a file called cb.txt in a folder named webapp in a repository named RepoB. 
+	// The file cb.txt contains the string assigned to RepoAobj.input_text.
+	var RepoAobj = {};
+  
+  	RepoAobj.repoOwner = 'CodeSolutions2';
+	RepoAobj.repoA_name = 'library_to_run_GitHub_Actions';
+  	RepoAobj.foldername = 'library_to_run_GitHub_Actions'; // foldername in RepoB
+	
+	RepoAobj.filename = 'cb.txt'; // filename to create in RepoB, in foldername
+	RepoAobj.input_text = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
+	RepoAobj.repoB_name = 'library_encryption_class';
+
+	// Call the library
+	var package_import_methods = document.getElementById("package_import_methods").value;
+	// console.log('package_import_methods: ', package_import_methods);
+
+	
+	if (package_import_methods == 'Way 0: src dist/library_to_run_GitHub_Actions.js') {
+		// Way 0
+		await run_backend_process(RepoAobj);
+		
+	} else if (package_import_methods == 'Way 1a: module .dist/library_to_run_GitHub_Actions.js') {
+		// Way 1a
+		await module1a.run_backend_process(RepoAobj);
+		
+	} else if (package_import_methods == 'Way 1b: module https://codesolutions2.github.io/library_to_run_GitHub_Actions/dist/library_to_run_GitHub_Actions.js') {
+		// Way 1b
+		await module1b.run_backend_process(RepoAobj);
+		
+	} else if (package_import_methods == 'Way 2: module ./index.js') {
+		// Way 2
+		await run_backend_process(RepoAobj);
+		// document.getElementById('notification').innerHTML = "In progress.";
+
+	} else if (package_import_methods == 'Way 3: module https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/dist/library_to_run_GitHub_Actions.js') {
+		// Way 3
+		await module3.run_backend_process(RepoAobj);
+		
+	} else {
+		document.getElementById('notification').innerHTML = "Please select package import method."; 
+	}
+
+}
+
+// -----------------------------------------------
+
+</script>
+</body>
+</html>
