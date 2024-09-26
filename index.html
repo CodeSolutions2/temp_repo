@@ -38,29 +38,6 @@ div#error { position: relative; color: #bd1f17; }
 
 <!-- --------------------------------------------------- -->
 
-<!-- Way 0: WORKS! -->
-<script type="text/javascript" src="lodash.js"></script>
-
-<!-- Way 1a: WORKS! -->
-<script type="module">
-import { lowerCase } from "./lodash.js";
-module1a.lowerCase = lowerCase;
-</script>
-
-<!-- Way 1b: WORKS! -->
-<script type="module" redirect="follow" mode="no-cors">
-import { lowerCase } from "https://codesolutions2.github.io/temp_repo/lodash.js";
-module1b.lowerCase = lowerCase;
-</script>
-
-<!-- Way 2: WORKS! -->
-<script type="module" src="./index.js"></script>
-
-<!-- Way 3 -->
-<script type="module" crossorigin="*" redirect="follow" mode="cors">
-import { lowerCase } from "https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js";
-module3.lowerCase = lowerCase;
-</script>
 
 <!-- Way 4 -->
 <script type="module" crossorigin="*" redirect="follow" mode="cors">
@@ -69,7 +46,6 @@ module4.lowerCase = lowerCase;
 </script>
 
 
-<script src=" https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js "></script>
 	
 <!-- --------------------------------------------------- -->	  
 	
