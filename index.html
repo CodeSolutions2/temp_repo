@@ -43,7 +43,7 @@ div#error { position: relative; color: #bd1f17; }
 
 <!-- Way 1a: WORKS! -->
 <script type="module">
-import { map } from ".lodash.js";
+import { map } from "./lodash.js";
 module1a.lodash_map = map;
 </script>
 
@@ -63,18 +63,6 @@ module3.lodash_map = map;
 </script>
 
 
-<script type="importmap">
-    {
-      "imports": {
-        "lodash": "https://cdn.skypack.dev/lodash"
-      }
-    }
-</script>
-<script type="module">
-import { map } from "lodash";  
-//import _ from 'lodash';
-module4.lodash_map = map;
-</script>
 	
 <!-- --------------------------------------------------- -->	  
 	
