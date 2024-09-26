@@ -5,25 +5,7 @@
 
 <h1>How to import libraries from CDN</h1>
 	
-<ol type="A">
-	<li>Select a package import method for how to call the library using the dropdown.</li>
-  	<li>Click Run selection.</li>
-</ol>
 
-<!-- Drop down menu -->
-<label for="select_package_import_methods">Select a package import method for how to call the library:</label>
-<select name="package_import_methods" id="package_import_methods" style="display:block">
-  <option value="---">Select an option</option>
-  <option value="Way 0">Way 0</option>
-  <option value="Way 1a">Way 1a</option>
-  <option value="Way 1b">Way 1b</option>
-  <option value="Way 2">Way 2</option>
-  <option value="Way 3">Way 3</option>
-  <option value="Way 4">Way 4</option>
-</select>
-
-<button id="run_selection" onclick="run_selection()">Run Selection</button>
-<br>
 <div id="notification"></div>
 <br>
 <div id="error"></div>
@@ -37,13 +19,8 @@ div#error { position: relative; color: #bd1f17; }
 </style>
 
 <!-- --------------------------------------------------- -->
-
-
-<!-- Way 4 -->
-<script type="module" crossorigin="*" redirect="follow" mode="cors">
-import { @lodash/lowerCase } from "https://unpkg.com/lodash-es@4.17.21/lowerCase.js";
-module4.lowerCase = @lodash/lowerCase;
-</script>
+	
+<script src=" https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js "></script>
 
 
 	
@@ -55,54 +32,14 @@ module4.lowerCase = @lodash/lowerCase;
 	
 window.addEventListener('beforeunload', function() {
 	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
-	
-	document.getElementById("package_import_methods").selectedIndex = 0;
 });
   
 // -----------------------------------------------
 
-const module1a = {};
-const module1b = {};
-const module3 = {};
-const module4 = {};
-
-// -----------------------------------------------
-
 async function run_selection() {
 
-	// Call the library
-	var package_import_methods = document.getElementById("package_import_methods").value;
-	console.log('package_import_methods: ', package_import_methods);
-	
 	var out = "TEXT";
-	
-	if (package_import_methods == 'Way 0') {
-		// Way 0
-		out = lowerCase(out);
-		
-	} else if (package_import_methods == 'Way 1a') {
-		// Way 1a
-		out = module1a.lowerCase(out);
-		
-	} else if (package_import_methods == 'Way 1b') {
-		// Way 1b
-		out = module1b.lowerCase(out);
-		
-	} else if (package_import_methods == 'Way 2') {
-		// Way 2
-		out = lowerCase(out);
-
-	} else if (package_import_methods == 'Way 3') {
-		// Way 3
-		out = module3.lowerCase(out);
-
-	} else if (package_import_methods == 'Way 4') {
-		// Way 4
-		out = module4.lowerCase(out);
-		
-	} else {
-		document.getElementById('notification').innerHTML = "Please select package import method."; 
-	}
+	out = lodash.lowerCase(out);
 
 	console.log("out: ", out);
 	document.getElementById('notification').innerHTML = out; 
