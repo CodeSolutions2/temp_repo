@@ -41,7 +41,7 @@ window.addEventListener('beforeunload', function() {
 async function run_selection() {
 
 	var out = "TEXT";
-	out = lowerCase(out);
+	out = _.lowerCase(out);
 
 	console.log("out: ", out);
 	document.getElementById('notification').innerHTML = out; 
