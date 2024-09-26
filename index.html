@@ -62,6 +62,11 @@ import { map } from "https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js";
 module3.lodash_map = map;
 </script>
 
+<!-- Way 4 -->
+<script type="module" crossorigin="*" redirect="follow" mode="cors">
+import { map } from "hhttps://cdn.jsdelivr.net/npm/lodash@4.17.21/map.js";
+module4.lodash_map = map;
+</script>
 
 	
 <!-- --------------------------------------------------- -->	  
@@ -87,28 +92,32 @@ const module4 = {};
 
 async function run_selection() {
 
+	// Call the library
+	var package_import_methods = document.getElementById("package_import_methods").value;
+	console.log('package_import_methods: ', package_import_methods);
+	
 	const numbers = [1, 2, 3];
 	var doubledNumbers = [];
 	
 	if (package_import_methods == 'Way 0') {
 		// Way 0
-		await map(numbers, n => n * 2);
+		doubledNumbers = await map(numbers, n => n * 2);
 		
 	} else if (package_import_methods == 'Way 1a') {
 		// Way 1a
-		await module1a.lodash_map(numbers, n => n * 2);
+		doubledNumbers = await module1a.lodash_map(numbers, n => n * 2);
 		
 	} else if (package_import_methods == 'Way 1b') {
 		// Way 1b
-		await module1b.lodash_map(numbers, n => n * 2);
+		doubledNumbers = await module1b.lodash_map(numbers, n => n * 2);
 		
 	} else if (package_import_methods == 'Way 2') {
 		// Way 2
-		await lodash_map(RepoAobj);
+		doubledNumbers = await lodash_map(RepoAobj);
 
 	} else if (package_import_methods == 'Way 3') {
 		// Way 3
-		doubledNumbers = module3.lodash_map(numbers, n => n * 2);
+		doubledNumbers = module3.lodash_map(numbers, n => n * 2)
 
 	} else if (package_import_methods == 'Way 4') {
 		// Way 4
@@ -118,7 +127,8 @@ async function run_selection() {
 		document.getElementById('notification').innerHTML = "Please select package import method."; 
 	}
 
-	document.getElementById('notification').innerHTML = doubledNumbers; 
+	console.log("doubledNumbers: ", doubledNumbers);
+	document.getElementById('notification').innerHTML = doubledNumbers.toString(); 
 }
 
 // -----------------------------------------------
