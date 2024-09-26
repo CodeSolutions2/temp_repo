@@ -1,2 +1,2 @@
-import { map } from "./lodash.js";
-window.lodash_map = map;
+import { lowerCase } from "./lodash.js";
+window.lowerCase = lowerCase;
