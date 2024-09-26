@@ -9,12 +9,11 @@
 	<body> 
 <h2 id="elem"></h2>
     
-<script type="importmap"> { "imports": { "@lodash/startCase": "https://unpkg.com/lodash-es@4.17.21/startCase.js" } } </script> 
-<script type="module"> import startCase from "@lodash/startCase"; 
-
-// const elem = document.createElement("h2"); // capitalize the first letter of every word 
+<script type="importmap"> { "imports": { "@lodash/lowerCase": "https://unpkg.com/lodash-es@4.17.21/lowerCase.js" } } </script> 
+<script type="module"> import lowerCase from "@lodash/lowerCase"; 
   
-document.getElementById("elem").textContent = startCase("import maps demystified"); 
+// document.getElementById("elem").textContent = startCase("import MAPS demystified"); 
+	document.getElementById("elem").textContent = lowerCase("import MAPS demystified"); 
 
     </script>
 
