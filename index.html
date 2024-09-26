@@ -43,14 +43,14 @@ div#error { position: relative; color: #bd1f17; }
 
 <!-- Way 1a: WORKS! -->
 <script type="module">
-import { map } from "./lodash.js";
-module1a.lodash_map = map;
+import { lowerCase } from "./lodash.js";
+module1a.lowerCase = map;
 </script>
 
 <!-- Way 1b: WORKS! -->
 <script type="module" redirect="follow" mode="no-cors">
-import { map } from "https://codesolutions2.github.io/temp_repo/lodash.js";
-module1b.lodash_map = map;
+import { lowerCase } from "https://codesolutions2.github.io/temp_repo/lodash.js";
+module1b.lowerCase = lowerCase;
 </script>
 
 <!-- Way 2: WORKS! -->
@@ -58,14 +58,14 @@ module1b.lodash_map = map;
 
 <!-- Way 3 -->
 <script type="module" crossorigin="*" redirect="follow" mode="cors">
-import { map } from "https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js";
-module3.lodash_map = map;
+import { lowerCase } from "https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js";
+module3.lowerCase = lowerCase;
 </script>
 
 <!-- Way 4 -->
 <script type="module" crossorigin="*" redirect="follow" mode="cors">
-import { map } from "hhttps://cdn.jsdelivr.net/npm/lodash@4.17.21/map.js";
-module4.lodash_map = map;
+import { lowerCase } from "https://cdn.jsdelivr.net/npm/lodash@4.17.21/lowerCase.js";
+module4.lowerCase = lowerCase;
 </script>
 
 	
@@ -96,39 +96,38 @@ async function run_selection() {
 	var package_import_methods = document.getElementById("package_import_methods").value;
 	console.log('package_import_methods: ', package_import_methods);
 	
-	const numbers = [1, 2, 3];
-	var doubledNumbers = [];
+	var out = "TEXT";
 	
 	if (package_import_methods == 'Way 0') {
 		// Way 0
-		doubledNumbers = await map(numbers, n => n * 2);
+		out = lowerCase(out);
 		
 	} else if (package_import_methods == 'Way 1a') {
 		// Way 1a
-		doubledNumbers = await module1a.lodash_map(numbers, n => n * 2);
+		out = module1a.lowerCase(out);
 		
 	} else if (package_import_methods == 'Way 1b') {
 		// Way 1b
-		doubledNumbers = await module1b.lodash_map(numbers, n => n * 2);
+		out = module1b.lowerCase(out);
 		
 	} else if (package_import_methods == 'Way 2') {
 		// Way 2
-		doubledNumbers = await lodash_map(RepoAobj);
+		out = lowerCase(out);
 
 	} else if (package_import_methods == 'Way 3') {
 		// Way 3
-		doubledNumbers = module3.lodash_map(numbers, n => n * 2)
+		out = module3.lowerCase(out);
 
 	} else if (package_import_methods == 'Way 4') {
 		// Way 4
-		doubledNumbers = module4.lodash_map(numbers, n => n * 2);
+		out = module4.lowerCase(out);
 		
 	} else {
 		document.getElementById('notification').innerHTML = "Please select package import method."; 
 	}
 
-	console.log("doubledNumbers: ", doubledNumbers);
-	document.getElementById('notification').innerHTML = doubledNumbers.toString(); 
+	console.log("out: ", out);
+	document.getElementById('notification').innerHTML = out; 
 }
 
 // -----------------------------------------------
