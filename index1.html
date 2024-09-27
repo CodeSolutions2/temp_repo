@@ -22,7 +22,7 @@ async function test_functions_in_library() {
 
   var RepoAobj = {};
   
-	RepoAobj.input_text = document.getElementById("input_text").value+"|"+RepoAobj.repoA_name;
+	RepoAobj.input_text = "text";
   
   RepoAobj = await module.create_salt(RepoAobj);
   console.log('RepoAobj: ', RepoAobj);
