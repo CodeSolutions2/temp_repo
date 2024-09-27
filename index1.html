@@ -7,8 +7,9 @@
 <button id="test_functions_in_library" onclick="test_functions_in_library()" style="display:block">test_functions_in_library</button>
 
 <script type="module" crossorigin="*" redirect="follow" mode="cors">
-import { run_backend_process } from "https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/dist/library_to_run_GitHub_Actions.js";
-module.run_backend_process = run_backend_process;
+import { create_salt, rand_perm } from "https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/dist/library_to_run_GitHub_Actions.js";
+module.create_salt = create_salt;
+module.rand_perm = rand_perm;
 </script>
 	
 <script>
@@ -20,12 +21,17 @@ const module = {};
 
 async function test_functions_in_library() {
 
-  var RepoAobj = {};
-  
+
+	var out = await rand_perm([1,4,6]);
+	console.log("out: ", out);
+
+	// -------------------------------
+	
+  	var RepoAobj = {};
 	RepoAobj.input_text = "text";
   
-  RepoAobj = await module.create_salt(RepoAobj);
-  console.log('RepoAobj: ', RepoAobj);
+  	RepoAobj = await module.create_salt(RepoAobj);
+  	console.log('RepoAobj: ', RepoAobj);
 
 }
   
