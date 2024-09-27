@@ -3,16 +3,15 @@
 <head></head>
     
 <body>
+  
+<button id="load_a_script_in_JavaScript" onclick="load_a_script_in_JavaScript()" style="display:block">load_a_script_in_JavaScript</button>
 
-<input type="text" name="" id="url" value="" placeholder="url" style="display:block; width: 600px;">
-  
-<button id="run_fetch_script" onclick="run_fetch_script()" style="display:block">run_fetch_script</button>
-  
+	
 <script>
 
 // -------------------------------------------------
   
-async function run_fetch_script() {
+async function load_a_script_in_JavaScript() {
 
 	await loadScript()
 		.then( data  => { console.log("Script loaded successfully", data); })
@@ -32,7 +31,7 @@ async function loadScript() {
 	            const scriptElement = document.createElement("script");
 	            scriptElement.type = "module";  // "text/javascript"
 	            scriptElement.async = true;
-	            scriptElement.src = document.getElementById('url').value;
+	            scriptElement.src = "https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/dist/library_to_run_GitHub_Actions.js";
 	            scriptElement.crossorigin = "*";
 	            scriptElement.redirect = "follow";
 	            scriptElement.mode = 'cors';
