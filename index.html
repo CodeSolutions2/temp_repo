@@ -4,7 +4,7 @@
     
 <body>
 
-<input type="text" name="" id="url" value="" placeholder="url" style="display:block;">
+<input type="text" name="" id="url" value="" placeholder="url" style="display:block; width: 600px;">
   
 <button id="run_fetch_script" onclick="run_fetch_script()" style="display:block">run_fetch_script</button>
   
@@ -14,10 +14,9 @@
   // This is a continuation of script attempts in multi_media_fetch_webapp_index3.html
   // -------------------------------------------------
   
-function run_fetch_script() {
+async function run_fetch_script() {
 
-	// https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/index.min.js
-	loadScript()
+	await loadScript()
 		.then( data  => { console.log("Script loaded successfully", data); })
 		.catch( err => { console.error(err); });
 
@@ -52,41 +51,36 @@ function run_fetch_script() {
 
 // -------------------------------------------------
 
-const loadScript = () => {
-	
-	const FILE_URL = document.getElementById('url').value;
-	console.log("FILE_URL: ", FILE_URL);
-
-	// const type = "text/javascript";
-	const type = "module";
+async function loadScript() {
 	
 	return new Promise((resolve, reject) => {
-        try {
-            const scriptElement = document.createElement("script");
-            scriptElement.type = type;
-            scriptElement.async = true;
-            scriptElement.src = FILE_URL;
-            scriptElement.crossorigin = "*";
-            scriptElement.redirect = "follow";
-            scriptElement.mode = 'cors';
+	        try {
+	            const scriptElement = document.createElement("script");
+	            scriptElement.type = "module";  // "text/javascript"
+	            scriptElement.async = true;
+	            scriptElement.src = document.getElementById('url').value;
+	            scriptElement.crossorigin = "*";
+	            scriptElement.redirect = "follow";
+	            scriptElement.mode = 'cors';
+	
+	            scriptElement.addEventListener("load", (ev) => {
+	                resolve({ status: true });
+	            });
+	
+	            scriptElement.addEventListener("error", (ev) => {
+	                reject({
+	                    status: false,
+	                    message: `Failed to load the script ${FILE_URL}`
+	                });
+	            });
+	
+	            document.body.appendChild(scriptElement);
+	        } catch (error) {
+	            reject(error);
+	        }
+	}
 
-            scriptElement.addEventListener("load", (ev) => {
-                resolve({ status: true });
-            });
-
-            scriptElement.addEventListener("error", (ev) => {
-                reject({
-                    status: false,
-                    message: `Failed to load the script ${FILE_URL}`
-                });
-            });
-
-            document.body.appendChild(scriptElement);
-        } catch (error) {
-            reject(error);
-        }
-    });
-};
+}
 
 // -------------------------------------------------
 
