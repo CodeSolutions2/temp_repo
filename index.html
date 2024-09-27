@@ -23,30 +23,6 @@ async function run_fetch_script() {
 	// Test a function in the imported script
 	var out = async () => { await rand_perm([2, 4, 5]); }
 	console.log('out: ', out);
-
-	// GET
-	// https://codesolutions2.github.io/favicon.ico
-	// FILE_URL:  https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/index.min.js loading_text_using_script.html:33:10
-	// out:  
-	// async function out()
-	// loading_text_using_script.html:24:10
-	// GET
-	// https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/library_to_run_GitHub_Actions.js
-
-	// Loading module from “https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/library_to_run_GitHub_Actions.js” was blocked because of a disallowed MIME type (“text/plain”).
-	// loading_text_using_script.html
-	// Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/library_to_run_GitHub_Actions.js. (Reason: CORS request did not succeed). Status code: (null).
-
-	// Module source URI is not allowed in this document: “https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/library_to_run_GitHub_Actions.js”. loading_text_using_script.html:1:1
-	// Object { status: false, message: "Failed to load the script https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/index.min.js" }
-​
-	// message: "Failed to load the script https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/index.min.js"
-​
-	// status: false
-​
-	// <prototype>: Object { … }
-	// loading_text_using_script.html:20:28
-
 }
 
 // -------------------------------------------------
