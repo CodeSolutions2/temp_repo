@@ -19,7 +19,7 @@ async function run_fetch_script() {
 		.catch( err => { console.error(err); });
 
 	// Test a function in the imported script
-	var out = async () => { await rand_perm([2, 4, 5]); }
+	var out = async () => { return await rand_perm([2, 4, 5]); }
 	console.log('out: ', out);
 }
 
@@ -36,7 +36,7 @@ async function loadScript() {
 	            scriptElement.crossorigin = "*";
 	            scriptElement.redirect = "follow";
 	            scriptElement.mode = 'cors';
-	
+			
 	            scriptElement.addEventListener("load", (ev) => {
 	                resolve({ status: true });
 	            });
