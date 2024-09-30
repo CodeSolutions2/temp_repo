@@ -192,7 +192,7 @@ async function run_selection() {
 		const twoD_array = Array.from(oneD_array)
 		
 		// Put final image in [file blog image]
-		const blob_object = await new Blob(bytes, {type: "image/png"});
+		const blob_object = await new Blob(twoD_array, {type: "image/png"});
 		const file_blob_object = await new File ([blob_object], "image.png", {type: "image/png"});
 
 		// Create a URL for the Blob object
@@ -293,11 +293,23 @@ async function display_image(generated_text, image_url, image_size){
 		document.getElementById("canvas_img").height = height;
 			
 		ctx.drawImage(image, 0,0);
-	
+
+		// ------------------------------
+
+		// Put overlay on top of image to make font more readable
+		
+		// Make a square on canvas
+		ctx.fillStyle = "rgb(153 153 153 / 10%)";  // Background square over image = grey
+    		ctx.fillRect(0, 0, width, height);  // fillRect(x, y, width, height)
+		
 		// ------------------------------
 
 		// Could adjust this by the length of the generated sentence
-		const font_height = 48;
+		if (width == 256) {
+			const font_height = 23;
+		} else {
+			const font_height = 48;
+		}
 		console.log("font_height: ", font_height);
 		
 		// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
@@ -367,7 +379,7 @@ async function display_image(generated_text, image_url, image_size){
 		// ------------------------------
 	};
 
-	return ctx.getImageData(0, 0, document.getElementById("canvas_img").width, document.getElementById("canvas_img").width);
+	return ctx.getImageData(0, 0, width, height);
 }
 
 // ------------------------------------------
