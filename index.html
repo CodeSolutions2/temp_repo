@@ -15,15 +15,11 @@
 <tr>
         
 <td>
-<h3 id="enter_key" style="display:block">[A. Generate an image: Step 0] Enter Key</h3>
+<h3 id="enter_key" style="display:block">[0] Enter OPENAI_API_KEY</h3>
 <input id="OPENAI_API_KEY" type="text" value="" placeholder="OPENAI_API_KEY" rows="10" cols="100" style="display:block; text-align: left; width: 150px;">
 <br>
 
-<h3>[A. Generate an image: Step 1] Enter a text description to create an image</h3>
-<input id="prompt" type="text" value="" placeholder="prompt" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
-<br>
-
-<h3>[A. Generate an image: Step 2] Select a model and image size</h3>
+<h3>[1] Select a model and image size.</h3>
 <fieldset>
 <input type="radio" id="dalle2" name="radio_name" value="dalle2" />
 <label for="dalle2">dall-e-2</label>
@@ -31,7 +27,9 @@
 <input type="radio" id="dalle3" name="radio_name" value="dalle3" />
 <label for="dalle3">dall-e-3</label>
 </fieldset>
+
 <br>
+
 <!-- Drop down menu -->
 <!-- 256x256, 512x512, or 1024x1024 for dall-e-2 -->
 <!-- 1024x1024, 1792x1024, or 1024x1792 for dall-e-3 -->
@@ -45,14 +43,15 @@
   <option value="1024x1024">1024x1024</option>
   <option value="1792x1024">1792x1024</option>
   <option value="1024x1792">1024x1792</option>
-</select> 
+</select>
 <br>
-<button id="display_image" onclick="display_image()">Display the image</button>
+	
+<button id="display_image" onclick="display_image()">[2] Display the image</button>
 <hr id="line_0" style="display:none;">
 
 <br>
   
-<h3 id="download_button_header" style="display:none">[B. Step 1] Download the displayed image</h3>
+<h3 id="download_button_header" style="display:none">[3] Download the displayed image.</h3>
 <button id="download_button" style="display:none">Download the image</button>
 <hr id="line_1" style="display:none;">
 <br>
