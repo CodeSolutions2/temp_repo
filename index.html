@@ -164,18 +164,18 @@ document.getElementById("dropdown_options").addEventListener("change", processEv
 
 async function processEvent_download(event) {
 	
-	const link = document.createElement('a');
-	link.href = document.getElementById("canvas_img").toDataURL("image/png");
+	// const link = document.createElement('a');
+	// link.href = await new Promise((resolve) => { document.getElementById("canvas_img").toDataURL("image/png");
 	
 	// Give generated url to new window
-	document.getElementById("download_button").setAttribute("data-id", link.href);
+	// document.getElementById("download_button").setAttribute("data-id", link.href);
 
 	// Display the download link in a new window
 	winRef = window.open(this.getAttribute("data-id"), "winRef", target="width=1300,height=700");
 
 	// Download the image
-	link.download = "image.png";
-	link.click();
+	// link.download = "image.png";
+	// link.click();
 }
 
 document.getElementById("download_button").addEventListener("click", processEvent_download, false);
@@ -216,6 +216,7 @@ async function run_selection() {
 		const blob_object = await new Blob(twoD_array, {type: "image/png"});
 		const file_blob_object = await new File ([blob_object], "image.png", {type: "image/png"});
 		const url = URL.createObjectURL(file_blob_object);  // Create a URL for the Blob object
+		document.getElementById("download_button").setAttribute("data-id", url);
 	    
 		// Make Download image button appear 
 		document.getElementById("line_0").style.display = 'block';
@@ -246,6 +247,7 @@ async function run_selection() {
 		const blob_object = await new Blob(twoD_array, {type: "image/png"});
 		const file_blob_object = await new File ([blob_object], "image.png", {type: "image/png"});
 		const url = URL.createObjectURL(file_blob_object);  // Create a URL for the Blob object
+		document.getElementById("download_button").setAttribute("data-id", url);
 	    
 		// Make Download image button appear 
 		document.getElementById("line_0").style.display = 'block';
@@ -333,7 +335,7 @@ async function display_image(generated_text_array, image_url){
 		// ------------------------------
 
 		// Put overlay on top of image to make font more readable
-		ctx.fillStyle = "rgb(153 153 153 / 10%)";  // Background square over image = grey
+		ctx.fillStyle = "rgb(153 153 153 / 15%)";  // Background square over image = grey
     		ctx.fillRect(0, 0, width, height);  // fillRect(x, y, width, height)
 
 		// ------------------------------
