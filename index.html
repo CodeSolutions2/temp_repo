@@ -261,7 +261,7 @@ async function select_motivation_topic() {
 	const selected_topic = motivation_topics.at(selection);
 	console.log("selected_topic: ", selected_topic);
 	
-	const motivational_image_prompt = `Create a picture about ${selected_topic}, such that one would be motivated to obtain more of the topic of ${selected_topic}. Only generate a picture without text.`;
+	const motivational_image_prompt = `Create a picture, without writing, about ${selected_topic}, such that one would be motivated to obtain more of the topic of ${selected_topic}.`;
 
 	const motivational_text_prompt = `Write a motivational sentence to encourage ${selected_topic}.`;
 
@@ -333,12 +333,12 @@ async function create_text_call_API_OpenAI(motivational_text_prompt) {
 
 // ------------------------------------------
 
-async function write_message_on_image(generated_text) {
+async function write_message_on_image(generated_text, image_size) {
 	
 	// ------------------------------
 
 	// Could adjust this by the length of the generated sentence
-	let font_height = 48;
+	let font_height = 30;
 	console.log("font_height: ", font_height);
 
 	
@@ -353,7 +353,7 @@ async function write_message_on_image(generated_text) {
 	ctx.textAlign = "left";
 	
 	let width = Number(image_size.split('x').pop());
-	let height = Number(image_size.split('x').shift());
+	
 	let img_width = 10;
 	if (width == 256) {
 		img_width = 10;
@@ -366,12 +366,11 @@ async function write_message_on_image(generated_text) {
 	}
 
 	// ------------------------------
-
-	let words = generated_text.split(" ");
+	
 	let c = 0;
 	let word_list = [];
 	let cut_text = [];
-	words.forEach((word, ind) => {
+	generated_text.split(" ").forEach((word, ind) => {
 		c = c + word.length;
 
 		if (c > img_width){
