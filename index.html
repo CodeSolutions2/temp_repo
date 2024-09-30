@@ -213,7 +213,7 @@ async function run_selection() {
 		// Optional (process data)
 		const oneD_array = await imageData.data; // data is a 1D array
 		const twoD_array = Array.from(oneD_array)
-		const blob_object = await new Blob(bytes, {type: "image/png"});
+		const blob_object = await new Blob(twoD_array, {type: "image/png"});
 		const file_blob_object = await new File ([blob_object], "image.png", {type: "image/png"});
 		const url = URL.createObjectURL(file_blob_object);  // Create a URL for the Blob object
 	    
@@ -243,7 +243,7 @@ async function run_selection() {
 		// Optional (process data)
 		const oneD_array = await imageData.data; // data is a 1D array
 		const twoD_array = Array.from(oneD_array)
-		const blob_object = await new Blob(bytes, {type: "image/png"});
+		const blob_object = await new Blob(twoD_array, {type: "image/png"});
 		const file_blob_object = await new File ([blob_object], "image.png", {type: "image/png"});
 		const url = URL.createObjectURL(file_blob_object);  // Create a URL for the Blob object
 	    
@@ -338,6 +338,12 @@ async function display_image(generated_text_array, image_url){
 
 		// ------------------------------
 
+		// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
+		const RGB = [0, 0, 0]; // black 
+		console.log("RGB: ", RGB);
+
+		// ------------------------------
+		
 		const x = 30;
 		var y = 50;
 		const padding = 4;
@@ -396,10 +402,6 @@ async function preprocess_text(generated_text) {
 	// Could adjust this by the length of the generated sentence
 	if (width == 256) { font_height = 20; }
 	console.log("font_height: ", font_height);
-	
-	// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
-	const RGB = [0, 0, 0]; // black 
-	console.log("RGB: ", RGB);
 
 	// ------------------------------
 	
