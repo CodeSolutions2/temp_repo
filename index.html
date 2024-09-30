@@ -112,8 +112,11 @@ window.addEventListener('beforeunload', function() {
 const motivation_topics = ["health", "education", "life-balance", "happiness", "success"];
 
 var ctx = document.getElementById("canvas_img").getContext("2d");
-
-                           
+	
+var font_height = 40;
+var width;
+var height;
+	
 // ------------------------------------------
 // UI
 // ------------------------------------------  
@@ -192,16 +195,19 @@ async function run_selection() {
 	if (dropdown_option_type == 'dalle2') {
 		const model_name = 'dall-e-2';
 		const image_size = document.getElementById("image_size_list_dalle2").value;
+
+		await assign_width_height(image_size);
+		
 		const image_url = await create_image_call_API_OpenAI(model_name, image_size, motivational_image_prompt);
 
 		// Generate automated message for the image
-		const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt).catch(error => { document.getElementById('error').innerHTML = error; });
+		const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt);
 		console.log("generated_text: ", generated_text);
 
-		const generated_text_array = await preprocess_text(image_size, generated_text);
+		const generated_text_array = await preprocess_text(generated_text);
 
 		// Display image
-		const imageData = await display_image(generated_text_array, image_url, image_size);
+		const imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
 
 		// Optional (process data)
@@ -219,16 +225,19 @@ async function run_selection() {
 	} else if (dropdown_option_type == 'dalle3') {
 		const model_name = 'dall-e-3';
 		const image_size = document.getElementById("image_size_list_dalle3").value;
+
+		await assign_width_height(image_size);
+		
 		const image_url = await create_image_call_API_OpenAI(model_name, image_size, motivational_image_prompt);
 		
 		// Generate automated message for the image
-		const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt).catch(error => { document.getElementById('error').innerHTML = error; });
+		const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt);
 		console.log("generated_text: ", generated_text);
 
-		const generated_text_array = await preprocess_text(image_size, generated_text);
+		const generated_text_array = await preprocess_text(generated_text);
 
 		// Display image
-		const imageData = await display_image(generated_text_array, image_url, image_size);
+		const imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
 
 		// Optional (process data)
@@ -259,6 +268,37 @@ async function run_selection() {
 // ------------------------------------------
 // SUBFUNCTIONS
 // ------------------------------------------
+async function assign_width_height(image_size) {
+
+	width = await Number(image_size.split('x').pop());
+	console.log('width: ', width);
+	document.getElementById("canvas_img").width = width; // Resize the canvas that is originally set to 224
+
+	height = await Number(image_size.split('x').shift());
+	console.log('height: ', height);
+	document.getElementById("canvas_img").height = height;	// Resize the canvas that is originally set to 224
+}
+
+// ------------------------------------------
+
+async function create_image_call_API_OpenAI(model_name, image_size, motivational_image_prompt) {
+
+	var headers = {"Content-Type": "application/json", "Authorization": 'Bearer ' + document.getElementById("OPENAI_API_KEY").value}
+        var data = {"model": model_name, "prompt": motivational_image_prompt, "n": 1, "size": image_size};
+	var options = {method : 'POST', headers: headers, body : JSON.stringify(data)};
+				
+	return await fetch('https://api.openai.com/v1/images/generations', options)
+		.then(res => res.json())
+		.then(res => { 
+			let output = JSON.parse(JSON.stringify(res)); 
+			document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selected."
+			return output["data"][0]["url"];
+		})
+		.catch(error => { document.getElementById('error').innerHTML = error; });
+}
+
+// ------------------------------------------
+
 async function select_motivation_topic() {
 	
 	// Generate one random number from [0 to motivation_topics.length]
@@ -277,26 +317,18 @@ async function select_motivation_topic() {
 
 // ------------------------------------------
 
-async function display_image(generated_text_array, image_url, image_size){
+async function display_image(generated_text_array, image_url){
 	
-	image = new Image();
+	image = await new Image();
 	image.src = image_url;
 	
 	// Display image on canvas
-	image.onload = async () => {
+	image.onload = await function () { 
 
 		// Draw image on canvas
 		document.getElementById("canvas_img").style.display = "block";
 		
-		const width = await Number(image_size.split('x').pop());
-		console.log('width: ', width);
-		document.getElementById("canvas_img").width = width; // Resize the canvas that is originally set to 224
-
-		const height = await Number(image_size.split('x').shift());
-		console.log('height: ', height);
-		document.getElementById("canvas_img").height = height;	// Resize the canvas that is originally set to 224
-			
-		await ctx.drawImage(image, 0,0);
+		ctx.drawImage(image, 0,0);
 
 		// ------------------------------
 
@@ -323,27 +355,7 @@ async function display_image(generated_text_array, image_url, image_size){
 		
 	}
 
-	
-
 	return ctx.getImageData(0, 0, width, height);
-}
-
-// ------------------------------------------
-
-async function create_image_call_API_OpenAI(model_name, image_size, motivational_image_prompt) {
-
-	var headers = {"Content-Type": "application/json", "Authorization": 'Bearer ' + document.getElementById("OPENAI_API_KEY").value}
-        var data = {"model": model_name, "prompt": motivational_image_prompt, "n": 1, "size": image_size};
-	var options = {method : 'POST', headers: headers, body : JSON.stringify(data)};
-				
-	return await fetch('https://api.openai.com/v1/images/generations', options)
-		.then(res => res.json())
-		.then(res => { 
-			let output = JSON.parse(JSON.stringify(res)); 
-			document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selected."
-			return output["data"][0]["url"];
-		})
-		.catch(error => { document.getElementById('error').innerHTML = error; });
 }
 	
 // ------------------------------------------
@@ -377,16 +389,11 @@ async function create_text_call_API_OpenAI(motivational_text_prompt) {
 
 // -------------------------------------------------
 
-async function preprocess_text(image_size, generated_text) {
-
-	// ------------------------------
-	
-	const width = Number(image_size.split('x').pop());
+async function preprocess_text(generated_text) {
 
 	// ------------------------------
 	
 	// Could adjust this by the length of the generated sentence
-	var font_height = 40;
 	if (width == 256) { font_height = 20; }
 	console.log("font_height: ", font_height);
 	
@@ -402,7 +409,7 @@ async function preprocess_text(image_size, generated_text) {
 	const char_width = font_height*aspect_ratio;
 	console.log("char_width: ", char_width);
 	
-	const max_num_of_char_per_line = Math.floor(width/char_width);
+	const max_num_of_char_per_line = await Math.floor(width/char_width);
 	console.log("max_num_of_char_per_line: ", max_num_of_char_per_line);
 
 	// ------------------------------
