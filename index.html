@@ -160,8 +160,22 @@ document.getElementById("dropdown_options").addEventListener("change", processEv
 // ------------------------------------------
 
 async function processEvent_download(event) {
+	
+	const link = document.createElement('a');
+	link.href = document.getElementById("canvas_img").toDataURL("image/png");
+	
+	// Give generated url to new window
+	document.getElementById("download_button").setAttribute("data-id", link.href);
+
+	// Display the download link in a new window
 	winRef = window.open(this.getAttribute("data-id"), "winRef", target="width=1300,height=700");
+
+	// Download the image
+	link.download = "image.png";
+	link.click();
 }
+
+document.getElementById("download_button").addEventListener("click", processEvent_download, false);
 	
 // ------------------------------------------
 
@@ -184,28 +198,23 @@ async function run_selection() {
 		const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt).catch(error => { document.getElementById('error').innerHTML = error; });
 		console.log("generated_text: ", generated_text);
 
+		const generated_text_array = await preprocess_text(image_size, generated_text);
+
 		// Display image
-		const imageData = await display_image(generated_text, image_url, image_size);
+		const imageData = await display_image(generated_text_array, image_url, image_size);
 		console.log('imageData: ', imageData);
 
+		// Optional (process data)
 		const oneD_array = await imageData.data; // data is a 1D array
 		const twoD_array = Array.from(oneD_array)
-		
-		// Put final image in [file blog image]
-		const blob_object = await new Blob(twoD_array, {type: "image/png"});
+		const blob_object = await new Blob(bytes, {type: "image/png"});
 		const file_blob_object = await new File ([blob_object], "image.png", {type: "image/png"});
-
-		// Create a URL for the Blob object
-		const url = URL.createObjectURL(file_blob_object);
+		const url = URL.createObjectURL(file_blob_object);  // Create a URL for the Blob object
 	    
 		// Make Download image button appear 
 		document.getElementById("line_0").style.display = 'block';
 		document.getElementById("download_button_header").style.display = 'block';
 		document.getElementById("download_button").style.display = 'block';
-		
-		// Give generated url to new window
-		document.getElementById("download_button").setAttribute("data-id", url);
-		document.getElementById("download_button").addEventListener("click", processEvent_download, false);
 		
 	} else if (dropdown_option_type == 'dalle3') {
 		const model_name = 'dall-e-3';
@@ -216,28 +225,23 @@ async function run_selection() {
 		const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt).catch(error => { document.getElementById('error').innerHTML = error; });
 		console.log("generated_text: ", generated_text);
 
+		const generated_text_array = await preprocess_text(image_size, generated_text);
+
 		// Display image
-		const imageData = await display_image(generated_text, image_url, image_size);
+		const imageData = await display_image(generated_text_array, image_url, image_size);
 		console.log('imageData: ', imageData);
 
+		// Optional (process data)
 		const oneD_array = await imageData.data; // data is a 1D array
 		const twoD_array = Array.from(oneD_array)
-		
-		// Put final image in [file blog image]
 		const blob_object = await new Blob(bytes, {type: "image/png"});
 		const file_blob_object = await new File ([blob_object], "image.png", {type: "image/png"});
-
-		// Create a URL for the Blob object
-		const url = URL.createObjectURL(file_blob_object);
+		const url = URL.createObjectURL(file_blob_object);  // Create a URL for the Blob object
 	    
 		// Make Download image button appear 
 		document.getElementById("line_0").style.display = 'block';
 		document.getElementById("download_button_header").style.display = 'block';
 		document.getElementById("download_button").style.display = 'block';
-		
-		// Give generated url to new window
-		document.getElementById("download_button").setAttribute("data-id", url);
-		document.getElementById("download_button").addEventListener("click", processEvent_download, false);
 
 	} else if (dropdown_option_type == 'custom_model') {
 		document.getElementById('notification').innerHTML = "In progress.";
@@ -273,111 +277,53 @@ async function select_motivation_topic() {
 
 // ------------------------------------------
 
-async function display_image(generated_text, image_url, image_size){
+async function display_image(generated_text_array, image_url, image_size){
 	
 	image = new Image();
 	image.src = image_url;
-		
+	
 	// Display image on canvas
-	image.onload = await function () { 
-		
+	image.onload = async () => {
+
 		// Draw image on canvas
 		document.getElementById("canvas_img").style.display = "block";
 		
-		const width = Number(image_size.split('x').pop());
+		const width = await Number(image_size.split('x').pop());
 		console.log('width: ', width);
-		document.getElementById("canvas_img").width = width;
+		document.getElementById("canvas_img").width = width; // Resize the canvas that is originally set to 224
 
-		const height = Number(image_size.split('x').shift());
+		const height = await Number(image_size.split('x').shift());
 		console.log('height: ', height);
-		document.getElementById("canvas_img").height = height;
+		document.getElementById("canvas_img").height = height;	// Resize the canvas that is originally set to 224
 			
-		ctx.drawImage(image, 0,0);
+		await ctx.drawImage(image, 0,0);
 
 		// ------------------------------
 
 		// Put overlay on top of image to make font more readable
-		
-		// Make a square on canvas
 		ctx.fillStyle = "rgb(153 153 153 / 10%)";  // Background square over image = grey
     		ctx.fillRect(0, 0, width, height);  // fillRect(x, y, width, height)
-		
+
 		// ------------------------------
 
-		// Could adjust this by the length of the generated sentence
-		if (width == 256) {
-			const font_height = 23;
-		} else {
-			const font_height = 48;
-		}
-		console.log("font_height: ", font_height);
-		
-		// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
-		const RGB = [0, 0, 0]; // black 
-		console.log("RGB: ", RGB);
-	
-		// ------------------------------
-		
-		// need to measure the max number of [font characters] that can be written on one line
-		// Character Width = Font Size * Character Aspect Ratio = 30 * 0.5 = 15pt
-		const aspect_ratio = 0.6; // larger aspect_ratio the max_num_of_char_per_line is smaller
-		const char_width = font_height*aspect_ratio;
-		console.log("char_width: ", char_width);
-		
-		const max_num_of_char_per_line = Math.floor(width/char_width);
-		console.log("max_num_of_char_per_line: ", max_num_of_char_per_line);
-	
-		// ------------------------------
-	
-		// Replace hypens with spaces
-		generated_text = generated_text.replace(/-/g, " ");
-	
-		// Replace double hypens with [dot space]
-		generated_text = generated_text.replace(/—/g, ". ");
-		console.log("generated_text: ", generated_text);
-	
-		// ------------------------------
-		
-		// Separate text into an array for printing line-by-line
-		var c = 0;
-		var word_list = [];
-		var cut_text = [];
-		generated_text.split(" ").map((word, ind) => {
-			c = c + (word.length + 1); // plus for the space
-	
-			if (c > max_num_of_char_per_line){
-				cut_text.push(word_list.join(' '));
-				word_list = [word];
-				c=0;
-			} else {
-				word_list.push(word);
-			}
-		});
-		cut_text.push(word_list.join(' '));
-		console.log('cut_text: ', cut_text);
-	
-		// ------------------------------
-	
 		const x = 30;
 		var y = 50;
 		const padding = 4;
 	
 		ctx.font = "bold "+font_height.toString()+"px serif";
 		ctx.textAlign = "left";
-	
 		ctx.fillStyle = "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")";
-		// console.log('RGB font color: ', "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")");
 		
-		cut_text.map((phrase, ind) => {
-			// using width as the maxWidth will help to fit text on the image
+		generated_text_array.map((phrase, ind) => {
 			ctx.fillText(phrase, x, y, width);
-			
 			y = y + Number(font_height) + padding;
-			console.log('y: ', y);
 		});
-	
+
 		// ------------------------------
-	};
+		
+	}
+
+	
 
 	return ctx.getImageData(0, 0, width, height);
 }
@@ -414,14 +360,75 @@ async function create_text_call_API_OpenAI(motivational_text_prompt) {
         var url = 'https://api.openai.com/v1/chat/completions';
         var options = {method : 'post', headers: headers, body : JSON.stringify(data)};
 
-        return await fetch(url, options)
+        var generated_text = await fetch(url, options)
 		.then(res => res.json())
 		.then(res => { return JSON.parse(JSON.stringify(res))['choices'][0]['message']['content']; })
 		.catch(error => { document.getElementById('error').innerHTML = error; });
+
+	// Replace hypens with spaces
+	generated_text = await generated_text.replace(/-/g, " ");
+	
+	// Replace double hypens with [dot space]
+	generated_text = await generated_text.replace(/—/g, ". ");
+	console.log("generated_text: ", generated_text);
+
+	return generated_text;
 }
 
 // -------------------------------------------------
 
+async function preprocess_text(image_size, generated_text) {
+
+	// ------------------------------
+	
+	const width = Number(image_size.split('x').pop());
+
+	// ------------------------------
+	
+	// Could adjust this by the length of the generated sentence
+	var font_height = 40;
+	if (width == 256) { font_height = 20; }
+	console.log("font_height: ", font_height);
+	
+	// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
+	const RGB = [0, 0, 0]; // black 
+	console.log("RGB: ", RGB);
+
+	// ------------------------------
+	
+	// Measure the max number of [font characters] that can be written on one line
+	// Character Width = Font Size * Character Aspect Ratio = 30 * 0.5 = 15pt
+	const aspect_ratio = 0.6; // larger aspect_ratio the max_num_of_char_per_line is smaller
+	const char_width = font_height*aspect_ratio;
+	console.log("char_width: ", char_width);
+	
+	const max_num_of_char_per_line = Math.floor(width/char_width);
+	console.log("max_num_of_char_per_line: ", max_num_of_char_per_line);
+
+	// ------------------------------
+	
+	// Separate text into an array for printing line-by-line
+	var c = 0;
+	var word_list = [];
+	var cut_text = [];
+	generated_text.split(" ").map((word, ind) => {
+		c = c + (word.length + 1); // plus for the space
+
+		if (c > max_num_of_char_per_line){
+			cut_text.push(word_list.join(' '));
+			word_list = [word];
+			c=0;
+		} else {
+			word_list.push(word);
+		}
+	});
+	cut_text.push(word_list.join(' '));
+	console.log('cut_text: ', cut_text);
+
+	return cut_text;
+}
+
+// -------------------------------------------------
 
 
 </script>
