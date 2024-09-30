@@ -171,10 +171,6 @@ async function processEvent_download(event) {
 	// Display the download link in a new window
 	winRef = window.open(this.getAttribute("data-id"), "winRef", target="width=1300,height=700");
 
-	// OR
-	
-	// Download the image
-	download_button.click();
 }
 
 document.getElementById("download_button").addEventListener("click", processEvent_download, false);
@@ -208,14 +204,6 @@ async function run_selection() {
 		// Display image
 		const imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
-
-		// Optional (process data)
-		const oneD_array = await imageData.data; // data is a 1D array
-		const twoD_array = Array.from(oneD_array)
-		const blob_object = await new Blob(twoD_array, {type: "image/png"});
-		const file_blob_object = await new File ([blob_object], "image.png", {type: "image/png"});
-		const url = URL.createObjectURL(file_blob_object);  // Create a URL for the Blob object
-		document.getElementById("download_button").setAttribute("data-id", url);
 	    
 		// Make Download image button appear 
 		document.getElementById("line_0").style.display = 'block';
@@ -239,14 +227,6 @@ async function run_selection() {
 		// Display image
 		const imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
-
-		// Optional (process data)
-		const oneD_array = await imageData.data; // data is a 1D array
-		const twoD_array = Array.from(oneD_array)
-		const blob_object = await new Blob(twoD_array, {type: "image/png"});
-		const file_blob_object = await new File ([blob_object], "image.png", {type: "image/png"});
-		const url = URL.createObjectURL(file_blob_object);  // Create a URL for the Blob object
-		document.getElementById("download_button").setAttribute("data-id", url);
 	    
 		// Make Download image button appear 
 		document.getElementById("line_0").style.display = 'block';
@@ -360,9 +340,8 @@ async function display_image(generated_text_array, image_url){
 		});
 
 		// ------------------------------
-
-		download_button.download = "image.png";
-		download_button.href = document.getElementById("canvas_img").toDataURL("image/png");
+	
+		download_button.href = document.getElementById("canvas_img").toDataURL();
 	}
 
 	
