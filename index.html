@@ -273,7 +273,6 @@ async function select_motivation_topic() {
 async function display_image(generated_text_array, image_url){
 	
 	image = await new Image();
-	image.crossOrigin = "anonymous";
 	image.src = image_url;
 	
 	// Display image on canvas
