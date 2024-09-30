@@ -264,11 +264,11 @@ async function display_image(generated_text, image_url, image_size){
 		// Draw image on canvas
 		document.getElementById("canvas_img").style.display = "block";
 		
-		let width = Number(image_size.split('x').pop());
+		const width = Number(image_size.split('x').pop());
 		console.log('width: ', width);
 		document.getElementById("canvas_img").width = width;
 
-		let height = Number(image_size.split('x').shift());
+		const height = Number(image_size.split('x').shift());
 		console.log('height: ', height);
 		document.getElementById("canvas_img").height = height;
 			
@@ -283,11 +283,6 @@ async function display_image(generated_text, image_url, image_size){
 		// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
 		const RGB = [0, 0, 0]; // black 
 		console.log("RGB: ", RGB);
-	
-		// ------------------------------
-		
-		const width = Number(image_size.split('x').pop());
-		// let height = Number(image_size.split('x').shift());
 	
 		// ------------------------------
 		
