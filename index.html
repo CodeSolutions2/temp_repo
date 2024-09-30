@@ -180,62 +180,44 @@ async function run_selection() {
 		const image_size = document.getElementById("image_size_list_dalle2").value;
 		const image_url = await create_image_call_API_OpenAI(model_name, image_size, motivational_image_prompt);
 
-		// If model gives a url, display the image
-		if (image_url.length > 0) {
-			// Display image
-			await display_image(image_url, image_size);
+		// Generate automated message for the image
+		const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt).catch(error => { document.getElementById('error').innerHTML = error; });
+		console.log("generated_text: ", generated_text);
 
-			// Generate automated message for the image
-			const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt).catch(error => { document.getElementById('error').innerHTML = error; });
-			console.log("generated_text: ", generated_text);
+		// Display image
+		await display_image(generated_text, image_url, image_size);
+
+		// Final display output
+		// Make Download image button appear 
+		document.getElementById("line_0").style.display = 'block';
+		document.getElementById("download_button_header").style.display = 'block';
+		document.getElementById("download_button").style.display = 'block';
 		
-			// Write automated message on image
-			await write_message_on_image(generated_text, image_size);
-
-			// Final display output
-			// Make Download image button appear 
-			document.getElementById("line_0").style.display = 'block';
-			document.getElementById("download_button_header").style.display = 'block';
-			document.getElementById("download_button").style.display = 'block';
-			
-			// Give generated url to new window
-			document.getElementById("download_button").setAttribute("data-id", image_url);
-			document.getElementById("download_button").addEventListener("click", processEvent_download, false);
-			
-		} else {
-			document.getElementById('notification').innerHTML = "Image url was not created. Select another model and image size.";
-		}
+		// Give generated url to new window
+		document.getElementById("download_button").setAttribute("data-id", image_url);
+		document.getElementById("download_button").addEventListener("click", processEvent_download, false);
 		
 	} else if (dropdown_option_type == 'dalle3') {
 		const model_name = 'dall-e-3';
 		const image_size = document.getElementById("image_size_list_dalle3").value;
 		const image_url = await create_image_call_API_OpenAI(model_name, image_size, motivational_image_prompt);
-
-		// If model gives a url, display the image
-		if (image_url.length > 0) {
-			// Display image
-			await display_image(image_url, image_size);
-
-			// Generate automated message for the image
-			const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt).catch(error => { document.getElementById('error').innerHTML = error; });
-			console.log("generated_text: ", generated_text);
 		
-			// Write automated message on image
-			await write_message_on_image(generated_text, image_size);
+		// Generate automated message for the image
+		const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt).catch(error => { document.getElementById('error').innerHTML = error; });
+		console.log("generated_text: ", generated_text);
 
-			// Final display output
-			// Make Download image button appear 
-			document.getElementById("line_0").style.display = 'block';
-			document.getElementById("download_button_header").style.display = 'block';
-			document.getElementById("download_button").style.display = 'block';
-			
-			// Give generated url to new window
-			document.getElementById("download_button").setAttribute("data-id", image_url);
-			document.getElementById("download_button").addEventListener("click", processEvent_download, false);
-			
-		} else {
-			document.getElementById('notification').innerHTML = "Image url was not created. Select another model and image size.";
-		}
+		// Display image
+		await display_image(generated_text, image_url, image_size);
+
+		// Final display output
+		// Make Download image button appear 
+		document.getElementById("line_0").style.display = 'block';
+		document.getElementById("download_button_header").style.display = 'block';
+		document.getElementById("download_button").style.display = 'block';
+		
+		// Give generated url to new window
+		document.getElementById("download_button").setAttribute("data-id", image_url);
+		document.getElementById("download_button").addEventListener("click", processEvent_download, false);
 
 	} else if (dropdown_option_type == 'custom_model') {
 		document.getElementById('notification').innerHTML = "In progress.";
@@ -262,7 +244,7 @@ async function select_motivation_topic() {
 	const selected_topic = motivation_topics.at(selection);
 	console.log("selected_topic: ", selected_topic);
 	
-	const motivational_image_prompt = `Create a picture without text writing about ${selected_topic}, such that one would be motivated to obtain more of the topic of ${selected_topic}.`;
+	const motivational_image_prompt = `Create an image about ${selected_topic}, without writing text on the image, such that one would be motivated to obtain more of the topic of ${selected_topic}.`;
 
 	const motivational_text_prompt = `Write a motivational sentence to encourage ${selected_topic}.`;
 
@@ -271,7 +253,7 @@ async function select_motivation_topic() {
 
 // ------------------------------------------
 
-async function display_image(image_url, image_size){
+async function display_image(generated_text, image_url, image_size){
 	
 	image = new Image();
 	image.src = image_url;
@@ -291,6 +273,83 @@ async function display_image(image_url, image_size){
 		document.getElementById("canvas_img").height = height;
 			
 		ctx.drawImage(image, 0,0);
+
+		// ------------------------------
+
+		// Could adjust this by the length of the generated sentence
+		const font_height = 48;
+		console.log("font_height: ", font_height);
+		
+		// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
+		const RGB = [0, 0, 0]; // black 
+		console.log("RGB: ", RGB);
+	
+		// ------------------------------
+		
+		const width = Number(image_size.split('x').pop());
+		// let height = Number(image_size.split('x').shift());
+	
+		// ------------------------------
+		
+		// need to measure the max number of [font characters] that can be written on one line
+		// Character Width = Font Size * Character Aspect Ratio = 30 * 0.5 = 15pt
+		const aspect_ratio = 0.6; // larger aspect_ratio the max_num_of_char_per_line is smaller
+		const char_width = font_height*aspect_ratio;
+		console.log("char_width: ", char_width);
+		
+		const max_num_of_char_per_line = Math.floor(width/char_width);
+		console.log("max_num_of_char_per_line: ", max_num_of_char_per_line);
+	
+		// ------------------------------
+	
+		// Replace hypens with spaces
+		generated_text = generated_text.replace(/-/g, " ");
+	
+		// Replace double hypens with [dot space]
+		generated_text = generated_text.replace(/—/g, ". ");
+		console.log("generated_text: ", generated_text);
+	
+		// ------------------------------
+		
+		// Separate text into an array for printing line-by-line
+		var c = 0;
+		var word_list = [];
+		var cut_text = [];
+		generated_text.split(" ").map((word, ind) => {
+			c = c + (word.length + 1); // plus for the space
+	
+			if (c > max_num_of_char_per_line){
+				cut_text.push(word_list.join(' '));
+				word_list = [word];
+				c=0;
+			} else {
+				word_list.push(word);
+			}
+		});
+		cut_text.push(word_list.join(' '));
+		console.log('cut_text: ', cut_text);
+	
+		// ------------------------------
+	
+		const x = 30;
+		var y = 50;
+		const padding = 4;
+	
+		ctx.font = font_height.toString()+"px serif";
+		ctx.textAlign = "left";
+	
+		ctx.fillStyle = "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")";
+		// console.log('RGB font color: ', "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")");
+		
+		cut_text.map((phrase, ind) => {
+			// using width as the maxWidth will help to fit text on the image
+			ctx.fillText(phrase, x, y, width);
+			
+			y = y + Number(font_height) + padding;
+			console.log('y: ', y);
+		});
+	
+		// ------------------------------
 	};
 }
 
@@ -330,90 +389,6 @@ async function create_text_call_API_OpenAI(motivational_text_prompt) {
 		.then(res => res.json())
 		.then(res => { return JSON.parse(JSON.stringify(res))['choices'][0]['message']['content']; })
 		.catch(error => { document.getElementById('error').innerHTML = error; });
-}
-
-// ------------------------------------------
-
-async function write_message_on_image(generated_text, image_size) {
-	
-	// ------------------------------
-
-	// Could adjust this by the length of the generated sentence
-	const font_height = 48;
-	console.log("font_height: ", font_height);
-
-	
-	// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
-	const RGB = [0, 0, 0]; // black 
-	console.log("RGB: ", RGB);
-
-	// ------------------------------
-	
-	const width = Number(image_size.split('x').pop());
-	// let height = Number(image_size.split('x').shift());
-
-	// ------------------------------
-	
-	// need to measure the max number of [font characters] that can be written on one line
-	// Character Width = Font Size * Character Aspect Ratio = 30 * 0.5 = 15pt
-	const aspect_ratio = 0.6; // larger aspect_ratio the max_num_of_char_per_line is smaller
-	const char_width = font_height*aspect_ratio;
-	console.log("char_width: ", char_width);
-	
-	const max_num_of_char_per_line = Math.floor(width/char_width);
-	console.log("max_num_of_char_per_line: ", max_num_of_char_per_line);
-
-	// ------------------------------
-
-	// Replace hypens with spaces
-	generated_text = generated_text.replace(/-/g, " ");
-
-	// Replace double hypens with [dot space]
-	generated_text = generated_text.replace(/—/g, ". ");
-	console.log("generated_text: ", generated_text);
-
-	// ------------------------------
-	
-	// Separate text into an array for printing line-by-line
-	var c = 0;
-	var word_list = [];
-	var cut_text = [];
-	generated_text.split(" ").map((word, ind) => {
-		c = c + (word.length + 1); // plus for the space
-
-		if (c > max_num_of_char_per_line){
-			cut_text.push(word_list.join(' '));
-			word_list = [word];
-			c=0;
-		} else {
-			word_list.push(word);
-		}
-	});
-	cut_text.push(word_list.join(' '));
-	console.log('cut_text: ', cut_text);
-
-	// ------------------------------
-
-	const x = 30;
-	var y = 50;
-	const padding = 4;
-
-	ctx.font = font_height.toString()+"px serif";
-	ctx.textAlign = "left";
-
-	ctx.fillStyle = "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")";
-	console.log('RGB font color: ', "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")");
-	
-	cut_text.map((phrase, ind) => {
-		// using width as the maxWidth will help to fit text on the image
-		ctx.fillText(phrase, x, y, width);
-		console.log('phrase: ', phrase);
-		
-		y = y + Number(font_height) + padding;
-		console.log('y: ', y);
-	});
-
-	// ------------------------------
 }
 
 // -------------------------------------------------
