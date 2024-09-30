@@ -170,6 +170,8 @@ async function run_selection() {
 
 	// Get randomly selected image and text prompts
 	const [motivational_image_prompt, motivational_text_prompt] = await select_motivation_topic();
+	console.log("motivational_image_prompt: ", motivational_image_prompt);
+	console.log("motivational_text_prompt: ", motivational_text_prompt);
 
 	
 	if (dropdown_option_type == 'dalle2') {
@@ -180,7 +182,7 @@ async function run_selection() {
 		// If model gives a url, display the image
 		if (image_url.length > 0) {
 			// Display image
-			await display_image(image_url);
+			await display_image(image_url, image_size);
 
 			// Generate automated message for the image
 			const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt).catch(error => { document.getElementById('error').innerHTML = error; });
@@ -210,7 +212,7 @@ async function run_selection() {
 		// If model gives a url, display the image
 		if (image_url.length > 0) {
 			// Display image
-			await display_image(image_url);
+			await display_image(image_url, image_size);
 
 			// Generate automated message for the image
 			const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt).catch(error => { document.getElementById('error').innerHTML = error; });
@@ -266,7 +268,7 @@ async function select_motivation_topic() {
 
 // ------------------------------------------
 
-async function display_image(image_url){
+async function display_image(image_url, image_size){
 	
 	image = new Image();
 	image.src = image_url;
