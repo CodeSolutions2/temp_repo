@@ -244,7 +244,7 @@ async function select_motivation_topic() {
 	const selected_topic = motivation_topics.at(selection);
 	console.log("selected_topic: ", selected_topic);
 	
-	const motivational_image_prompt = `Create an image about ${selected_topic}, without writing text on the image, such that one would be motivated to obtain more of the topic of ${selected_topic}.`;
+	const motivational_image_prompt = `Create an image, without text writing, about ${selected_topic} such that one would be motivated to obtain more of the topic of ${selected_topic}.`;
 
 	const motivational_text_prompt = `Write a motivational sentence to encourage ${selected_topic}.`;
 
@@ -273,7 +273,7 @@ async function display_image(generated_text, image_url, image_size){
 		document.getElementById("canvas_img").height = height;
 			
 		ctx.drawImage(image, 0,0);
-
+	
 		// ------------------------------
 
 		// Could adjust this by the length of the generated sentence
@@ -330,7 +330,7 @@ async function display_image(generated_text, image_url, image_size){
 		var y = 50;
 		const padding = 4;
 	
-		ctx.font = font_height.toString()+"px serif";
+		ctx.font = "bold "+font_height.toString()+"px serif";
 		ctx.textAlign = "left";
 	
 		ctx.fillStyle = "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")";
