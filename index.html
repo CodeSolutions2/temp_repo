@@ -100,6 +100,15 @@ button#download_button {background: goldenrod;}
 	
 <script>
 
+// ------------------------------------------
+	
+window.addEventListener('beforeunload', function() {
+	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+	document.getElementById("dropdown_options").selectedIndex = 0;
+});
+
+// ------------------------------------------
+	
 const motivation_topics = ["health", "education", "life-balance", "happiness", "success"];
 const ctx = document.getElementById("canvas_img").getContext("2d");
 
@@ -108,25 +117,40 @@ const ctx = document.getElementById("canvas_img").getContext("2d");
 // UI
 // ------------------------------------------  
 async function processEvent_dropdown_options(event) {
+
+	console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
 	
 	if (document.getElementById("dropdown_options").selectedIndex == 0) {
-		console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
+		document.getElementById("enter_key").style.display = 'none';
+		document.getElementById("OPENAI_API_KEY").style.display = 'none';
+		document.getElementById("image_size_list_dalle2_label").style.display = 'none';
+		document.getElementById("image_size_list_dalle2").style.display = 'none';
+		document.getElementById("image_size_list_dalle3_label").style.display = 'none';
+		document.getElementById("image_size_list_dalle3").style.display = 'none';
 		
 	} else if (document.getElementById("dropdown_options").selectedIndex == 1) {
 		document.getElementById("enter_key").style.display = 'block';
 		document.getElementById("OPENAI_API_KEY").style.display = 'block';
 		document.getElementById("image_size_list_dalle2_label").style.display = 'block';
 		document.getElementById("image_size_list_dalle2").style.display = 'block';
+		document.getElementById("image_size_list_dalle3_label").style.display = 'none';
+		document.getElementById("image_size_list_dalle3").style.display = 'none';
 
 	} else if (document.getElementById("dropdown_options").selectedIndex == 2) {
 		document.getElementById("enter_key").style.display = 'block';
 		document.getElementById("OPENAI_API_KEY").style.display = 'block';
+		document.getElementById("image_size_list_dalle2_label").style.display = 'none';
+		document.getElementById("image_size_list_dalle2").style.display = 'none';
 		document.getElementById("image_size_list_dalle3_label").style.display = 'block';
 		document.getElementById("image_size_list_dalle3").style.display = 'block';
 		
 	} else if (document.getElementById("dropdown_options").selectedIndex == 3) {
-		console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
-		
+		document.getElementById("enter_key").style.display = 'none';
+		document.getElementById("OPENAI_API_KEY").style.display = 'none';
+		document.getElementById("image_size_list_dalle2_label").style.display = 'none';
+		document.getElementById("image_size_list_dalle2").style.display = 'none';
+		document.getElementById("image_size_list_dalle3_label").style.display = 'none';
+		document.getElementById("image_size_list_dalle3").style.display = 'none';
 	}
 }
 
