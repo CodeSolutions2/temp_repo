@@ -371,7 +371,10 @@ async function write_message_on_image(generated_text, image_size) {
 	// ------------------------------
 
 	// Replace hypens with spaces
-	generated_text = generated_text.replace(/-|—/g, " ");
+	generated_text = generated_text.replace(/-/g, " ");
+
+	// Replace double hypens with [dot space]
+	generated_text = generated_text.replace(/—/g, ". ");
 	console.log("generated_text: ", generated_text);
 
 	// ------------------------------
