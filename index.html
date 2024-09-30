@@ -110,7 +110,8 @@ window.addEventListener('beforeunload', function() {
 // ------------------------------------------
 	
 const motivation_topics = ["health", "education", "life-balance", "happiness", "success"];
-const ctx = document.getElementById("canvas_img").getContext("2d");
+
+var ctx = document.getElementById("canvas_img").getContext("2d");
 
                            
 // ------------------------------------------
@@ -261,7 +262,7 @@ async function select_motivation_topic() {
 	const selected_topic = motivation_topics.at(selection);
 	console.log("selected_topic: ", selected_topic);
 	
-	const motivational_image_prompt = `Create a picture, without writing, about ${selected_topic}, such that one would be motivated to obtain more of the topic of ${selected_topic}.`;
+	const motivational_image_prompt = `Create a picture without text writing about ${selected_topic}, such that one would be motivated to obtain more of the topic of ${selected_topic}.`;
 
 	const motivational_text_prompt = `Write a motivational sentence to encourage ${selected_topic}.`;
 
@@ -338,34 +339,28 @@ async function write_message_on_image(generated_text, image_size) {
 	// ------------------------------
 
 	// Could adjust this by the length of the generated sentence
-	let font_height = 48;
+	const font_height = 48;
 	console.log("font_height: ", font_height);
 
 	
 	// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
-	let RGB = [0, 0, 0]; // black 
+	const RGB = [0, 0, 0]; // black 
 	console.log("RGB: ", RGB);
 
 	// ------------------------------
-  
-	let padding = 4;
-	ctx.font = font_height.toString()+"px serif";
-	ctx.textAlign = "left";
-
-	// ------------------------------
 	
-	let width = Number(image_size.split('x').pop());
+	const width = Number(image_size.split('x').pop());
 	// let height = Number(image_size.split('x').shift());
 
 	// ------------------------------
 	
 	// need to measure the max number of [font characters] that can be written on one line
 	// Character Width = Font Size * Character Aspect Ratio = 30 * 0.5 = 15pt
-	var aspect_ratio = 0.6; // larger aspect_ratio the max_num_of_char_per_line is smaller
-	var char_width = font_height*aspect_ratio;
+	const aspect_ratio = 0.6; // larger aspect_ratio the max_num_of_char_per_line is smaller
+	const char_width = font_height*aspect_ratio;
 	console.log("char_width: ", char_width);
 	
-	var max_num_of_char_per_line = Math.floor(width/char_width);
+	const max_num_of_char_per_line = Math.floor(width/char_width);
 	console.log("max_num_of_char_per_line: ", max_num_of_char_per_line);
 
 	// ------------------------------
@@ -380,9 +375,9 @@ async function write_message_on_image(generated_text, image_size) {
 	// ------------------------------
 	
 	// Separate text into an array for printing line-by-line
-	let c = 0;
-	let word_list = [];
-	let cut_text = [];
+	var c = 0;
+	var word_list = [];
+	var cut_text = [];
 	generated_text.split(" ").map((word, ind) => {
 		c = c + (word.length + 1); // plus for the space
 
@@ -399,19 +394,26 @@ async function write_message_on_image(generated_text, image_size) {
 
 	// ------------------------------
 
-	let x = 30;
-	let y = 50;
-	
-	for (let i=0; i<cut_text.length; i++) {
-		ctx.fillStyle = "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")";
+	const x = 30;
+	var y = 50;
+	const padding = 4;
 
+	ctx.font = font_height.toString()+"px serif";
+	ctx.textAlign = "left";
+
+	ctx.fillStyle = "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")";
+	console.log('RGB font color: ', "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")");
+	
+	cut_text.map((phrase, ind) => {
 		// using width as the maxWidth will help to fit text on the image
-		ctx.fillText(cut_text[i], x, y, width);
+		ctx.fillText(phrase, x, y, width);
+		console.log('phrase: ', phrase);
 		
 		y = y + Number(font_height) + padding;
 		console.log('y: ', y);
-	} 
-  
+	});
+
+	// ------------------------------
 }
 
 // -------------------------------------------------
