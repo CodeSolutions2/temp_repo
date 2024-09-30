@@ -54,12 +54,6 @@
 <hr id="line_0" style="display:none;">
 
 <br>
-  
-<h3 id="download_button_header" style="display:none">[3] Download the displayed image.</h3>
-
-<button id="download_button" style="display:none">Download the image</button>
-
-<br>
 </td>
 
 <!-- View results -->
@@ -163,20 +157,6 @@ document.getElementById("dropdown_options").addEventListener("change", processEv
 	
 // ------------------------------------------
 
-async function processEvent_download(event) {
-	
-	// Give generated url to new window
-	document.getElementById("download_button").setAttribute("data-id", download_button.href);
-
-	// Display the download link in a new window
-	winRef = window.open(this.getAttribute("data-id"), "winRef", target="width=1300,height=700");
-
-}
-
-document.getElementById("download_button").addEventListener("click", processEvent_download, false);
-	
-// ------------------------------------------
-
 async function run_selection() {
 
 	var dropdown_option_type = document.getElementById("dropdown_options").value;
@@ -205,10 +185,6 @@ async function run_selection() {
 		const imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
 	    
-		// Make Download image button appear 
-		document.getElementById("line_0").style.display = 'block';
-		document.getElementById("download_button_header").style.display = 'block';
-		document.getElementById("download_button").style.display = 'block';
 		
 	} else if (dropdown_option_type == 'dalle3') {
 		const model_name = 'dall-e-3';
@@ -228,10 +204,6 @@ async function run_selection() {
 		const imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
 	    
-		// Make Download image button appear 
-		document.getElementById("line_0").style.display = 'block';
-		document.getElementById("download_button_header").style.display = 'block';
-		document.getElementById("download_button").style.display = 'block';
 
 	} else if (dropdown_option_type == 'custom_model') {
 		document.getElementById('notification').innerHTML = "In progress.";
@@ -340,8 +312,7 @@ async function display_image(generated_text_array, image_url){
 		});
 
 		// ------------------------------
-	
-		download_button.href = document.getElementById("canvas_img").toDataURL();
+		
 	}
 
 	
