@@ -185,16 +185,26 @@ async function run_selection() {
 		console.log("generated_text: ", generated_text);
 
 		// Display image
-		await display_image(generated_text, image_url, image_size);
+		const imageData = await display_image(generated_text, image_url, image_size);
+		console.log('imageData: ', imageData);
 
-		// Final display output
+		const oneD_array = await imageData.data; // data is a 1D array
+		const twoD_array = Array.from(oneD_array)
+		
+		// Put final image in [file blog image]
+		const blob_object = await new Blob(bytes, {type: "image/png"});
+		const file_blob_object = await new File ([blob_object], "image.png", {type: "image/png"});
+
+		// Create a URL for the Blob object
+		const url = URL.createObjectURL(file_blob_object);
+	    
 		// Make Download image button appear 
 		document.getElementById("line_0").style.display = 'block';
 		document.getElementById("download_button_header").style.display = 'block';
 		document.getElementById("download_button").style.display = 'block';
 		
 		// Give generated url to new window
-		document.getElementById("download_button").setAttribute("data-id", image_url);
+		document.getElementById("download_button").setAttribute("data-id", url);
 		document.getElementById("download_button").addEventListener("click", processEvent_download, false);
 		
 	} else if (dropdown_option_type == 'dalle3') {
@@ -207,16 +217,26 @@ async function run_selection() {
 		console.log("generated_text: ", generated_text);
 
 		// Display image
-		await display_image(generated_text, image_url, image_size);
+		const imageData = await display_image(generated_text, image_url, image_size);
+		console.log('imageData: ', imageData);
 
-		// Final display output
+		const oneD_array = await imageData.data; // data is a 1D array
+		const twoD_array = Array.from(oneD_array)
+		
+		// Put final image in [file blog image]
+		const blob_object = await new Blob(bytes, {type: "image/png"});
+		const file_blob_object = await new File ([blob_object], "image.png", {type: "image/png"});
+
+		// Create a URL for the Blob object
+		const url = URL.createObjectURL(file_blob_object);
+	    
 		// Make Download image button appear 
 		document.getElementById("line_0").style.display = 'block';
 		document.getElementById("download_button_header").style.display = 'block';
 		document.getElementById("download_button").style.display = 'block';
 		
 		// Give generated url to new window
-		document.getElementById("download_button").setAttribute("data-id", image_url);
+		document.getElementById("download_button").setAttribute("data-id", url);
 		document.getElementById("download_button").addEventListener("click", processEvent_download, false);
 
 	} else if (dropdown_option_type == 'custom_model') {
@@ -346,6 +366,8 @@ async function display_image(generated_text, image_url, image_size){
 	
 		// ------------------------------
 	};
+
+	return ctx.getImageData(0, 0, document.getElementById("canvas_img").width, document.getElementById("canvas_img").width);
 }
 
 // ------------------------------------------
