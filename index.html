@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+<h1>Life Evaluation</h1>
+<ol type="A">
+	<li>Input a desired .txt file: [Option for user].</li>
+	<li>Select method type to create a chatbot: OpenAI Assistant, Q&A finetuning, Q&A finetuning and Vector Similarity.</li>
+	<li>View notification or errors about chatbot creation.</li>
+	<li>View the desired file.</li>
+	<li>Ask the chatbot questions about the text/file.</li>
+</ol>
+
+<!-- ---------------------------------------- -->
+<!-- View two split window -->
+<div align="left">
+<table style='text-align: left; width: 500px; display:block'>
+<tr>
+
+<th id="inputs">
+	
+<h3>[Step 0] Select chatbot model type and input API_KEY.</h3>
+<select name="chatbot_model_type" id="chatbot_model_type">
+<option value="openai_assistant">OpenAI Assistant</option>
+</select> 
+
+
+<input id="OPENAI_API_KEY" type="text" value="" placeholder="OPENAI_API_KEY" rows="10" cols="100" style="display:none; text-align: left; width: 150px;">
+  
+<br>
+
+<h3>[Step 1] Do you want to add additional inputted data to your existing journal?</h3>
+<p>If yes, reinput your journal and retrain the assistant. If no, input the ASSISTANT_ID, THREAD_ID, and RUN_ID; the additional data will not be added to the file connected to your ASSISTANT model and will be used as prompt information.</p>
+
+<h4 id="input_journal" style="display:none;">Input a journal file.</h4>
+<input id="file_download_url" type="text" value="" placeholder="file_download_url" rows="10" cols="100" style="display:none; text-align: left; width: 600px;">
+<input type="file" id="upload_file" value="" accept=".txt" style="display:none;">
+
+<input id="input_ASSISTANT_ID" type="text" value="" placeholder="ASSISTANT_ID" rows="10" cols="100" style="display:none; text-align: left; width: 600px;">
+<input id="input_THREAD_ID" type="text" value="" placeholder="THREAD_ID" rows="10" cols="100" style="display:none; text-align: left; width: 600px;">
+<input id="input_RUN_ID" type="text" value="" placeholder="RUN_ID" rows="10" cols="100" style="display:none; text-align: left; width: 600px;">
+
+<br>
+
+<h3>[Step 2] Evaluate your progress with respect to: short-term goals, long-term life goals.</h3>
+<p>If you did not put completion of some of your short-term and long-term goals in your journal, add new information about which short-term and long-term goals that you completed in the additional goal completion textarea.</p>
+<h4 id="short_term_goals_label" style="display:block;">Short-term goals.</h4>
+<textarea id="short_term_goals" wrap="soft" rows="10" cols="100" placeholder="short term goals" style="display:block; text-align: left; width: 600px; height: 200px;"></textarea>
+
+<h4 id="long_term_goals_label" style="display:block;">Long-term goals.</h4>
+<textarea id="long_term_goals" wrap="soft" rows="10" cols="100" placeholder="long term goals" style="display:block; text-align: left; width: 600px; height: 200px;"></textarea>
+
+<h4 id="additional_goal_completion_label" style="display:block;">Additional goal completion.</h4>
+<textarea id="additional_goal_completion" wrap="soft" rows="10" cols="100" placeholder="additional text to add to journal about goal completion" style="display:block; text-align: left; width: 600px; height: 200px;"></textarea>
+
+<br>
+
+<h3>[Step 3] Evaluate your current knowledge compared to general knowledge regarding a topic.</h3>
+<p>For life evaluation, the topic is one's career; thus write your career name in the topic area if you are performing life evaluation. If you did not list all of your current knowledge about the topic in your journal, add new information that you completed about the topic in the additional knowledge completion textarea.</p>
+
+<h4 id="topic_label" style="display:block;">Topic.</h4>
+<input id="topic" type="text" value="" placeholder="topic" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+  
+<textarea id="additional_knowledge_completion" wrap="soft" rows="10" cols="100" placeholder="additional text to add to journal about topic knowledge completion" style="display:block; text-align: left; width: 600px; height: 600px;"></textarea>
+
+<br>
+
+<div id="notification"></div>
+<div id="error"></div>
+<div id="response"></div>
+
+<h3>[Step 4] Evaluate responses.</h3>
+When you click the evaluate button, a report will be generated. After the report is generated, ask the chatbot in [Step 5] about the evaluation and journal file.
+<button id="evaluate" onclick="evaluate()" style="display:block">Evaluate</button>
+</th>
+
+<!-- ---------------------------------------- -->
+<th id="outputs">
+<h3 id="chatbot_output_label" style="display:none">[Step 5] Ask the chatbot questions about the evaluation.</h3>
+<!-- ---------------------------------------- -->
+<!-- View chatbot -->
+<input id="prompt" type="text" value="" placeholder="Ask the chatbot questions about the evaluation" rows="10" cols="100" style="display:none; text-align: left; height: 50px; width:600px;"><button id="run_selection" onclick="run_selection()" style="display:none">Run Selection</button>
+
+<div id="table-wrapper">
+<div id="table-scroll">
+<table id="chatbot_output" style='text-align: left; width: 300px; display:none'>
+<!-- dynamically add rows here -->
+</table>
+</div>
+</div>
+<!-- ---------------------------------------- -->
+</th>
+	
+</tr>
+</table>
+</div>  
+<!-- ---------------------------------------- -->
+
+
+
+<!-- ---------------------------------------- -->
+<!-- CSS -->
+<style>
+div { padding: 10px; display:block; font-family:courier; font-size:15px; height:10px; }
+	
+div#notification { position: relative; color: #3236a8; }
+div#error { position: relative; color: #bd1f17; }
+div#response { display:none; color: #3236a8; }
+
+table { width: 600px; }
+tr {vertical-align: top; border: 0px solid black; padding: 20px 10px; width: 100%; }
+th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; width: 100%; }
+#table-wrapper { position: relative; }
+#table-scroll { height: 400px; overflow: auto; margin-top: 20px; }
+#table-wrapper table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black; width: 100%; }
+
+tr {vertical-align: top; border: 0px solid black; padding: 10px 20px; }
+
+th, td {vertical-align: top; border: 0px solid black; padding: 10px 20px; }
+
+input#prompt {background-color: #acbdac; border: 0.5px grey; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
+</style>
+  
+<script>
+
+const long_term_goals = document.getElementById("long_term_goals").value;
+  
+var prompt_list = [`Using the text in the file and in (${additional_goal_completion}), count the number of following completed long-term goals: ${long_term_goals}.`, ""]
+
+  </script>
+  </body>
+</html>
