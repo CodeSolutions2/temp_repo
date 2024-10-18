@@ -410,6 +410,11 @@ async function display_image(generated_text_array, image_url){
 
 // ------------------------------------------
 
+document.getElementById("img_element").addEventListener('load', function (event) {
+
+	const base64_data = document.getElementById("img_element")
+	})
+	
 async function share_w_GCP() {
 
 	// Save canvas image (includes both the image and text)
