@@ -43,10 +43,10 @@ async function gradient() {
 
 	// ----------------------
 	
-	// Verify example
-	const num_of_squares = 6;
+	// This changes the width of the square
+	// const num_of_squares = 6;
 	// OR
-	// const num_of_squares = Math.floor(Math.random()*max_val);
+	const num_of_squares = Math.floor(Math.random()*max_val);
 
 	// ----------------------
 	
@@ -65,9 +65,6 @@ async function gradient() {
 			// OR
 			let b = 0;
 			ctx.fillStyle = `rgb(${r} ${g} ${b} / 75%)`;
-
-			// idea 0 - not sure why 25
-			// ctx.fillRect(j * 25, i * 25, 25, 25);
 				
 			// idea 1 - it should be val to fill the space of the canvas
 			ctx.fillRect(j * val, i * val, val, val);
