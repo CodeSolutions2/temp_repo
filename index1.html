@@ -5,19 +5,45 @@
 
 <canvas id="canvas_img" width="224" height="224" style="display:block"></canvas>
 
+<button id="solid" onclick="solid()" style="display:block;">solid</button>
+	<button id="gradient" onclick="gradient()" style="display:block;">gradient</button>
 
-	<button id="print_image" onclick="print_image()" style="display:block;">print_image</button>
-  
-<script>
-		
-async function print_image() {
-
-	var ctx = document.getElementById("canvas_img").getContext("2d");
-
-	document.getElementById("canvas_img").width = 256;
-	document.getElementById("canvas_img").height = 256;
+<style>
+canvas {border: 1px solid black; position: absolute; display: inline-block; z-index: 0; top: 150px;}
+</style>
 
 	
+<script>
+
+var ctx = document.getElementById("canvas_img").getContext("2d");
+	var width = 256;
+	var height = 256;
+document.getElementById("canvas_img").width = width;
+document.getElementById("canvas_img").height = height;
+
+
+async function solid() {
+
+	const image = await new Image();
+
+	// Make a solid colored background appear on the canvas
+	image.onload = await function () {
+		const r = Math.floor(Math.random()*255);
+		const g = Math.floor(Math.random()*255);
+		const b = Math.floor(Math.random()*255);
+		const alpha = Math.floor(Math.random()*100);
+		ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
+		ctx.fillRect(0, 0, width, height);
+
+	}
+
+
+}
+	  
+
+	
+async function gradient() {
+
 	const image = await new Image();
 	  
 	image.onload = await function () {
