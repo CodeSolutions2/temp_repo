@@ -466,6 +466,26 @@ async function display_all(generated_text_array, image_url, option_image, option
 
 	// ------------------------------
 
+	await write_text(option_text, generated_text_array);
+
+	// ------------------------------
+	
+	document.getElementById("progress_bar").value = (6/6)*100;
+	
+	document.getElementById('notification').innerHTML = "";
+
+	// Remove progress bar after processing
+	document.getElementById("progress_bar").style.display = "none";
+	
+	// ------------------------------
+	
+	return await ctx.getImageData(0, 0, width, height);
+}
+
+// -----------------------------------------------
+
+async function write_text(option_text, generated_text_array) {
+	
 	if (option_text == 'with_text') {
 		// Select text contrasting colors to background
 		// const RGB_contrast = circle_map_opposite_color(r, g, b);
@@ -483,19 +503,6 @@ async function display_all(generated_text_array, image_url, option_image, option
 			y = y + Number(font_height) + padding;
 		});
 	}
-
-	// ------------------------------
-	
-	document.getElementById("progress_bar").value = (6/6)*100;
-	
-	document.getElementById('notification').innerHTML = "";
-
-	// Remove progress bar after processing
-	document.getElementById("progress_bar").style.display = "none";
-	
-	// ------------------------------
-	
-	return await ctx.getImageData(0, 0, width, height);
 }
 	
 // -----------------------------------------------
