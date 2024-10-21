@@ -61,48 +61,52 @@ async function gradient() {
 	for (let i = 0; i < num_of_squares; i++) {
 		for (let j = 0; j < num_of_squares; j++) {
 
+			var r;
+			var g;
+			var b;
+			
 			if ( color_selection == 0 ) {
 				// rainbow colors
-				let r = Math.floor(255 - val * i);
-				let g = Math.floor(255 - val * j);
+				r = Math.floor(255 - val * i);
+				g = Math.floor(255 - val * j);
 				let k = Math.floor(Math.random()*(num_of_squares-1)); // maintains gradient for square size when Math.random()=1
-				let b = Math.floor(255 - val * k);
+				b = Math.floor(255 - val * k);
 				
 			} else if ( color_selection == 1 ) {
 				// red and green only
-				let r = Math.floor(255 - val * i);
-				let g = Math.floor(255 - val * j);
-				let b = 0;
+				r = Math.floor(255 - val * i);
+				g = Math.floor(255 - val * j);
+				b = 0;
 
 			} else if ( color_selection == 2 ) {
 				// green and red only
-				let g = Math.floor(255 - val * i);
-				let r = Math.floor(255 - val * j);
-				let b = 0; 
+				g = Math.floor(255 - val * i);
+				r = Math.floor(255 - val * j);
+				b = 0; 
 
 			} else if ( color_selection == 3 ) {
 				// red and blue only
-				let r = Math.floor(255 - val * i);
-				let b = Math.floor(255 - val * j);
-				let g = 0;
+				r = Math.floor(255 - val * i);
+				b = Math.floor(255 - val * j);
+				g = 0;
 
 			} else if ( color_selection == 4 ) {
 				// blue and red only
-				let b = Math.floor(255 - val * i);
-				let r = Math.floor(255 - val * j);
-				let g = 0;
+				b = Math.floor(255 - val * i);
+				r = Math.floor(255 - val * j);
+				g = 0;
 
 			} else if ( color_selection == 5 ) {
 				// blue and green only
-				let b = Math.floor(255 - val * i);
-				let g = Math.floor(255 - val * j);
-				let r = 0;
+			 	b = Math.floor(255 - val * i);
+				g = Math.floor(255 - val * j);
+				r = 0;
 
 			} else {
 				// green and blue only
-				let g = Math.floor(255 - val * i);
-				let b = Math.floor(255 - val * j);
-				let r = 0;
+				g = Math.floor(255 - val * i);
+				b = Math.floor(255 - val * j);
+				r = 0;
 			}
 			
 			ctx.fillStyle = `rgb(${r} ${g} ${b} / 75%)`;
