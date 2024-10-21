@@ -4,12 +4,19 @@
 <body>
 
 <canvas id="canvas_img" width="224" height="224" style="display:block"></canvas>
+
+
+	<button id="print_image" onclick="print_image()" style="display:block;">print_image</button>
   
 <script>
 		
 async function print_image() {
 
 	var ctx = document.getElementById("canvas_img").getContext("2d");
+
+	document.getElementById("canvas_img").width = 256;
+	document.getElementById("canvas_img").height = 256;
+
 	
 	const image = await new Image();
 	  
@@ -27,8 +34,6 @@ async function print_image() {
 			}
 
 }
-
-print_image();
 
 
 	
