@@ -23,20 +23,6 @@ document.getElementById("canvas_img").height = height;
 
 
 async function solid() {
-
-	// const image = await new Image();
-	// Make a solid colored background appear on the canvas
-	// image.onload = await function () {
-	// 	ctx.drawImage(image, 0, 0);
-	// 	const r = Math.floor(Math.random()*255);
-	// 	const g = Math.floor(Math.random()*255);
-	// 	const b = Math.floor(Math.random()*255);
-	// 	const alpha = Math.floor(Math.random()*100);
-	// 	ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
-	// 	ctx.fillRect(0, 0, width, height);
-	// }
-
-	// OR
 	
 	const r = Math.floor(Math.random()*255);
 	const g = Math.floor(Math.random()*255);
@@ -52,32 +38,22 @@ async function solid() {
 	
 async function gradient() {
 
-	// const image = await new Image();
-	// image.onload = await function () {
-	// 	ctx.drawImage(image, 0, 0);
-		// Make a gradient colored background appear on the canvas
-	// 	const max_val = 20;
-	// 	const num_of_squares = Math.floor(Math.random()*max_val);
-	// 	for (let i = 0; i < num_of_squares; i++) {
-	// 		for (let j = 0; j < num_of_squares; j++) {
-	// 			let k = Math.floor(Math.random()*(num_of_squares-1));
-	// 			ctx.fillStyle = `rgb(${Math.floor((255 - 255/num_of_squares)*i)} ${Math.floor((255 - 255/num_of_squares)*j)} ${Math.floor((255 - 255/num_of_squares)*k)} / 75%)`;
-	// 			ctx.fillRect(j*(255/num_of_squares), i*(255/num_of_squares), 255/num_of_squares, 255/num_of_squares);
-	// 		}
-	// 	}
-	// }
-
-
-	// OR
-
 	// Make a gradient colored background appear on the canvas
 	const max_val = 20;
-	// const num_of_squares = Math.floor(Math.random()*max_val);
+
+	// ----------------------
 	
 	// Verify example
 	const num_of_squares = 6;
+	// OR
+	// const num_of_squares = Math.floor(Math.random()*max_val);
+
+	// ----------------------
+	
 	const val = 255/num_of_squares;
 	console.log("val: ", val);
+
+	// ----------------------
 		
 	for (let i = 0; i < num_of_squares; i++) {
 		for (let j = 0; j < num_of_squares; j++) {
@@ -90,11 +66,11 @@ async function gradient() {
 			let b = 0;
 			ctx.fillStyle = `rgb(${r} ${g} ${b} / 75%)`;
 
-			// idea 0
-			ctx.fillRect(j * 25, i * 25, 25, 25);
+			// idea 0 - not sure why 25
+			// ctx.fillRect(j * 25, i * 25, 25, 25);
 				
-			// idea 1
-			// ctx.fillRect(j * val, i * val, val, val);
+			// idea 1 - it should be val to fill the space of the canvas
+			ctx.fillRect(j * val, i * val, val, val);
 		}
 	}
 
