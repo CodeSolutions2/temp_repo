@@ -44,8 +44,6 @@ async function gradient() {
 	// ----------------------
 	
 	// This changes the width of the square
-	// const num_of_squares = 6;
-	// OR
 	const num_of_squares = Math.floor(Math.random()*max_val);
 
 	// ----------------------
@@ -54,22 +52,61 @@ async function gradient() {
 	console.log("val: ", val);
 
 	// ----------------------
+
+	const color_selection = Math.floor(Math.random() * 7);
+	console.log("color_selection: ", color_selection);
+	
+	// ----------------------
 		
 	for (let i = 0; i < num_of_squares; i++) {
 		for (let j = 0; j < num_of_squares; j++) {
-			let r = Math.floor(255 - val * i);
-			let g = Math.floor(255 - val * j);
 
-			// Introduces blue range from 0 to 255
-			let k = Math.floor(Math.random()*(num_of_squares-1)); // maintains gradient for square size when Math.random()=1
-			let b = Math.floor(255 - val * k);
-			// OR
-			// let b = Math.floor(Math.random() * 255); // when Math.random()=1, the entire canvas is one color (gradient square size is not maintained)
-			// OR
-			// let b = 0; // red and green only
-			ctx.fillStyle = `rgb(${r} ${g} ${b} / 75%)`;
+			if ( color_selection == 0 ) {
+				// rainbow colors
+				let r = Math.floor(255 - val * i);
+				let g = Math.floor(255 - val * j);
+				let k = Math.floor(Math.random()*(num_of_squares-1)); // maintains gradient for square size when Math.random()=1
+				let b = Math.floor(255 - val * k);
 				
-			// idea 1 - it should be val to fill the space of the canvas
+			} else if ( color_selection == 1 ) {
+				// red and green only
+				let r = Math.floor(255 - val * i);
+				let g = Math.floor(255 - val * j);
+				let b = 0;
+
+			} else if ( color_selection == 2 ) {
+				// green and red only
+				let g = Math.floor(255 - val * i);
+				let r = Math.floor(255 - val * j);
+				let b = 0; 
+
+			} else if ( color_selection == 3 ) {
+				// red and blue only
+				let r = Math.floor(255 - val * i);
+				let b = Math.floor(255 - val * j);
+				let g = 0;
+
+			} else if ( color_selection == 4 ) {
+				// blue and red only
+				let b = Math.floor(255 - val * i);
+				let r = Math.floor(255 - val * j);
+				let g = 0;
+
+			} else if ( color_selection == 5 ) {
+				// blue and green only
+				let b = Math.floor(255 - val * i);
+				let g = Math.floor(255 - val * j);
+				let r = 0;
+
+			} else {
+				// green and blue only
+				let g = Math.floor(255 - val * i);
+				let b = Math.floor(255 - val * j);
+				let r = 0;
+			}
+			
+			ctx.fillStyle = `rgb(${r} ${g} ${b} / 75%)`;
+			
 			ctx.fillRect(j * val, i * val, val, val);
 		}
 	}
