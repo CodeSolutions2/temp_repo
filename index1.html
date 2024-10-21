@@ -8,8 +8,8 @@
 <script>
 
 
-	(async () => { await print_image() });
-
+	var out = (async () => { return await print_image(); });
+out();
 		
 async function print_image() {
 
