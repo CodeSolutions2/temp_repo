@@ -7,9 +7,12 @@
 <script>
 
 
-var cur_date = Date.now();
-  console.log("cur_date: ", cur_date);
+  var cur_date_timestamp = Date.now();
+  console.log("cur_date_timestamp: ", cur_date_timestamp);
 
+  // print the date in correct format
+  var cur_date = new Date(cur_date_timestamp).toString();
+  console.log("cur_date: ", cur_date);
   	
 
 </script>
