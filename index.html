@@ -445,6 +445,7 @@ async function display_all(generated_text_array, image_url, option_image, option
 
 	if (option_image == 'image') {
 		// Make an image appear on the canvas
+		var image = new Image();
 		image.src = image_url;
 	
 		image.onload = await function () { 
