@@ -72,12 +72,29 @@ async function gradient() {
 
 	// Make a gradient colored background appear on the canvas
 	const max_val = 20;
-	const num_of_squares = Math.floor(Math.random()*max_val);
+	// const num_of_squares = Math.floor(Math.random()*max_val);
+	
+	// Verify example
+	const num_of_squares = 6;
+	const val = 255/num_of_squares;
+	console.log("val: ", val);
+		
 	for (let i = 0; i < num_of_squares; i++) {
 		for (let j = 0; j < num_of_squares; j++) {
-			let k = Math.floor(Math.random()*(num_of_squares-1));
-			ctx.fillStyle = `rgb(${Math.floor((255 - 255/num_of_squares)*i)} ${Math.floor((255 - 255/num_of_squares)*j)} ${Math.floor((255 - 255/num_of_squares)*k)} / 75%)`;
-			ctx.fillRect(j*(255/num_of_squares), i*(255/num_of_squares), 255/num_of_squares, 255/num_of_squares);
+			let r = Math.floor(255 - val * i);
+			let g = Math.floor(255 - val * j);
+
+			// let k = Math.floor(Math.random()*(num_of_squares-1));
+			// let b = Math.floor(255 - val * k);
+			// OR
+			let b = 0;
+			ctx.fillStyle = `rgb(${r} ${g} ${b} / 75%)`;
+
+			// idea 0
+			ctx.fillRect(j * 25, i * 25, 25, 25);
+				
+			// idea 1
+			// ctx.fillRect(j * val, i * val, val, val);
 		}
 	}
 
