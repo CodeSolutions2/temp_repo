@@ -296,6 +296,11 @@ async function run_selection() {
 		document.getElementById("progress_bar").value = (4/6)*100;
 
 		// ------------------------------
+
+		// Obtain one sentence of text
+		var all_generated_text = generated_text.split('.').at(0);
+		generated_text = all_generated_text.split(':').at(1);
+		//
 		
 		const generated_text_array = await preprocess_text(generated_text);
 
@@ -463,6 +468,7 @@ async function display_all(generated_text_array, image_url, option_image, option
 	if (option_text == 'with_text') {
 		// Select text contrasting colors to background
 		// const RGB_contrast = circle_map_opposite_color(r, g, b);
+		const RGB_contrast = [0, 0, 0];
 		console.log("RGB_contrast: ", RGB_contrast);
 	
 		const x = 30;
@@ -517,7 +523,7 @@ async function gradient() {
 
 	// ----------------------
 	
-	const val = 255/num_of_squares;
+	const val = width/num_of_squares;
 	console.log("val: ", val);
 
 	// ----------------------
