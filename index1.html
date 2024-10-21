@@ -8,23 +8,32 @@
 <script>
 
 
-var ctx = document.getElementById("canvas_img").getContext("2d");
+	(async () => { await print_image() });
 
-const image = await new Image();
-  
-image.onload = await function () {
-	    		// Make a gradient colored background appear on the canvas
-			const max_val = 20;
-			const num_of_squares = Math.floor(Math.random()*max_val);
-	      		for (let i = 0; i < num_of_squares; i++) {
-				for (let j = 0; j < num_of_squares; j++) {
-					let k = Math.floor(Math.random()*(num_of_squares-1));
-					ctx.fillStyle = `rgb(${Math.floor((255 - 255/num_of_squares)*i)} ${Math.floor((255 - 255/num_of_squares)*j)} ${Math.floor((255 - 255/num_of_squares)*k)} / 75%)`;
-					ctx.fillRect(j*(255/num_of_squares), i*(255/num_of_squares), 255/num_of_squares, 255/num_of_squares);
+		
+async function print_image() {
+
+	var ctx = document.getElementById("canvas_img").getContext("2d");
+	
+	const image = await new Image();
+	  
+	image.onload = await function () {
+		    		// Make a gradient colored background appear on the canvas
+				const max_val = 20;
+				const num_of_squares = Math.floor(Math.random()*max_val);
+		      		for (let i = 0; i < num_of_squares; i++) {
+					for (let j = 0; j < num_of_squares; j++) {
+						let k = Math.floor(Math.random()*(num_of_squares-1));
+						ctx.fillStyle = `rgb(${Math.floor((255 - 255/num_of_squares)*i)} ${Math.floor((255 - 255/num_of_squares)*j)} ${Math.floor((255 - 255/num_of_squares)*k)} / 75%)`;
+						ctx.fillRect(j*(255/num_of_squares), i*(255/num_of_squares), 255/num_of_squares, 255/num_of_squares);
+					}
 				}
 			}
-		}
 
+}
+
+
+	
 </script>
 </body>
 </html>
