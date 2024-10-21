@@ -61,9 +61,12 @@ async function gradient() {
 			let g = Math.floor(255 - val * j);
 
 			// Introduces blue range from 0 to 255
-			let b = Math.floor(Math.random() * 255);
+			let k = Math.floor(Math.random()*(num_of_squares-1)); // maintains gradient for square size when Math.random()=1
+			let b = Math.floor(255 - val * k);
 			// OR
-			// let b = 0;
+			// let b = Math.floor(Math.random() * 255); // when Math.random()=1, the entire canvas is one color (gradient square size is not maintained)
+			// OR
+			// let b = 0; // red and green only
 			ctx.fillStyle = `rgb(${r} ${g} ${b} / 75%)`;
 				
 			// idea 1 - it should be val to fill the space of the canvas
@@ -73,6 +76,31 @@ async function gradient() {
 
 }
 
+
+
+async function evaluate_average_image_color() {
+
+	const image = await new Image();
+
+	image.src = image_url;
+	image.onload = await function () { ctx.drawImage(image, 0,0); }
+
+
+	const uint8Array = await ctx.getImageData(0, 0, width, height); // TypedArray  Uint8ClampedArray
+	// Convert TypedArray to normalArray
+	const normalArray = await Array.from(uint8Array);
+
+	// Determine the length of the normalArray.length
+	console.log('normalArray.length: ', normalArray.length); // should be wid
+
+	
+	for (let i=0; i<height; i++) {
+		var start = i;
+		var ender = start + width;
+		var row = normalArray.slice(start, ender);
+	}
+	
+}
 
 	
 </script>
