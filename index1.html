@@ -60,10 +60,10 @@ async function gradient() {
 			let r = Math.floor(255 - val * i);
 			let g = Math.floor(255 - val * j);
 
-			// let k = Math.floor(Math.random()*(num_of_squares-1));
-			// let b = Math.floor(255 - val * k);
+			// Introduces blue range from 0 to 255
+			let b = Math.floor(Math.random() * 255);
 			// OR
-			let b = 0;
+			// let b = 0;
 			ctx.fillStyle = `rgb(${r} ${g} ${b} / 75%)`;
 				
 			// idea 1 - it should be val to fill the space of the canvas
