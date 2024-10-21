@@ -290,7 +290,7 @@ async function run_selection() {
 		// ------------------------------
 		
 		// Generate automated message for the image
-		const generated_text = await create_text_call_API_Gemini(motivational_text_prompt);
+		var generated_text = await create_text_call_API_Gemini(motivational_text_prompt);
 		console.log("generated_text: ", generated_text);
 
 		document.getElementById("progress_bar").value = (4/6)*100;
