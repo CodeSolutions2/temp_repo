@@ -401,12 +401,20 @@ async function select_motivation_topic() {
 
 	const selected_topic = motivation_topics.at(selection);
 	console.log("selected_topic: ", selected_topic);
-	
-	const motivational_image_prompt = `Create an image, without text writing, about ${selected_topic} such that one would be motivated to obtain more of the topic of ${selected_topic}.`;
 
-  let date = new Date(); 
-   	getMonth();
-  getFullYear();
+	var cur_date_timestamp = Date.now();
+	// console.log("cur_date_timestamp: ", cur_date_timestamp);
+
+	// print the date in correct format
+	var cur_date = new Date(cur_date_timestamp).toString();
+	// console.log("cur_date: ", cur_date);
+
+	// Version 0
+	// const motivational_image_prompt = `Create an image, without text writing, about ${selected_topic} such that one would be motivated to obtain more of the topic of ${selected_topic}.`;
+
+	// Version 1
+	const motivational_image_prompt = `Create an image, without text writing, about ${selected_topic} such that one would be motivated to obtain more of the topic of ${selected_topic}. In addition today's date is ${cur_date}, if there is a major holiday within the next 10 days, use themes from the upcoming holiday to create the image.`;
+	
 
 	const motivational_text_prompt = `Write a motivational sentence to encourage ${selected_topic}. Be creative and give varying responses, limit the response to 25 words or less.`;
 
@@ -423,34 +431,12 @@ async function display_all(generated_text_array, image_url, option_image, option
 	console.log("option_text: ", option_text);
 
 	// ------------------------------
-
-	// Obtain image information only
-	if (option_image == 'image') {
-		const image0 = await new Image();
-		image.src = image_url;
-		image.onload = await function () { ctx.drawImage(image, 0,0); }
-		const uint8Array = await ctx.getImageData(0, 0, width, height); // TypedArray  Uint8ClampedArray
-		// Convert TypedArray to normalArray
-		const normalArray = await Array.from(uint8Array);
-
-		// Determine the length of the normalArray.length
-	console.log('normalArray.length: ', normalArray.length); // should be wid
-
-		
-		for (let i=0; i<height; i++) {
-			var start = i;
-			var ender = start + width;
-			var row = normalArray.slice(start, ender);
-		}
 		
 	
 	// Make cavas visible
 	document.getElementById("canvas_img").style.display = "block";
 
 	// ------------------------------
-	
-	// Display image on canvas
-	const image = await new Image();
 
 	if (option_image == 'image') {
 		// Make an image appear on the canvas
@@ -466,58 +452,30 @@ async function display_all(generated_text_array, image_url, option_image, option
 		}
 		
 	} else if (option_image == 'solid') {
-
-		image.onload = await function () {
-			// Make a solid colored background appear on the canvas
-			const r = Math.floor(Math.random()*255);
-			const g = Math.floor(Math.random()*255);
-			const b = Math.floor(Math.random()*255);
-			const alpha = Math.floor(Math.random()*100);
-			ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
-			ctx.fillRect(0, 0, width, height);
-
-			if (option_text == 'with_text') {
-				// Select text contrasting colors to background
-				const RGB_contrast = circle_map_opposite_color(r, g, b);
-				console.log("RGB_contrast: ", RGB_contrast);
-			
-				const x = 30;
-				var y = 50;
-				ctx.font = "bold "+font_height.toString()+"px serif";
-				ctx.textAlign = "left";
-				ctx.fillStyle = "rgb("+RGB_contrast[0]+" "+RGB_contrast[1]+" "+RGB_contrast[2]+")";
-				
-				generated_text_array.map((phrase, ind) => {
-					ctx.fillText(phrase, x, y, width);
-					y = y + Number(font_height) + padding;
-				});
-			}
-		}
-
+		await solid();
+		
 	} else if (option_image == 'gradient') {
-
-		image.onload = await function () {
-	    		// Make a gradient colored background appear on the canvas
-			const max_val = 20;
-			const num_of_squares = Math.floor(Math.random()*max_val);
-	      		for (let i = 0; i < num_of_squares; i++) {
-				for (let j = 0; j < num_of_squares; j++) {
-					let k = Math.floor(Math.random()*(num_of_squares-1));
-					ctx.fillStyle = `rgb(${Math.floor((255 - 255/num_of_squares)*i)} ${Math.floor((255 - 255/num_of_squares)*j)} ${Math.floor((255 - 255/num_of_squares)*k)} / 75%)`;
-					ctx.fillRect(j*(255/num_of_squares), i*(255/num_of_squares), 255/num_of_squares, 255/num_of_squares);
-				}
-			}
-		}
-
+		await gradient();
 	}
-		
-		// ------------------------------
-		
-		
 
-		// ------------------------------
-		
+	// ------------------------------
+
+	if (option_text == 'with_text') {
+		// Select text contrasting colors to background
+		// const RGB_contrast = circle_map_opposite_color(r, g, b);
+		console.log("RGB_contrast: ", RGB_contrast);
 	
+		const x = 30;
+		var y = 50;
+		ctx.font = "bold "+font_height.toString()+"px serif";
+		ctx.textAlign = "left";
+		ctx.fillStyle = "rgb("+RGB_contrast[0]+" "+RGB_contrast[1]+" "+RGB_contrast[2]+")";
+		
+		generated_text_array.map((phrase, ind) => {
+			ctx.fillText(phrase, x, y, width);
+			y = y + Number(font_height) + padding;
+		});
+	}
 
 	// ------------------------------
 	
@@ -534,7 +492,102 @@ async function display_all(generated_text_array, image_url, option_image, option
 }
 	
 // -----------------------------------------------
+
+async function solid() {
 	
+	const r = Math.floor(Math.random()*255);
+	const g = Math.floor(Math.random()*255);
+	const b = Math.floor(Math.random()*255);
+	const alpha = Math.floor(Math.random()*100);
+	ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
+	ctx.fillRect(0, 0, width, height);
+}
+
+// -----------------------------------------------
+	
+async function gradient() {
+
+	// Make a gradient colored background appear on the canvas
+	const max_val = 20;
+
+	// ----------------------
+	
+	// This changes the width of the square
+	const num_of_squares = Math.floor(Math.random()*max_val);
+
+	// ----------------------
+	
+	const val = 255/num_of_squares;
+	console.log("val: ", val);
+
+	// ----------------------
+
+	const color_selection = Math.floor(Math.random() * 7);
+	console.log("color_selection: ", color_selection);
+	
+	// ----------------------
+		
+	for (let i = 0; i < num_of_squares; i++) {
+		for (let j = 0; j < num_of_squares; j++) {
+
+			var r;
+			var g;
+			var b;
+			
+			if ( color_selection == 0 ) {
+				// rainbow colors
+				r = Math.floor(255 - val * i);
+				g = Math.floor(255 - val * j);
+				let k = Math.floor(Math.random()*(num_of_squares-1)); // maintains gradient for square size when Math.random()=1
+				b = Math.floor(255 - val * k);
+				
+			} else if ( color_selection == 1 ) {
+				// red and green only
+				r = Math.floor(255 - val * i);
+				g = Math.floor(255 - val * j);
+				b = 0;
+
+			} else if ( color_selection == 2 ) {
+				// green and red only
+				g = Math.floor(255 - val * i);
+				r = Math.floor(255 - val * j);
+				b = 0; 
+
+			} else if ( color_selection == 3 ) {
+				// red and blue only
+				r = Math.floor(255 - val * i);
+				b = Math.floor(255 - val * j);
+				g = 0;
+
+			} else if ( color_selection == 4 ) {
+				// blue and red only
+				b = Math.floor(255 - val * i);
+				r = Math.floor(255 - val * j);
+				g = 0;
+
+			} else if ( color_selection == 5 ) {
+				// blue and green only
+			 	b = Math.floor(255 - val * i);
+				g = Math.floor(255 - val * j);
+				r = 0;
+
+			} else {
+				// green and blue only
+				g = Math.floor(255 - val * i);
+				b = Math.floor(255 - val * j);
+				r = 0;
+			}
+			
+			ctx.fillStyle = `rgb(${r} ${g} ${b} / 75%)`;
+			
+			ctx.fillRect(j * val, i * val, val, val);
+		}
+	}
+
+}
+
+// -----------------------------------------------
+
 async function create_text_call_API_OpenAI(motivational_text_prompt) {
 
 	var headers = {"Content-Type": "application/json", "Authorization": 'Bearer ' + document.getElementById("OPENAI_API_KEY").value};
