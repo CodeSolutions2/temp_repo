@@ -11,6 +11,7 @@
 <button id="gradient" onclick="gradient()" style="display:block;">gradient</button>
 <button id="evaluate_average_image_color" onclick="evaluate_average_image_color()" style="display:block;">evaluate_average_image_color using gradient</button>
 
+	
 
 <input id="service_account_key_id" type="text" value="" placeholder="service_account_key_id" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
 
@@ -221,6 +222,8 @@ async function evaluate_average_image_color() {
 	console.log('r_typedarray: ', r_typedarray);
 	
 	let imageData = new ImageData(r_typedarray, width, height);
+
+	document.getElementById("canvas_img_onechannel").style.left = Number(1*width + 40).toString() + 'px';
 	ctx1.putImageData(imageData, 0, 0);
 }
 
