@@ -222,8 +222,6 @@ async function evaluate_average_image_color() {
 	
 	// ----------------------
 
-	const zero_arr = Array.from({ length: r_arr.length }, (_, i) => 0);
-
 	// Alpha component, set to 255 to make it fully opaque
 
 	// ----------------------
@@ -254,11 +252,6 @@ async function evaluate_average_image_color() {
 	// ----------------------
 	
 	// Draw the GREEN layers of the image data onto the canvas
-	// Concatenate to make all channels [r, g, b, alpha]
-	// var full_arr_only_g = zero_arr.concat(g_arr);
-	// full_arr_only_g = full_arr_only_g.concat(zero_arr);  // add b
-	// full_arr_only_g = full_arr_only_g.concat(zero_arr);  // add alpha
-
 	console.log('full_arr_only_g.length : ', full_arr_only_g.length);
 	
 	const g_typedarray = await new Uint8ClampedArray(full_arr_only_g);
@@ -270,11 +263,6 @@ async function evaluate_average_image_color() {
 	// ----------------------
 	
 	// Draw the BLUE layers of the image data onto the canvas
-	// Concatenate to make all channels [r, g, b, alpha]
-	// var full_arr_only_b = zero_arr.concat(zero_arr);
-	// full_arr_only_b = full_arr_only_b.concat(b_arr);  // add b
-	// full_arr_only_b = full_arr_only_b.concat(zero_arr);  // add alpha
-	
 	console.log('full_arr_only_b.length : ', full_arr_only_b.length);
 	
 	const b_typedarray = await new Uint8ClampedArray(full_arr_only_g);
