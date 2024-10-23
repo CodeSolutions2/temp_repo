@@ -4,8 +4,9 @@
 <body>
 
 <canvas id="canvas_img" width="224" height="224" style="display:block"></canvas>
-
-<canvas id="canvas_img_onechannel" width="224" height="224" style="display:block"></canvas>
+<canvas id="canvas_img_r" width="224" height="224" style="display:block"></canvas>
+<canvas id="canvas_img_g" width="224" height="224" style="display:block"></canvas>
+<canvas id="canvas_img_b" width="224" height="224" style="display:block"></canvas>
 
 <button id="solid" onclick="solid()" style="display:block;">solid</button>
 <button id="gradient" onclick="gradient()" style="display:block;">gradient</button>
@@ -30,9 +31,17 @@ var ctx = document.getElementById("canvas_img").getContext("2d");
 document.getElementById("canvas_img").width = width;
 document.getElementById("canvas_img").height = height;
 
-var ctx1 = document.getElementById("canvas_img_onechannel").getContext("2d");
-document.getElementById("canvas_img_onechannel").width = width;
-document.getElementById("canvas_img_onechannel").height = height;
+var ctx1 = document.getElementById("canvas_img_r").getContext("2d");
+document.getElementById("canvas_img_r").width = width;
+document.getElementById("canvas_img_r").height = height;
+	
+var ctx2 = document.getElementById("canvas_img_g").getContext("2d");
+document.getElementById("canvas_img_g").width = width;
+document.getElementById("canvas_img_g").height = height;
+
+var ctx3 = document.getElementById("canvas_img_b").getContext("2d");
+document.getElementById("canvas_img_b").width = width;
+document.getElementById("canvas_img_b").height = height;
 
   
 async function solid() {
@@ -201,25 +210,53 @@ async function evaluate_average_image_color() {
 	var alpha_arr_avg = await avg(alpha_arr);
 	console.log('avg_rbgalpha: ', [r_arr_avg, g_arr_avg, b_arr_avg, alpha_arr_avg]);
 	
+	// ----------------------
 
-	// Draw one of the layers of the image data onto the canvas
-
-	// Concatenate to make all channels the same length as all the channels
 	const zero_arr = Array.from({ length: r_arr.length }, (_, i) => 0);
-	// cycle 3 times for [g, b, alpha]
+	
+	// Draw the RED layers of the image data onto the canvas
+	// Concatenate to make all channels [r, g, b, alpha]
 	var full_arr_only_r = r_arr;
 	for (let i=0; i<3; i++) {
 		full_arr_only_r = full_arr_only_r.concat(zero_arr);
 	}
 	console.log('full_arr_only_r.length : ', full_arr_only_r.length);
-	
 	const r_typedarray = await new Uint8ClampedArray(full_arr_only_r);
 	console.log('r_typedarray: ', r_typedarray);
-	
 	let imageData = await new ImageData(r_typedarray, width, height);
-
-	document.getElementById("canvas_img_onechannel").style.left = Number(1*width + 40).toString() + 'px';
+	document.getElementById("canvas_img_r").style.left = Number(1*width + 40).toString() + 'px';
 	ctx1.putImageData(imageData, 0, 0);
+
+	// ----------------------
+	
+	// Draw the GREEN layers of the image data onto the canvas
+	// Concatenate to make all channels [r, g, b, alpha]
+	var full_arr_only_g = zero_arr.concat(g_arr);
+	full_arr_only_g = full_arr_only_g.concat(zero_arr);  // add b
+	full_arr_only_g = full_arr_only_g.concat(zero_arr);  // add alpha
+	console.log('full_arr_only_g.length : ', full_arr_only_g.length);
+	const g_typedarray = await new Uint8ClampedArray(full_arr_only_g);
+	console.log('g_typedarray: ', g_typedarray);
+	let imageData = await new ImageData(g_typedarray, width, height);
+	document.getElementById("canvas_img_g").style.left = Number(2*width + 40).toString() + 'px';
+	ctx2.putImageData(imageData, 0, 0);
+
+	// ----------------------
+	
+	// Draw the BLUE layers of the image data onto the canvas
+	// Concatenate to make all channels [r, g, b, alpha]
+	var full_arr_only_b = zero_arr.concat(zero_arr);
+	full_arr_only_b = full_arr_only_b.concat(b_arr);  // add b
+	full_arr_only_b = full_arr_only_b.concat(zero_arr);  // add alpha
+	console.log('full_arr_only_b.length : ', full_arr_only_g.length);
+	const b_typedarray = await new Uint8ClampedArray(full_arr_only_g);
+	console.log('g_typedarray: ', b_typedarray);
+	let imageData = await new ImageData(b_typedarray, width, height);
+	document.getElementById("canvas_img_b").style.left = Number(3*width + 40).toString() + 'px';
+	ctx3.putImageData(imageData, 0, 0);
+
+	// ----------------------
+	
 }
 
 
