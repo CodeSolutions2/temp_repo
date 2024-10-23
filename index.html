@@ -184,7 +184,7 @@ async function evaluate_average_image_color() {
 	var r_arr;
 	
 	for (let i=0; i<color_name.length; i++) {
-		var start = i;
+		var start = i*(height*width);
 		var ender = start + height*width;
 		var r_g_b_alpha_layer_arr = normalArray.slice(start, ender); // row is a r, g, or b layer
 
@@ -218,7 +218,7 @@ async function evaluate_average_image_color() {
 	// Concatenate to make all channels the same
 	// cycle 3 times for [g, b, alpha]
 	for (let i=0; i<3; i++) {
-		r_arr = r_arr.concat(img[color_name.at(0)]);
+		r_arr = r_arr.concat(r_arr);
 	}
 
 	const r_typedarray = new Uint8ClampedArray(r_arr);
