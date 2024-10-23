@@ -128,12 +128,18 @@ async function evaluate_average_image_color() {
 	await gradient();
 	
 	// Get canvas image
-	const uint8Array = await ctx.getImageData(0, 0, width, height); // TypedArray  Uint8ClampedArray
+	const uint8ClampedArray = await ctx.getImageData(0, 0, width, height); // TypedArray  Uint8ClampedArray
 	console.log('uint8Array: ', uint8Array);
   
 	// Convert TypedArray to normalArray
-	const normalArray = await Array.from(uint8Array);
+	const normalArray = await Array.from(uint8Array);  // did not work, maybe it only works for uint8Array
 	console.log('normalArray: ', normalArray);
+	
+	// OR
+
+	var normalArray1 = Array.prototype.slice.call(uint8ClampedArray)
+	console.log('normalArray1: ', normalArray1);
+	
 	// ----------------------
   
 	// Determine the length of the normalArray.length
