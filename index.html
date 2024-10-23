@@ -203,6 +203,16 @@ async function evaluate_average_image_color() {
 		alpha_arr.push(normalArray[i+3]);
 	}
 
+	// OR
+
+	// for (let i = 0; i < width * height; i++) {
+	//      r_arr.push(normalArray[i * color_name.length]);
+	//      g_arr.push([i * color_name.length + 1]);
+	//      b_arr.push([i * color_name.length + 2]);
+	//      alpha_arr.push([i * color_name.length + 3]);
+	// }
+	
+
 	// Calculate average per r, g, b layer
 	var r_arr_avg = await avg(r_arr);
 	var g_arr_avg = await avg(g_arr);
@@ -213,46 +223,88 @@ async function evaluate_average_image_color() {
 	// ----------------------
 
 	const zero_arr = Array.from({ length: r_arr.length }, (_, i) => 0);
+
+	// Alpha component, set to 255 to make it fully opaque
+
+	// ----------------------
 	
 	// Draw the RED layers of the image data onto the canvas
 	// Concatenate to make all channels [r, g, b, alpha]
-	var full_arr_only_r = r_arr;
-	for (let i=0; i<3; i++) {
-		full_arr_only_r = full_arr_only_r.concat(zero_arr);
+	
+	// var full_arr_only_r = r_arr;
+	// for (let i=0; i<3; i++) {
+	// 	full_arr_only_r = full_arr_only_r.concat(zero_arr);
+	// }
+
+	// OR
+	
+	// Interleave them back
+	var full_arr_only_r = [];
+	let c = 0;
+	for ( let i=0; i<normalArray.length; i+=color_name.length ) {
+		full_arr_only_r = full_arr_only_r.concat([r_arr[c], 0, 0, 255])
+		c = c + 1;
 	}
+	
 	console.log('full_arr_only_r.length : ', full_arr_only_r.length);
+	
 	const r_typedarray = await new Uint8ClampedArray(full_arr_only_r);
 	console.log('r_typedarray: ', r_typedarray);
 	let imageData_r = await new ImageData(r_typedarray, width, height);
-	document.getElementById("canvas_img_r").style.left = Number(1*width + 40).toString() + 'px';
+	document.getElementById("canvas_img_r").style.left = Number(1*(width + 40)).toString() + 'px';
 	ctx1.putImageData(imageData_r, 0, 0);
 
 	// ----------------------
 	
 	// Draw the GREEN layers of the image data onto the canvas
 	// Concatenate to make all channels [r, g, b, alpha]
-	var full_arr_only_g = zero_arr.concat(g_arr);
-	full_arr_only_g = full_arr_only_g.concat(zero_arr);  // add b
-	full_arr_only_g = full_arr_only_g.concat(zero_arr);  // add alpha
+	// var full_arr_only_g = zero_arr.concat(g_arr);
+	// full_arr_only_g = full_arr_only_g.concat(zero_arr);  // add b
+	// full_arr_only_g = full_arr_only_g.concat(zero_arr);  // add alpha
+	
+	// OR
+	
+	// Interleave them back
+	var full_arr_only_g = [];
+	let c = 0;
+	for ( let i=0; i<normalArray.length; i+=color_name.length ) {
+		full_arr_only_g = full_arr_only_g.concat([0, g_arr[c], 0, 255])
+		c = c + 1;
+	}
+
 	console.log('full_arr_only_g.length : ', full_arr_only_g.length);
+	
 	const g_typedarray = await new Uint8ClampedArray(full_arr_only_g);
 	console.log('g_typedarray: ', g_typedarray);
 	let imageData_g = await new ImageData(g_typedarray, width, height);
-	document.getElementById("canvas_img_g").style.left = Number(2*width + 40).toString() + 'px';
+	document.getElementById("canvas_img_g").style.left = Number(2*(width + 40)).toString() + 'px';
 	ctx2.putImageData(imageData_g, 0, 0);
 
 	// ----------------------
 	
 	// Draw the BLUE layers of the image data onto the canvas
 	// Concatenate to make all channels [r, g, b, alpha]
-	var full_arr_only_b = zero_arr.concat(zero_arr);
-	full_arr_only_b = full_arr_only_b.concat(b_arr);  // add b
-	full_arr_only_b = full_arr_only_b.concat(zero_arr);  // add alpha
-	console.log('full_arr_only_b.length : ', full_arr_only_g.length);
+	// var full_arr_only_b = zero_arr.concat(zero_arr);
+	// full_arr_only_b = full_arr_only_b.concat(b_arr);  // add b
+	// full_arr_only_b = full_arr_only_b.concat(zero_arr);  // add alpha
+
+	
+	// OR
+	
+	// Interleave them back
+	var full_arr_only_b = [];
+	let c = 0;
+	for ( let i=0; i<normalArray.length; i+=color_name.length ) {
+		full_arr_only_b = full_arr_only_b.concat([0, 0, b_arr[c], 255])
+		c = c + 1;
+	}
+	
+	console.log('full_arr_only_b.length : ', full_arr_only_b.length);
+	
 	const b_typedarray = await new Uint8ClampedArray(full_arr_only_g);
 	console.log('g_typedarray: ', b_typedarray);
 	let imageData_b = await new ImageData(b_typedarray, width, height);
-	document.getElementById("canvas_img_b").style.left = Number(3*width + 40).toString() + 'px';
+	document.getElementById("canvas_img_b").style.left = Number(3*(width + 40)).toString() + 'px';
 	ctx3.putImageData(imageData_b, 0, 0);
 
 	// ----------------------
