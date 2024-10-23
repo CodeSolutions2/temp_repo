@@ -3,11 +3,19 @@
 <head></head>
 <body>
 
-	<canvas id="canvas_img" width="224" height="224" style="display:block"></canvas>
+<canvas id="canvas_img" width="224" height="224" style="display:block"></canvas>
 
-	<button id="solid" onclick="solid()" style="display:block;">solid</button>
-	<button id="gradient" onclick="gradient()" style="display:block;">gradient</button>
-	<button id="evaluate_average_image_color" onclick="evaluate_average_image_color()" style="display:block;">evaluate_average_image_color using gradient</button>
+<button id="solid" onclick="solid()" style="display:block;">solid</button>
+<button id="gradient" onclick="gradient()" style="display:block;">gradient</button>
+<button id="evaluate_average_image_color" onclick="evaluate_average_image_color()" style="display:block;">evaluate_average_image_color using gradient</button>
+
+
+<input id="service_account_key_id" type="text" value="" placeholder="service_account_key_id" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+
+<input id="service_account_email_address" type="text" value="" placeholder="service_account_email_address" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+
+<button id="test_order" onclick="test_order()" style="display:block;">test_order</button>
+	
 
 <style>
 canvas {border: 1px solid black; position: absolute; display: inline-block; z-index: 0; top: 150px;}
@@ -206,18 +214,99 @@ async function avg(arr) {
 }
 
 
-async function contrast_color() { 
+// async function contrast_color() { 
 
 
 	// red is 
-}
+// }
 
 
 async function server_to_server_google_login() {
 
-  
+  	// Get service_account_key_id and service_account_email_address from input field
+	var service_account_key_id = document.getElementById("service_account_key_id").value;
+	// console.log("service_account_key_id :", service_account_key_id);
+	
+	var service_account_email_address = document.getElementById("service_account_email_address").value;
+	// console.log("service_account_email_address :", service_account_email_address);
+	
+	// Construct header
+	var header = `{"alg":"RS256","typ":"JWT", "kid":"${service_account_key_id}"}`;
+	var header_encoded = await serialize_str_to_utf8(text_str);
+	var header_encoded_base64 =  btoa(header_encoded);
+
+	// claim set
+	var claim_set = `{"iss":"${service_account_email_address}", "scope":"https://www.googleapis.com/auth/prediction", "aud":"https://oauth2.googleapis.com/token", "exp":1328554385, "iat":1328550785}`;
+
+
+	// signature
+	var signature_str = header+'.'+claim_set;
+	
+	
+	
+	
+	var JWT = +'.'+btoa(claim_set)+'.'+btoa(signature_str_encoded);
 }
 
+async function serialize_str_to_utf8(text_str) {
+	
+	const uint8Array = new TextEncoder().encode(text_str);
+	// console.log('uint8Array:', uint8Array);
+
+	// Convert UTF-8 array [non-fixed length array] to a binary arrayBuffer [fixed-length array]
+	const arrayBuffer = uint8Array.buffer;
+	// console.log("arrayBuffer:", arrayBuffer);
+	
+	// Convert arrayBuffer [fixed-length array] to UTF-8 array [non-fixed length array]
+	return new Uint8Array(arrayBuffer);
+}
+
+
+async function test_order() {
+
+	var text_str = ['{"alg":"RS256","typ":"JWT"}', '{"alg":"RS256","typ":"JWT"}.'];
+
+	// -------------------------------------
+
+	for (let i=0; i<text_str.length; i++) {
+		
+		console.log('i: ', i);
+		
+		// -------------------------------------
+		
+		// Way 0: serialize it -> base64 encode
+		var serialized = await serialize_str_to_utf8(text_str);
+		var serialized_base64encoded =  btoa(serialized);
+		console.log("serialized_base64encoded:", serialized_base64encoded);
+	
+		// -------------------------------------
+		
+		// Way 1: base64 encode
+		var base64encoded =  btoa(text_str);
+		console.log("base64encoded:", base64encoded);
+	}
+
+
+	// Output should be
+	// eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9
+	
+}
+
+
+async function convert_canvas_to_base64str() {
+
+	// Get canvas image
+	const uint8ClampedArray = await ctx.getImageData(0, 0, width, height); // TypedArray  Uint8ClampedArray
+	console.log('uint8ClampedArray: ', uint8ClampedArray);
+
+	// see url 
+}
+
+
+// async function send_base64str_file_to_cloud_storage() {
+
+	// REST API send file
+// }
 
                        
 </script>
