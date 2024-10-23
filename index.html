@@ -227,15 +227,33 @@ async function evaluate_average_image_color() {
 	// ----------------------
 
 	// Interleave them back
-	var full_arr_only_r = [];
-	var full_arr_only_g = [];
-	var full_arr_only_b = [];
-	let count = 0;
-	for ( let i=0; i<normalArray.length; i+=color_name.length ) {
-		full_arr_only_r = full_arr_only_r.concat([r_arr[count], 0, 0, 255]);
-		full_arr_only_g = full_arr_only_g.concat([0, g_arr[count], 0, 255]);
-		full_arr_only_b = full_arr_only_b.concat([0, 0, b_arr[count], 255])
-		count = count + 1;
+
+	// Way 0: slow computing
+	// var full_arr_only_r = [];
+	// var full_arr_only_g = [];
+	// var full_arr_only_b = [];
+	// let count = 0;
+	// for ( let i=0; i<normalArray.length; i+=color_name.length ) {
+	// 	full_arr_only_r = full_arr_only_r.concat([r_arr[count], 0, 0, 255]);
+	// 	full_arr_only_g = full_arr_only_g.concat([0, g_arr[count], 0, 255]);
+	// 	full_arr_only_b = full_arr_only_b.concat([0, 0, b_arr[count], 255])
+	// 	count = count + 1;
+	// }
+
+	// OR
+
+	var full_arr_only_r = Array.from({ length: normalArray.length }, (_, i) => 0);
+	var full_arr_only_g = Array.from({ length: normalArray.length }, (_, i) => 0);
+	var full_arr_only_b = Array.from({ length: normalArray.length }, (_, i) => 0);
+	for ( let i=0; i<full_arr_only_r.length; i+=color_name.length ) {
+		full_arr_only_r[i] = r_arr[count];
+		full_arr_only_r[i+3] = 255;
+
+		full_arr_only_g[i+1] = g_arr[count];
+		full_arr_only_g[i+3] = 255;
+
+		full_arr_only_b[i+2] = b_arr[count];
+		full_arr_only_b[i+3] = 255;
 	}
 
 	// ----------------------
