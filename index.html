@@ -181,9 +181,9 @@ async function evaluate_average_image_color() {
 	// var img = {};
 	const color_name = ['r', 'g', 'b', 'alpha'];
 	var avg_rbgalpha = [];
-	var r_arr;
+	var r_arr = [];
 
-	const start_index = Array.from({ length: color_name.length }, (_, i) => i*(height*width));
+	const start_index = await Array.from({ length: color_name.length }, (_, i) => i*(height*width));
 	console.log('start_index: ', start_index);
 	
 	start_index.map(async (start, ind) => {
@@ -192,7 +192,7 @@ async function evaluate_average_image_color() {
 		var r_g_b_alpha_layer_arr = await normalArray.slice(start, ender); // row is a r, g, or b layer
 
 		if (ind == 0) {
-			var r_arr = r_g_b_alpha_layer_arr;
+			r_arr = r_g_b_alpha_layer_arr;
 		}
 		
 		// Calculate average per r, g, b layer
@@ -226,10 +226,10 @@ async function evaluate_average_image_color() {
 
 	console.log('r_arr: ', r_arr);
 	
-	const r_typedarray = new Uint8ClampedArray(r_arr);
+	const r_typedarray = await new Uint8ClampedArray(r_arr);
 	console.log('r_typedarray: ', r_typedarray);
 	
-	let imageData = new ImageData(r_typedarray, width, height);
+	let imageData = await new ImageData(r_typedarray, width, height);
 
 	document.getElementById("canvas_img_onechannel").style.left = Number(1*width + 40).toString() + 'px';
 	ctx1.putImageData(imageData, 0, 0);
