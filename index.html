@@ -275,14 +275,14 @@ async function test_order() {
 		// -------------------------------------
 		
 		// Way 0: serialize it -> base64 encode
-		var serialized = await serialize_str_to_utf8(text_str);
-		var serialized_base64encoded =  btoa(serialized);
+		var serialized = await serialize_str_to_utf8(text_str.at(i));
+		var serialized_base64encoded =  await btoa(serialized);
 		console.log("serialized_base64encoded:", serialized_base64encoded);
 	
 		// -------------------------------------
 		
 		// Way 1: base64 encode
-		var base64encoded =  btoa(text_str);
+		var base64encoded =  await btoa(text_str.at(i));
 		console.log("base64encoded:", base64encoded);
 	}
 
