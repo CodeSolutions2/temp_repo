@@ -186,7 +186,8 @@ async function evaluate_average_image_color() {
 	const start_index = await Array.from({ length: color_name.length }, (_, i) => i*(height*width));
 	console.log('start_index: ', start_index);
 	
-	start_index.map(async (start, ind) => {
+	// start_index.map(async (start, ind) => {
+	for (let i=0; i<start_index.length; i++) {
 		var ender = start + height*width-1;
 		console.log('ender: ', ender);
 		var r_g_b_alpha_layer_arr = await normalArray.slice(start, ender); // row is a r, g, or b layer
@@ -211,7 +212,7 @@ async function evaluate_average_image_color() {
 		// img[color_name.at(i)] = layer;
 	
 		// ----------------------
-	})
+	}
 	// console.log('img: ', img);
 	
 	console.log('avg_rbgalpha: ', avg_rbgalpha);
