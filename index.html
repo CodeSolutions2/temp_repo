@@ -192,7 +192,7 @@ async function evaluate_average_image_color() {
 		console.log('ender: ', ender);
 		var r_g_b_alpha_layer_arr = await normalArray.slice(start_index.at(i), ender); // row is a r, g, or b layer
 
-		if (ind == 0) {
+		if (i == 0) {
 			r_arr = r_g_b_alpha_layer_arr;
 		}
 		
