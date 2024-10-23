@@ -129,10 +129,10 @@ async function evaluate_average_image_color() {
 	
 	// Get canvas image
 	const uint8ClampedArray = await ctx.getImageData(0, 0, width, height); // TypedArray  Uint8ClampedArray
-	console.log('uint8Array: ', uint8Array);
+	console.log('uint8ClampedArray: ', uint8ClampedArray);
   
 	// Convert TypedArray to normalArray
-	const normalArray = await Array.from(uint8Array);  // did not work, maybe it only works for uint8Array
+	const normalArray = await Array.from(uint8ClampedArray);  // did not work, maybe it only works for uint8Array
 	console.log('normalArray: ', normalArray);
 	
 	// OR
