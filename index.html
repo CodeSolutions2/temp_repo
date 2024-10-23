@@ -177,57 +177,43 @@ async function evaluate_average_image_color() {
 
 	// Extract the rgb layers of the image
 	// Unpack r,g,b,alpha: Image is 256*256*4
-
-	// var img = {};
+	
 	const color_name = ['r', 'g', 'b', 'alpha'];
-	var avg_rbgalpha = [];
+	
 	var r_arr = [];
-
-	const start_index = await Array.from({ length: color_name.length }, (_, i) => i*(height*width));
-	console.log('start_index: ', start_index);
+	var g_arr = [];
+	var b_arr = [];
+	var alpha_arr = [];
 	
-	// start_index.map(async (start, ind) => {
-	for (let i=0; i<start_index.length; i++) {
-		var ender = start_index.at(i) + height*width-1;
-		console.log('ender: ', ender);
-		var r_g_b_alpha_layer_arr = await normalArray.slice(start_index.at(i), ender); // row is a r, g, or b layer
-
-		if (i == 0) {
-			r_arr = r_g_b_alpha_layer_arr;
-		}
+	for ( let i=0; i<normalArray.length; i+=color_name.length ) {
 		
-		// Calculate average per r, g, b layer
-		var out = await avg(r_g_b_alpha_layer_arr); 
-		avg_rbgalpha.push(out);
-	    
-		// ----------------------
-	    
-		// Fold 1D layer into a 2D layer
-		// var layer = [];
-		// for (let j=0; j<r_g_b_alpha_layer_arr.length; j++) {
-		// 	var st = j;
-		// 	var en = st + width;
-		// 	layer.push(r_g_b_alpha_layer_arr.slice(st, en))
-		// }
-		// img[color_name.at(i)] = layer;
-	
-		// ----------------------
+		// r, g, b, alpha layers are interleaved 
+		r_arr.push(normalArray[i]);
+		g_arr.push(normalArray[i+1]);
+		b_arr.push(normalArray[i+2]);
+		alpha_arr.push(normalArray[i+3]);
 	}
-	// console.log('img: ', img);
+
+	// Calculate average per r, g, b layer
+	var r_arr_avg = await avg(r_arr);
+	var g_arr_avg = await avg(g_arr);
+	var b_arr_avg = await avg(b_arr);
+	var alpha_arr_avg = await avg(alpha_arr);
+	console.log('avg_rbgalpha: ', [r_arr_avg, g_arr_avg, b_arr_avg, alpha_arr_avg]);
 	
-	console.log('avg_rbgalpha: ', avg_rbgalpha);
 
 	// Draw one of the layers of the image data onto the canvas
 
-	// Concatenate to make all channels the same
+	// Concatenate to make all channels the same length as all the channels
+	const zero_arr = Array.from({ length: r_arr.length }, (_, i) => 0);
 	// cycle 3 times for [g, b, alpha]
-	// for (let i=0; i<3; i++) {
-	// 	r_arr = r_arr.concat(r_arr);
-	// }
-
-	console.log('r_arr: ', r_arr);
+	var full_arr_only_r = r_arr;
+	for (let i=0; i<3; i++) {
+		full_arr_only_r = full_arr_only_r.concat(zero_arr);
+	}
+	console.log('full_arr_only_r.length : ', full_arr_only_r.length);
 	
-	const r_typedarray = await new Uint8ClampedArray(r_arr);
+	const r_typedarray = await new Uint8ClampedArray(full_arr_only_r);
 	console.log('r_typedarray: ', r_typedarray);
 	
 	let imageData = await new ImageData(r_typedarray, width, height);
