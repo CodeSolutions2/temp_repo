@@ -140,13 +140,13 @@ async function evaluate_average_image_color() {
 	console.log('uint8ClampedArray: ', uint8ClampedArray);
   
 	// Convert TypedArray to normalArray
-	const normalArray = await Array.from(uint8ClampedArray);  // did not work, maybe it only works for uint8Array
+	const normalArray = await Array.from(uint8ClampedArray.data);  // did not work, maybe it only works for uint8Array
 	console.log('normalArray: ', normalArray);
 	
 	// OR
 
-	var normalArray1 = Array.prototype.slice.call(uint8ClampedArray)
-	console.log('normalArray1: ', normalArray1);
+	// var normalArray1 = Array.prototype.slice.call(uint8ClampedArray.data)
+	// console.log('normalArray1: ', normalArray1);
 	
 	// ----------------------
   
