@@ -223,9 +223,9 @@ async function evaluate_average_image_color() {
 	console.log('full_arr_only_r.length : ', full_arr_only_r.length);
 	const r_typedarray = await new Uint8ClampedArray(full_arr_only_r);
 	console.log('r_typedarray: ', r_typedarray);
-	let imageData = await new ImageData(r_typedarray, width, height);
+	let imageData_r = await new ImageData(r_typedarray, width, height);
 	document.getElementById("canvas_img_r").style.left = Number(1*width + 40).toString() + 'px';
-	ctx1.putImageData(imageData, 0, 0);
+	ctx1.putImageData(imageData_r, 0, 0);
 
 	// ----------------------
 	
@@ -237,9 +237,9 @@ async function evaluate_average_image_color() {
 	console.log('full_arr_only_g.length : ', full_arr_only_g.length);
 	const g_typedarray = await new Uint8ClampedArray(full_arr_only_g);
 	console.log('g_typedarray: ', g_typedarray);
-	let imageData = await new ImageData(g_typedarray, width, height);
+	let imageData_g = await new ImageData(g_typedarray, width, height);
 	document.getElementById("canvas_img_g").style.left = Number(2*width + 40).toString() + 'px';
-	ctx2.putImageData(imageData, 0, 0);
+	ctx2.putImageData(imageData_g, 0, 0);
 
 	// ----------------------
 	
@@ -251,9 +251,9 @@ async function evaluate_average_image_color() {
 	console.log('full_arr_only_b.length : ', full_arr_only_g.length);
 	const b_typedarray = await new Uint8ClampedArray(full_arr_only_g);
 	console.log('g_typedarray: ', b_typedarray);
-	let imageData = await new ImageData(b_typedarray, width, height);
+	let imageData_b = await new ImageData(b_typedarray, width, height);
 	document.getElementById("canvas_img_b").style.left = Number(3*width + 40).toString() + 'px';
-	ctx3.putImageData(imageData, 0, 0);
+	ctx3.putImageData(imageData_b, 0, 0);
 
 	// ----------------------
 	
