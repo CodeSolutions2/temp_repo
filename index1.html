@@ -80,6 +80,11 @@ async function test_order() {
 
 		// OR
 
+		const uint8Array = new TextEncoder().encode(text_str);
+	// console.log('uint8Array:', uint8Array);
+
+	// Convert UTF-8 array [non-fixed length array] to a binary arrayBuffer [fixed-length array]
+	const arrayBuffer = uint8Array.buffer;
 		const base64encoded = Buffer.from(text_str.at(i), 'utf-8').toString('base64');
 		
 		console.log("base64encoded:", base64encoded);
