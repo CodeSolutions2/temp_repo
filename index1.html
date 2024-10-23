@@ -52,7 +52,12 @@ async function serialize_str_to_utf8(text_str) {
 
 async function test_order() {
 
-	var text_str = ['{"iss":"761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com","scope":"https://www.googleapis.com/auth/prediction","aud":"https://oauth2.googleapis.com/token","exp":1328554385,"iat":1328550785}', `{
+	var text_str = ['{"iss":"761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com"',
+			'{"iss":"761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com","scope":"https://www.googleapis.com/auth/prediction"', 
+			'{"iss":"761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com","scope":"https://www.googleapis.com/auth/prediction","aud":"https://oauth2.googleapis.com/token"',  
+			'{"iss":"761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com","scope":"https://www.googleapis.com/auth/prediction","aud":"https://oauth2.googleapis.com/token","exp":1328554385',  
+			'{"iss":"761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com","scope":"https://www.googleapis.com/auth/prediction","aud":"https://oauth2.googleapis.com/token","exp":1328554385,"iat":1328550785}',  
+			`{
 "iss":"761326798069-r5mljlln1rd4lrbhg75efgigp36m78j5@developer.gserviceaccount.com",
 "scope":"https://www.googleapis.com/auth/prediction",
 "aud":"https://oauth2.googleapis.com/token",
