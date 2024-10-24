@@ -285,8 +285,8 @@ async function evaluate_average_image_color() {
 	// Draw the BLUE layers of the image data onto the canvas
 	console.log('full_arr_only_b.length : ', full_arr_only_b.length);
 	
-	const b_typedarray = await new Uint8ClampedArray(full_arr_only_g);
-	console.log('g_typedarray: ', b_typedarray);
+	const b_typedarray = await new Uint8ClampedArray(full_arr_only_b);
+	console.log('b_typedarray: ', b_typedarray);
 	let imageData_b = await new ImageData(b_typedarray, width, height);
 	document.getElementById("canvas_img_b").style.left = Number(3*(width + 40)).toString() + 'px';
 	ctx3.putImageData(imageData_b, 0, 0);
