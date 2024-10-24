@@ -273,9 +273,9 @@ async function evaluate_average_image_color() {
 	console.log('g_std: ', g_std);
 	console.log('b_std: ', b_std);
 	
-	const r_arr_stand =  r_arr.map(() => { return (val - avg_val) / r_std; });
-	const g_arr_stand =  g_arr.map(() => { return (val - avg_val) / g_std; });
-	const b_arr_stand =  b_arr.map(() => { return (val - avg_val) / b_std; });
+	const r_arr_stand =  r_arr.map((val, ind) => { return (val - avg_val) / r_std; });
+	const g_arr_stand =  g_arr.map((val, ind) => { return (val - avg_val) / g_std; });
+	const b_arr_stand =  b_arr.map((val, ind) => { return (val - avg_val) / b_std; });
 	console.log('r_arr_stand: ', r_arr_stand);
 	console.log('g_arr_stand: ', g_arr_stand);
 	console.log('b_arr_stand: ', b_arr_stand);
