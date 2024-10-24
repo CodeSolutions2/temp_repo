@@ -49,20 +49,11 @@ const padding = 4;
 async function view_image() {
 	
 	// Display something on a canvas
-	// await gradient();
-	
-	// OR
-	
-	const r = Math.floor(Math.random()*255);
-	// const r = 255;
-	const g = Math.floor(Math.random()*255);
-	// const g = 255;
-	const b = Math.floor(Math.random()*255);
-	// const b = 255;
-	const alpha = Math.floor(Math.random()*255);
-	ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
-	ctx.fillRect(0, 0, width, height);
-
+	if ( Math.floor(Math.random()*1) == 0 ) {
+		await gradient();
+	} else {
+		await solid()
+	}
 	
 	var RGB_contrast = await contrast_color();
 	console.log("RGB_contrast: ", RGB_contrast);
