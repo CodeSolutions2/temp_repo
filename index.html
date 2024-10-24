@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+<canvas id="canvas_img" width="224" height="224" style="display:block"></canvas>
+<canvas id="canvas_img_r" width="224" height="224" style="display:block"></canvas>
+<canvas id="canvas_img_g" width="224" height="224" style="display:block"></canvas>
+<canvas id="canvas_img_b" width="224" height="224" style="display:block"></canvas>
+
+<button id="solid" onclick="solid()" style="display:block;">solid</button>
+<button id="gradient" onclick="gradient()" style="display:block;">gradient</button>
+<button id="evaluate_average_image_color" onclick="evaluate_average_image_color()" style="display:block;">evaluate_average_image_color using gradient</button>
+
+	
+
+
+
+<style>
+canvas {border: 1px solid black; position: absolute; display: inline-block; z-index: 0; top: 150px;}
+</style>
+
+	
+<script>
+
+
+var width = 256;
+var height = 256;
+
+var ctx = document.getElementById("canvas_img").getContext("2d");
+document.getElementById("canvas_img").width = width;
+document.getElementById("canvas_img").height = height;
+
+var ctx1 = document.getElementById("canvas_img_r").getContext("2d");
+document.getElementById("canvas_img_r").width = width;
+document.getElementById("canvas_img_r").height = height;
+	
+var ctx2 = document.getElementById("canvas_img_g").getContext("2d");
+document.getElementById("canvas_img_g").width = width;
+document.getElementById("canvas_img_g").height = height;
+
+var ctx3 = document.getElementById("canvas_img_b").getContext("2d");
+document.getElementById("canvas_img_b").width = width;
+document.getElementById("canvas_img_b").height = height;
+
+  
+async function solid() {
+	
+	const r = Math.floor(Math.random()*255);
+	const g = Math.floor(Math.random()*255);
+	const b = Math.floor(Math.random()*255);
+	const alpha = Math.floor(Math.random()*100);
+	ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
+	ctx.fillRect(0, 0, width, height);
+
+
+}
+	  
+
+	
+async function gradient() {
+
+	// Make a gradient colored background appear on the canvas
+	const max_val = 20;
+
+	// ----------------------
+	
+	// This changes the width of the square
+	const num_of_squares = Math.floor(Math.random()*max_val);
+
+	// ----------------------
+	
+	const val = 255/num_of_squares;
+	console.log("val: ", val);
+
+	// ----------------------
+
+	const color_selection = Math.floor(Math.random() * 7);
+	console.log("color_selection: ", color_selection);
+	
+	// ----------------------
+		
+	for (let i = 0; i < num_of_squares; i++) {
+		for (let j = 0; j < num_of_squares; j++) {
+
+			var r;
+			var g;
+			var b;
+			
+			if ( color_selection == 0 ) {
+				// rainbow colors
+				r = Math.floor(255 - val * i);
+				g = Math.floor(255 - val * j);
+				let k = Math.floor(Math.random()*(num_of_squares-1)); // maintains gradient for square size when Math.random()=1
+				b = Math.floor(255 - val * k);
+				
+			} else if ( color_selection == 1 ) {
+				// red and green only
+				r = Math.floor(255 - val * i);
+				g = Math.floor(255 - val * j);
+				b = 0;
+
+			} else if ( color_selection == 2 ) {
+				// green and red only
+				g = Math.floor(255 - val * i);
+				r = Math.floor(255 - val * j);
+				b = 0; 
+
+			} else if ( color_selection == 3 ) {
+				// red and blue only
+				r = Math.floor(255 - val * i);
+				b = Math.floor(255 - val * j);
+				g = 0;
+
+			} else if ( color_selection == 4 ) {
+				// blue and red only
+				b = Math.floor(255 - val * i);
+				r = Math.floor(255 - val * j);
+				g = 0;
+
+			} else if ( color_selection == 5 ) {
+				// blue and green only
+			 	b = Math.floor(255 - val * i);
+				g = Math.floor(255 - val * j);
+				r = 0;
+
+			} else {
+				// green and blue only
+				g = Math.floor(255 - val * i);
+				b = Math.floor(255 - val * j);
+				r = 0;
+			}
+			
+			ctx.fillStyle = `rgb(${r} ${g} ${b} / 75%)`;
+			
+			ctx.fillRect(j * val, i * val, val, val);
+		}
+	}
+
+}
+
+
+
+async function evaluate_average_image_color() {
+	
+	// Display something on an image
+	await gradient();
+	
+	// Get canvas image
+	const uint8ClampedArray = await ctx.getImageData(0, 0, width, height); // TypedArray  Uint8ClampedArray
+	console.log('uint8ClampedArray: ', uint8ClampedArray);
+  
+	// Convert TypedArray to normalArray
+	const normalArray = await Array.from(uint8ClampedArray.data);  // did not work, maybe it only works for uint8Array
+	console.log('normalArray: ', normalArray);
+	
+	// OR
+
+	// var normalArray1 = Array.prototype.slice.call(uint8ClampedArray.data)
+	// console.log('normalArray1: ', normalArray1);
+	
+	// ----------------------
+  
+	// Determine the length of the normalArray.length
+	console.log('normalArray.length: ', normalArray.length);
+
+	// If image is stacked as 256*256*4, where 4 represents r, g, b, alpha
+	console.log('rgb_stacking expected length: ', width*height*4);
+
+	// ----------------------
+  
+	// Verify that image color range is correct: determine the maximum and minimum value
+	const normalArray_sorted = normalArray.sort();
+  
+	const min_val = normalArray_sorted.at(0);
+	console.log('min_val: ', min_val);  // needs to be 0
+  
+	const max_val = normalArray_sorted.at(normalArray_sorted.length-1);
+	console.log('max_val: ', max_val);  // needs to be 255
+
+	// average across all r,g,b,alpha layers
+	var avg_val = await avg(normalArray); 
+	console.log('avg_val: ', avg_val);
+
+	// ----------------------
+
+	// Extract the rgb layers of the image
+	// Unpack r,g,b,alpha: Image is 256*256*4
+	
+	const color_name = ['r', 'g', 'b', 'alpha'];
+	
+	var r_arr = [];
+	var g_arr = [];
+	var b_arr = [];
+	var alpha_arr = [];
+	
+	for ( let i=0; i<normalArray.length; i+=color_name.length ) {
+		
+		// r, g, b, alpha layers are interleaved 
+		r_arr.push(normalArray[i]);
+		g_arr.push(normalArray[i+1]);
+		b_arr.push(normalArray[i+2]);
+		alpha_arr.push(normalArray[i+3]);
+	}
+
+	// OR
+
+	// for (let i = 0; i < width * height; i++) {
+	//      r_arr.push(normalArray[i * color_name.length]);
+	//      g_arr.push([i * color_name.length + 1]);
+	//      b_arr.push([i * color_name.length + 2]);
+	//      alpha_arr.push([i * color_name.length + 3]);
+	// }
+	
+
+	// Calculate average per r, g, b layer
+	var r_arr_avg = await avg(r_arr);
+	var g_arr_avg = await avg(g_arr);
+	var b_arr_avg = await avg(b_arr);
+	var alpha_arr_avg = await avg(alpha_arr);
+	console.log('avg_rbgalpha: ', [r_arr_avg, g_arr_avg, b_arr_avg, alpha_arr_avg]);
+	
+	// ----------------------
+
+	// Alpha component, set to 255 to make it fully opaque
+
+	// ----------------------
+
+	// Interleave them back
+
+	// Way 0: slow computing
+	// var full_arr_only_r = [];
+	// var full_arr_only_g = [];
+	// var full_arr_only_b = [];
+	// let count = 0;
+	// for ( let i=0; i<normalArray.length; i+=color_name.length ) {
+	// 	full_arr_only_r = full_arr_only_r.concat([r_arr[count], 0, 0, 255]);
+	// 	full_arr_only_g = full_arr_only_g.concat([0, g_arr[count], 0, 255]);
+	// 	full_arr_only_b = full_arr_only_b.concat([0, 0, b_arr[count], 255])
+	// 	count = count + 1;
+	// }
+
+	// OR
+
+	var full_arr_only_r = Array.from({ length: normalArray.length }, (_, i) => 0);
+	var full_arr_only_g = Array.from({ length: normalArray.length }, (_, i) => 0);
+	var full_arr_only_b = Array.from({ length: normalArray.length }, (_, i) => 0);
+  var count = 0;
+	for ( let i=0; i<full_arr_only_r.length; i+=color_name.length ) {
+		full_arr_only_r[i] = r_arr[count];
+		full_arr_only_r[i+3] = 255;
+
+		full_arr_only_g[i+1] = g_arr[count];
+		full_arr_only_g[i+3] = 255;
+
+		full_arr_only_b[i+2] = b_arr[count];
+		full_arr_only_b[i+3] = 255;
+    count = count + 1;
+	}
+
+	// ----------------------
+	
+	// Draw the RED layers of the image data onto the canvas
+	console.log('full_arr_only_r.length : ', full_arr_only_r.length);
+	
+	const r_typedarray = await new Uint8ClampedArray(full_arr_only_r);
+	console.log('r_typedarray: ', r_typedarray);
+	let imageData_r = await new ImageData(r_typedarray, width, height);
+	document.getElementById("canvas_img_r").style.left = Number(1*(width + 40)).toString() + 'px';
+	ctx1.putImageData(imageData_r, 0, 0);
+
+	// ----------------------
+	
+	// Draw the GREEN layers of the image data onto the canvas
+	console.log('full_arr_only_g.length : ', full_arr_only_g.length);
+	
+	const g_typedarray = await new Uint8ClampedArray(full_arr_only_g);
+	console.log('g_typedarray: ', g_typedarray);
+	let imageData_g = await new ImageData(g_typedarray, width, height);
+	document.getElementById("canvas_img_g").style.left = Number(2*(width + 40)).toString() + 'px';
+	ctx2.putImageData(imageData_g, 0, 0);
+
+	// ----------------------
+	
+	// Draw the BLUE layers of the image data onto the canvas
+	console.log('full_arr_only_b.length : ', full_arr_only_b.length);
+	
+	const b_typedarray = await new Uint8ClampedArray(full_arr_only_g);
+	console.log('g_typedarray: ', b_typedarray);
+	let imageData_b = await new ImageData(b_typedarray, width, height);
+	document.getElementById("canvas_img_b").style.left = Number(3*(width + 40)).toString() + 'px';
+	ctx3.putImageData(imageData_b, 0, 0);
+
+	// ----------------------
+	
+}
+
+
+async function avg(arr) {
+  const sum = arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+  return sum/arr.length;
+}
+
+
+// async function contrast_color() { 
+
+
+	// red is 
+// }
+
+
+
+
+async function convert_canvas_to_base64str() {
+
+	// Get canvas image
+	const uint8ClampedArray = await ctx.getImageData(0, 0, width, height); // TypedArray  Uint8ClampedArray
+	console.log('uint8ClampedArray: ', uint8ClampedArray);
+
+	// see url 
+}
+
+
+// async function send_base64str_file_to_cloud_storage() {
+
+	// REST API send file
+// }
+
+                       
+</script>
+</body>
+</html>
