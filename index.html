@@ -49,7 +49,7 @@ async function solid() {
 	const r = Math.floor(Math.random()*255);
 	const g = Math.floor(Math.random()*255);
 	const b = Math.floor(Math.random()*255);
-	const alpha = Math.floor(Math.random()*100);
+	const alpha = Math.floor(Math.random()*255);
 	ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
 	ctx.fillRect(0, 0, width, height);
 
@@ -144,7 +144,17 @@ async function gradient() {
 async function evaluate_average_image_color() {
 	
 	// Display something on an image
-	await gradient();
+	// await gradient();
+	// const r = Math.floor(Math.random()*255);
+	const r = 255;
+	// const g = Math.floor(Math.random()*255);
+	const g = 255;
+	// const b = Math.floor(Math.random()*255);
+	const b = 255;
+	const alpha = Math.floor(Math.random()*255);
+	ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
+	ctx.fillRect(0, 0, width, height);
+	
 	
 	// Get canvas image
 	const uint8ClampedArray = await ctx.getImageData(0, 0, width, height); // TypedArray  Uint8ClampedArray
@@ -214,21 +224,37 @@ async function evaluate_average_image_color() {
 	
 
 	// Calculate average per r, g, b layer
-	var r_arr_avg = await avg(r_arr);
-	var g_arr_avg = await avg(g_arr);
-	var b_arr_avg = await avg(b_arr);
-	var alpha_arr_avg = await avg(alpha_arr);
-	console.log('avg_rbgalpha: ', [r_arr_avg, g_arr_avg, b_arr_avg, alpha_arr_avg]);
+	var r_avg = await avg(r_arr);
+	var g_avg = await avg(g_arr);
+	var b_avg = await avg(b_arr);
+	var alpha_avg = await avg(alpha_arr);
+	console.log('avg_rbgalpha: ', [r_avg, g_avg, b_avg, alpha_avg]);
 	
 	// ----------------------
 
-	// Alpha component, set to 255 to make it fully opaque
+	// Standardize r, g, b  values
+	const r_std = await std(r_arr);
+	const g_std = await std(g_arr);
+	const b_std = await std(b_arr);
+	const r_arr_stand =  (r_arr - avg_val) / r_std;
+	const g_arr_stand =  (g_arr - avg_val) / g_std;
+	const b_arr_stand =  (b_arr - avg_val) / b_std;
+	var r_stand_avg = await avg(r_arr_stand);
+	var g_stand_avg = await avg(g_arr_stand);
+	var b_stand_avg = await avg(b_arr_stand);
+	console.log('r_stand_avg: ', r_stand_avg);
+	console.log('g_stand_avg: ', g_stand_avg);
+	console.log('b_stand_avg: ', b_stand_avg);
+		
+	// ----------------------
+
+	// Alpha component, set to 255 to make the colors fully opaque
 
 	// ----------------------
 
 	// Interleave them back
 
-	// Way 0: slow computing
+	// Way 0: slow computation
 	// var full_arr_only_r = [];
 	// var full_arr_only_g = [];
 	// var full_arr_only_b = [];
@@ -242,10 +268,11 @@ async function evaluate_average_image_color() {
 
 	// OR
 
+	// Way 1: faster computation
 	var full_arr_only_r = Array.from({ length: normalArray.length }, (_, i) => 0);
 	var full_arr_only_g = Array.from({ length: normalArray.length }, (_, i) => 0);
 	var full_arr_only_b = Array.from({ length: normalArray.length }, (_, i) => 0);
-  var count = 0;
+	var count = 0;
 	for ( let i=0; i<full_arr_only_r.length; i+=color_name.length ) {
 		full_arr_only_r[i] = r_arr[count];
 		full_arr_only_r[i+3] = 255;
@@ -255,7 +282,7 @@ async function evaluate_average_image_color() {
 
 		full_arr_only_b[i+2] = b_arr[count];
 		full_arr_only_b[i+3] = 255;
-    count = count + 1;
+		count = count + 1;
 	}
 
 	// ----------------------
@@ -293,23 +320,228 @@ async function evaluate_average_image_color() {
 
 	// ----------------------
 	
+	// Average is logical with ratio of colors, for instance if an image has all blue and green it gives a higher average for blue and green layer than the red layer.
+
+	// But, not sure it is correct.
+
+	// ----------------------
+	
+	return [r_arr_avg, g_arr_avg, b_arr_avg, alpha_arr_avg];
 }
 
+// -----------------------------------------------
 
 async function avg(arr) {
   const sum = arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
   return sum/arr.length;
 }
 
+// -----------------------------------------------
 
-// async function contrast_color() { 
+async function std(arr) {
+	const mu =  await avg(arr);
+	// console.log('mu: ', mu);
 
+	var arr1 = arr.map((x) => { return x-mu; });
+	const summ = await arr1.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	// console.log('summ: ', summ);
 
-	// red is 
-// }
+	const out = Math.sqrt( Math.pow(summ, 2)/arr.length );
+	// console.log('out: ', out);
+	
+	return out;
+}
 
+// -----------------------------------------------
 
+async function contrast_color() { 
 
+	// Take the inverse of the r_avg, g_avg, b_avg on a color circle.
+
+	[r_avg, g_avg, b_avg, alpha_avg] = await evaluate_average_image_color();
+
+	// each r_avg, g_avg, b_avg has an x an y component on a circle.
+	
+	// -------------------------------------------
+	
+	// Way 0: numerical way
+
+	// Specify the number of mapping samples
+	const num_of_samples = 100;
+	
+	// [0] Make mapping of all possible theta values (theta on a circle is from 0 to 2*pi)
+	const max_value = 2*Math.PI;
+	const increment = max_value/num_of_samples;
+	const theta = Array.from({ length: num_of_samples }, (_, i) => i*increment);
+	// console.log("theta: ", theta)
+	
+	// -------------------------------------------
+	
+	// red=255 is at pi/2, so generate a sequence from 0 to 255 where the index of theta=pi/2 is equal to red=255
+	// find the index
+	const desired_index_r = await find_index_for_closest_array_value(theta, Math.PI/2);
+	// desired_index is in the range of 0 to 255
+	
+	const red = Array.from({ length: 256 }, (_, i) => i);
+	
+	// shift entries of red to the left by shift_index
+	const shift_index_r = 255 - desired_index_r; // since desired_index is in the range from 0-255, subtract 255 (not 256)
+	const red_circular_shifted = await circular_shift_to_left(red, shift_index_r);
+	
+	// -------------------------------------------
+
+	// green=255 is at 0, so generate a sequence from 0 to 255 where the index of theta=0 is equal to green=255
+	// find the index
+	const desired_index_g = await find_index_for_closest_array_value(theta, 0);
+	// desired_index is in the range of 0 to 255
+	
+	const green = Array.from({ length: 256 }, (_, i) => i);
+	
+	// shift entries of red to the left by shift_index
+	const shift_index_g = 255 - desired_index_g; // since desired_index is in the range from 0-255, subtract 255 (not 256)
+	const green_circular_shifted = await circular_shift_to_left(green, shift_index_g);
+	
+	// -------------------------------------------
+
+	// blue=255 is at 3*pi/4, so generate a sequence from 0 to 255 where the index of theta=3*pi/4 is equal to blue=255
+	// find the index
+	const desired_index_b = await find_index_for_closest_array_value(theta, (3/4)*Math.PI);
+	// desired_index is in the range of 0 to 255
+	
+	const blue = Array.from({ length: 256 }, (_, i) => i);
+	
+	// shift entries of red to the left by shift_index
+	const shift_index_b = 255 - desired_index_b; // since desired_index is in the range from 0-255, subtract 255 (not 256)
+	const blue_circular_shifted = await circular_shift_to_left(blue, shift_index_b);
+	
+	// -------------------------------------------
+
+	// The red, green, blue arrays are aligned with theta correctly, with respect to a color picker circle mapping.
+	
+	// -------------------------------------------
+	
+	// find the opposite r, g, b color (meaning find the index of r, g, b for r_avg, g_avg, and b_avg values that are M)
+
+	// find the index in red_circular_shifted for r_avg
+	const desired_index_r_avg = await find_index_for_closest_array_value(red_circular_shifted, r_avg);
+
+	// find corresponding theta index
+	const theta_at_r_avg = theta.at(desired_index_r_avg);
+
+	// add Math.PI to get opposite theta value
+	var theta_at_r_avg_opposite = theta_at_r_avg + Math.PI;
+
+	// Normalize from 0 to 2*Math.PI
+	if ( theta_at_r_avg_opposite > 2*Math.PI ) {
+		theta_at_r_avg_opposite = theta_at_r_avg_opposite / (2*Math.PI);
+	}
+
+	// Find index of the theta opposite value in theta
+	const desired_index_theta_opposite_r = await find_index_for_closest_array_value(theta, theta_at_r_avg_opposite);
+	
+	// Find the index of red_circular_shifted
+	const R_contrast = red_circular_shifted.at(desired_index_theta_opposite_r);
+	
+	// -------------------------------------------
+
+	// find the index in green_circular_shifted for g_avg
+	const desired_index_g_avg = await find_index_for_closest_array_value(green_circular_shifted, g_avg);
+
+	// find corresponding theta index
+	const theta_at_g_avg = theta.at(desired_index_g_avg);
+
+	// add Math.PI to get opposite theta value
+	var theta_at_g_avg_opposite = theta_at_g_avg + Math.PI;
+
+	// Normalize from 0 to 2*Math.PI
+	if ( theta_at_g_avg_opposite > 2*Math.PI ) {
+		theta_at_g_avg_opposite = theta_at_g_avg_opposite / (2*Math.PI);
+	}
+
+	// Find index of the theta opposite value in theta
+	const desired_index_theta_opposite_g = await find_index_for_closest_array_value(theta, theta_at_g_avg_opposite);
+	
+	// Find the index of green_circular_shifted
+	const G_contrast = green_circular_shifted.at(desired_index_theta_opposite_g);
+	
+	// -------------------------------------------
+
+	// find the index in blue_circular_shifted for b_avg
+	const desired_index_b_avg = await find_index_for_closest_array_value(blue_circular_shifted, b_avg);
+
+	// find corresponding theta index
+	const theta_at_b_avg = theta.at(desired_index_b_avg);
+
+	// add Math.PI to get opposite theta value
+	var theta_at_b_avg_opposite = theta_at_b_avg + Math.PI;
+
+	// Normalize from 0 to 2*Math.PI
+	if ( theta_at_b_avg_opposite > 2*Math.PI ) {
+		theta_at_b_avg_opposite = theta_at_b_avg_opposite / (2*Math.PI);
+	}
+
+	// Find index of the theta opposite value in theta
+	const desired_index_theta_opposite_b = await find_index_for_closest_array_value(theta, theta_at_b_avg_opposite);
+	
+	// Find the index of blue_circular_shifted
+	const B_contrast = blue_circular_shifted.at(desired_index_theta_opposite_b);
+	
+	// -------------------------------------------
+
+	return [R_contrast, G_contrast, B_contrast];
+}
+
+// -----------------------------------------------
+
+async function find_index_for_closest_array_value(arr, desired_array_value) {
+
+	// Find the index for the desired theta alignment value
+	var closest_val = 99999999; // initialization value; a largest value
+	var index = 0;
+	arr.map((val, ind) => { 
+	    if ( closest_val > Math.abs( val- desired_array_value ) ) {
+	        closest_val = Math.abs( val- desired_array_value );
+	        index = ind;
+	    }
+	    return "";
+	});
+	
+	console.log("index: ", index)
+	return index;
+}
+
+// -----------------------------------------------
+	
+function circular_shift_to_left(arr, shift_index) {
+    var left = arr.slice(0, shift_index);
+    console.log("left: ", left)
+    
+    var right = arr.slice(shift_index, arr.length);
+    console.log("right: ", right)
+    
+    var circular_shift_arr = right.concat(left);
+    
+    console.log("circular_shift_arr: ", circular_shift_arr);
+    return circular_shift_arr;
+}
+
+// -----------------------------------------------
+
+function circular_shift_arr_to_right(arr, shift_index) {
+	
+	var left = arr.slice(0, arr.length-shift_index);
+	console.log("left: ", left)
+    
+	var right = arr.slice(arr.length-shift_index, arr.length);
+	console.log("right: ", right)
+    
+	var circular_shift_arr = right.concat(left);
+    
+	console.log("circular_shift_arr: ", circular_shift_arr);
+	return circular_shift_arr;
+}
+	
+// -----------------------------------------------
 
 async function convert_canvas_to_base64str() {
 
