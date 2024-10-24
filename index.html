@@ -11,9 +11,7 @@
 <button id="solid" onclick="solid()" style="display:block;">solid</button>
 <button id="gradient" onclick="gradient()" style="display:block;">gradient</button>
 <button id="evaluate_average_image_color" onclick="evaluate_average_image_color()" style="display:block;">evaluate_average_image_color using gradient</button>
-
-	
-
+<button id="view_image" onclick="view_image()" style="display:block;">view_image</button>
 
 
 <style>
@@ -43,7 +41,55 @@ var ctx3 = document.getElementById("canvas_img_b").getContext("2d");
 document.getElementById("canvas_img_b").width = width;
 document.getElementById("canvas_img_b").height = height;
 
-  
+
+var font_height = 40;
+const padding = 4;
+
+
+async function view_image() {
+	
+	// Display something on a canvas
+	// await gradient();
+	// const r = Math.floor(Math.random()*255);
+	const r = 255;
+	// const g = Math.floor(Math.random()*255);
+	const g = 255;
+	// const b = Math.floor(Math.random()*255);
+	const b = 255;
+	const alpha = Math.floor(Math.random()*255);
+	ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
+	ctx.fillRect(0, 0, width, height);
+
+	
+	var RGB_contrast = await contrast_color();
+	console.log("RGB_contrast: ", RGB_contrast);
+
+	var generated_text_array = ["test text", "test text again"];
+
+	const x = 30;
+	var y = 50;
+	
+	ctx.font = "bold "+font_height.toString()+"px serif";
+	ctx.textAlign = "left";
+	
+	generated_text_array.map((phrase, ind) => {
+		// Write text that is filled in
+		ctx.fillStyle = "rgb("+RGB_contrast[0]+" "+RGB_contrast[1]+" "+RGB_contrast[2]+")";
+		ctx.lineWidth = 1;
+		ctx.fillText(phrase, x, y, width);
+
+		// Re-write text outline only, to make text contrasting on the image
+		// ctx.strokeStyle = "rgb("+RGB_opposite_contrast[0]+" "+RGB_opposite_contrast[1]+" "+RGB_opposite_contrast[2]+")";
+		// ctx.lineWidth = 1;
+		// ctx.strokeText(phrase, x, y, width);
+		
+		y = y + Number(font_height) + padding;
+	});
+
+	
+}
+	
+	
 async function solid() {
 	
 	const r = Math.floor(Math.random()*255);
@@ -142,19 +188,6 @@ async function gradient() {
 
 
 async function evaluate_average_image_color() {
-	
-	// Display something on an image
-	// await gradient();
-	// const r = Math.floor(Math.random()*255);
-	const r = 255;
-	// const g = Math.floor(Math.random()*255);
-	const g = 255;
-	// const b = Math.floor(Math.random()*255);
-	const b = 255;
-	const alpha = Math.floor(Math.random()*255);
-	ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
-	ctx.fillRect(0, 0, width, height);
-	
 	
 	// Get canvas image
 	const uint8ClampedArray = await ctx.getImageData(0, 0, width, height); // TypedArray  Uint8ClampedArray
@@ -491,6 +524,8 @@ async function contrast_color() {
 	return [R_contrast, G_contrast, B_contrast];
 }
 
+
+	
 // -----------------------------------------------
 
 async function find_index_for_closest_array_value(arr, desired_array_value) {
