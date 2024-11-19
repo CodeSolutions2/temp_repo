@@ -43,15 +43,49 @@ async function load_client() {
 			client_id: client_id,
 			scope: scopes
 		})
-		.then(res => res)
-		.then(data => { console.log('data: ', data); })
+		.then(function () { 
+
+			// Way 0: 
+			// Listen for sign-in state changes
+			gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+		
+			  // Handle the initial sign-in state.
+			  updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+		
+			  authorizeButton.onclick = handleAuthClick;
+			  signoutButton.onclick = handleSignoutClick;
+			
+			// Way 1: get accessToken
+			// var auth = gapi.auth2.getAuthInstance();
+			// var accessToken = auth.currentUser.get().getAuthResponse().access_token;
+		})
 	});
-
-
-	
 
 }
 
+function updateSigninStatus(isSignedIn) {
+        if (isSignedIn) {
+          authorizeButton.style.display = 'none';
+          signoutButton.style.display = 'block';
+          make_REST_API_request();
+        } else {
+          authorizeButton.style.display = 'block';
+          signoutButton.style.display = 'none';
+        }
+      }
+
+function handleAuthClick(event) {
+gapi.auth2.getAuthInstance().signIn();
+}
+
+function handleSignoutClick(event) {
+gapi.auth2.getAuthInstance().signOut();
+}
+
+function make_REST_API_request() {
+
+}
+	
 </script>
 </body>
 </html>
