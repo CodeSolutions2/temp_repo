@@ -18,14 +18,14 @@
 async function obtain_GCP_authorization_REST_API_way3() {
   
 const service_account_key_id_obj = JSON.parse(document.getElementById("service_account_key_id").value);
- const SERVICE_ACCOUNT_EMAIL = `${service_account_key_id_obj.client_email}.apps.googleusercontent.com`;
+ const SERVICE_ACCOUNT_EMAIL = `${service_account_key_id_obj.client_email}`;
   
 	const url = `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${SERVICE_ACCOUNT_EMAIL}:generateAccessToken`;
 	  
 	const method = '¨POST';
 	  
 	const data = {
-	    "scope": "https://www.googleapis.com/auth/cloud-platform",
+	    "scope": ["https://www.googleapis.com/auth/cloud-platform"],
 	};
 	
 	var headers_additional = {};
@@ -34,7 +34,7 @@ const service_account_key_id_obj = JSON.parse(document.getElementById("service_a
 	// headers_additional["Authorization"] = "Bearer " + authorization_code;
 	  
 	var response = await call_fetch_methods(url, method, data, headers_additional);
-	console.log('response: ', response);
+	console.log('response: ', bota(response.slice(0,5)));
 }
 
 
