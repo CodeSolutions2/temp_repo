@@ -14,16 +14,34 @@
 
 
 
-<script src="https://apis.google.com/js/platform.js" async defer crossorigin="anonymous"></script>
+<script src="https://apis.google.com/js/platform.js?onload=load_client" async defer crossorigin="anonymous"></script>
 
 <script>
 
-async function run_it() {
 
-  const service_account_key_id_obj = JSON.parse(document.getElementById("service_account_key_id").value);
+	
+async function load_client() {
+	
+	const service_account_key_id_obj = JSON.parse(document.getElementById("service_account_key_id").value);
+	var client_id = `${service_account_key_id_obj.client_id}.apps.googleusercontent.com`;
 
-      gapi.load('auth2', async function() {
-	await gapi.auth2.init({ client_id: service_account_key_id_obj.client_id })
+	// ------------------
+	
+	// A Google Discovery document for REST API services is used to describe the API's endpoints, methods, parameters, and responses in a standardized format. 
+	var discovery_document = ["https://storage.googleapis.com/discovery/v1/apis/storage/v1/rest"];
+	
+	// ------------------
+
+	var scopes = ["https://www.googleapis.com/auth/cloud-platform", "https://www.googleapis.com/auth/devstorage.full_control", "https://www.googleapis.com/auth/devstorage.read_write"];
+	
+	// ------------------
+	
+	gapi.load('auth2', async function() {
+		await gapi.auth2.init({ 
+			discoveryDocs: discovery_document,
+			client_id: client_id,
+			scope: scopes
+		})
 		.then(res => res)
 		.then(data => { console.log('data: ', data); })
 	});
