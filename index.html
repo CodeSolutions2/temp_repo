@@ -44,6 +44,97 @@ async function obtain_GCP_authorization_REST_API_way0() {
 	// return response;
 
 }
+
+
+
+// -----------------------------------------------
+// SUBFUNCTIONS
+// -----------------------------------------------
+async function call_fetch_methods(url, method, data, headers_additional) {
+ 
+ const CORS_method_list = ['jQuery_CORS', 'fetch_CORS'];
+  
+ var response = undefined;
+ // response = undefined means that blob_object = null
+ // response = {} is not blob_object = null
+
+ for (var i=0; i<CORS_method_list.length; i++) {
+  try {
+   response = await run_fetch_method(url, method, data, CORS_method_list.at(i), headers_additional);
+   console.log('response: ', response);
+  } catch (error) {
+   console.log('error: ', error);
+  }
+    
+  if (response != undefined) {
+   break;
+  }
+ }
+}
+
+// -----------------------------------------------
+
+async function run_fetch_method(url, method, data, fetch_method, headers_additional) {
+  
+ var headers = {
+  "Referer": url,
+  "Connection": "keep-alive",
+  "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+  "Access-Control-Allow-Origin": "*",
+ };
+
+ headers = Object.assign({}, headers, headers_additional);
+
+ // -------------------------------------
+  
+ if (fetch_method == "fetch_CORS") {
+  
+  var options = { 
+   method : method,
+   mode: 'cors',
+   headers: new Headers(headers),
+   cache: "no-cache",
+   crossorigin: 'anonymous',
+   redirect: "follow"
+  };
+  
+  if (method == 'POST') {
+   options.body = JSON.stringify(data);
+  }
+  
+  return await fetch(url, options)
+   .then(res => res.json())
+   .then(async function(data) { return JSON.parse(JSON.stringify(data)); })
+   .catch(error => console.error("error: ", error));
+
+ } else {
+  
+  // jQuery_CORS
+    
+  var settings = {
+   type : method,
+   xhrFields: {responseType: 'json'},
+   dataType: 'json',
+   async: true,
+   crossDomain: true,
+   beforeSend: function(xhr) {xhr.withCredentials = true;},
+   success: function(response) { console.log('Success'); },
+   error: function(xhr, status, error) { console.log('Error:', error); }
+  };
+  
+  if (method == 'POST') {
+   settings.body = JSON.stringify(data);
+  }
+  
+  return await $.ajax(url, [,settings]).done(function(response) { return response; });
+ }
+    
+}
+
+// -----------------------------------------------
+
+
+	
 </script>
 </body>
 </html>
