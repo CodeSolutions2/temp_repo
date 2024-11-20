@@ -3,10 +3,11 @@
 <head></head>
 <body>
 
-<input id="service_account_key_id" type="text" value="" placeholder="service_account_key_id" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+<input id="SERVICE_ACCOUNT_EMAIL" type="text" value="" placeholder="SERVICE_ACCOUNT_EMAIL" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
 
-<button id="obtain_GCP_authorization_REST_API_way4" onclick="obtain_GCP_authorization_REST_API_way4()">obtain_GCP_authorization_REST_API_way4</button>
-
+<button onclick="authenticate().then(loadClient)">authorize and load</button>
+	
+<button onclick="execute()">execute</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
@@ -17,12 +18,15 @@
 
 <script>
 
+
 async function obtain_GCP_authorization_REST_API_way4() {
 
 	// JavaScript, Service Account
   
-	const service_account_key_id_obj = JSON.parse(document.getElementById("service_account_key_id").value);
-	const SERVICE_ACCOUNT_EMAIL = `${service_account_key_id_obj.client_email}`;
+	// const service_account_key_id_obj = JSON.parse(document.getElementById("service_account_key_id").value);
+	// const SERVICE_ACCOUNT_EMAIL = `${service_account_key_id_obj.client_email}`;
+	// OR
+	const SERVICE_ACCOUNT_EMAIL = document.getElementById("SERVICE_ACCOUNT_EMAIL").value;
   
 	const url = `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${SERVICE_ACCOUNT_EMAIL}:generateAccessToken`;
 	  
@@ -33,11 +37,11 @@ async function obtain_GCP_authorization_REST_API_way4() {
 	};
 	
 	var headers_additional = {};
-	headers_additional["Content-Type"] = "application/json";
+	// headers_additional["Content-Type"] = "application/json";
 	// headers_additional["Content-Type"] = "application/x-www-form-urlencoded";
-	// headers_additional["Authorization"] = "Bearer " + authorization_code;
+	// headers_additional["Authorization"] = "Bearer " + XXXXX;
 	  
-	var response = await call_fetch_methods(url, method, data, headers_additional);
+	// var response = await call_fetch_methods(url, method, data, headers_additional);
 	console.log('response: ', window.bota(response.slice(0,5)));
 }
 
