@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+
+<button id="run_selection" onclick="run_selection()">run_selection</button>
+
+
+<script>
+
+
+async function reduce_embedding_dimension(embedding, new_len, ndim) {
+  var cut_dim = embedding.slice(0, 256);
+  var norm;
+  
+  if (ndim == 1) {
+     var x1 = await Array.from({ length: 256 }, (_, i) => i);
+    
+      norm = await one_norm(x1, embedding);
+      if (norm == 0) {
+        return embedding;
+      } else {
+        norm = await two_norm
+        }
+
+    
+  }
+}
+
+
+// -----------------------------------------------
+
+
+
+// -----------------------------------------------
+
+
+// -----------------------------------------------
+
+  
+// -----------------------------------------------
+
+</script>
+</body>
+</html>
