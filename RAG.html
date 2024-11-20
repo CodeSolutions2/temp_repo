@@ -11,6 +11,7 @@
 
 
 async function reduce_embedding_dimension(embedding, new_len, ndim) {
+  
   var cut_dim = embedding.slice(0, 256);
   var norm;
   
