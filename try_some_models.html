@@ -20,11 +20,16 @@
   <option value="toxicity_model">toxicity_model</option>
   <option value="BERT_model">BERT_model</option>
 </select>
-  
+
+<h2 style="display:block;">Text to use for evaluation (ie: toxicity or to answer a question)</h2>
 <textarea id="input_text" wrap="soft" rows="10" cols="100" placeholder="input text" style="display:block; text-align: left; width: 600px; height: 600px;"></textarea>
 
+<h2 id="toxicity_threshold_label" style="display:none;">Amount of toxicity text to filter out: 0 (filter no toxic text) to 1 (filter all toxic text)</h2>
 <input type="text" name="toxicity_threshold" id="toxicity_threshold" value="" style="display:none;">
-  
+
+<h2 id="BERT_q_label" style="display:none;">Question (the input text will be used to respond to the question)</h2>
+<input type="text" name="BERT_q" id="BERT_q" value="" style="display:none; width: 600px;">
+
 <button id="run_selection" onclick="run_selection()">run_selection</button>
 
 </th>
@@ -79,16 +84,22 @@ window.addEventListener('beforeunload', function() {
 async function processEvent_dropdown_options(event) {
 	
 	if (document.getElementById("dropdown_options").selectedIndex == 1) {
+		document.getElementById("toxicity_threshold_label").style.display = 'block';
 		document.getElementById("toxicity_threshold").style.display = 'block';
-    document.getElementById("BERT_q").style.display = 'none';
+		document.getElementById("BERT_q_label").style.display = 'none';
+		document.getElementById("BERT_q").style.display = 'none';
 
 	} else if (document.getElementById("dropdown_options").selectedIndex == 2) {
+		document.getElementById("toxicity_threshold_label").style.display = 'none';
 		document.getElementById("toxicity_threshold").style.display = 'none';
-    document.getElementById("BERT_q").style.display = 'block';
+		document.getElementById("BERT_q_label").style.display = 'block';
+		document.getElementById("BERT_q").style.display = 'block';
 		
 	} else {
-    document.getElementById("toxicity_threshold").style.display = 'none';
-    document.getElementById("BERT_q").style.display = 'none';
+		document.getElementById("toxicity_threshold_label").style.display = 'none';
+		document.getElementById("toxicity_threshold").style.display = 'none';
+		document.getElementById("BERT_q_label").style.display = 'none';
+		document.getElementById("BERT_q").style.display = 'none';
 	}
 	
 }
