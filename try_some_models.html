@@ -133,14 +133,15 @@ async function run_selection() {
 
 							var content_name = predictions[i].label;
 							console.log("content_name: ", content_name);
-	
+
+							var content_probability = predictions[i].results[0].probabilities[1] * 100;
+							console.log("content_probability: ", content_probability);
+							
 							if (predictions[i].results[0].probabilities[0] > predictions[i].results[0].probabilities[1]) {
-								obj_simple[content_name].yesORno = 'no';
+								obj_simple[content_name] = {yesORno: 'no', percentage: content_probability};
 							} else {
-								obj_simple[content_name].yesORno = 'yes';
+								obj_simple[content_name] = {yesORno: 'yes', percentage: content_probability};
 							}
-							// Percentage strength of the 'no' OR 'yes'
-							obj_simple[predictions[i].label].percentage = predictions[i].results[0].probabilities[1] * 100;
 						}
 						console.log("obj_simple: ", obj_simple);
 
