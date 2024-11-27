@@ -176,7 +176,7 @@ async function run_selection() {
 
 				console.log('innerHTML before: ', document.getElementById('data_display').innerHTML);
 				
-				document.getElementById('data_display').innerHTML = document.getElementById('data_display').value.replace(regexp, '<span class="highlight0">'+select_word+'</span>');
+				document.getElementById('data_display').innerHTML = document.getElementById('data_display').textContent.replace(regexp, '<span class="highlight0">'+select_word+'</span>');
 
 				console.log('innerHTML after: ', document.getElementById('data_display').innerHTML);
 			});
