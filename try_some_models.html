@@ -22,7 +22,7 @@
 </select>
 
 <h4 style="display:block;">Text to use for evaluation (ie: toxicity or to answer a question)</h4>
-<textarea id="input_text" wrap="soft" rows="10" cols="100" placeholder="input text" style="display:block; text-align: left; width: 600px; height: 600px;"></textarea>
+<textarea id="input_text" wrap="soft" rows="10" cols="100" placeholder="input text" style="display:block; text-align: left; width: 600px; height: 300px;"></textarea>
 
 <h4 id="toxicity_threshold_label" style="display:none;">Amount of toxicity text to filter out: 0 (filter no toxic text) to 1 (filter all toxic text)</h4>
 <input type="text" name="toxicity_threshold" id="toxicity_threshold" value="" style="display:none;">
@@ -131,7 +131,7 @@ if (dropdown_option_type == 'toxicity_model') {
 	qna.load().then(model => {
 		const Q = document.getElementById("BERT_q").value;
 		const input_text_to_use_to_respond_to_Q = document.getElementById("input_text").value;
-		model.findAnswers(Q, input_text).then(output => {
+		model.findAnswers(Q, input_text_to_use_to_respond_to_Q).then(output => {
 			console.log('output: ', output);
 		});
 	});
