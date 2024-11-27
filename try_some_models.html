@@ -8,7 +8,7 @@
 <!-- ---------------------------------------- -->
 <!-- View two split window -->
 <div align="left">
-<table style='text-align: left; width: 500px; display:block'>
+<table id='webapp_table' style='text-align: left; width: 500px; display:block'>
 <tr>
 
 <th id="input">
@@ -53,8 +53,9 @@
 <!-- ---------------------------------------- -->
 	
 <style>
-table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black;}
-
+table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 1px solid black;}
+table#webapp_table {border: 0px solid black;}
+	
 tr {vertical-align: top; border: 0px solid black; padding: 30px 30px; }
 
 th, td {vertical-align: top; border: 0px solid black; padding: 10px; }
@@ -166,6 +167,8 @@ async function run_selection() {
 	
 				// Take the best response
 				const select_word = output[0].text;
+				console.log("select_word: ", select_word);
+				
 				let regexp = new RegExp(`"${select_word}"`, 'g');
 				document.getElementById('data_display').innerHTML = document.getElementById('data_display').innerHTML.replace(regexp, `<span class="highlight0">`+select_word+'</span>');
 				
@@ -197,9 +200,14 @@ async function run_selection() {
 		  // obtain nested keys of each key
 		  var nested_keys = Object.keys(obj[keys[i]]);
 		  
-		  for (let j=0; j < nested_keys.length; j++){
+		  for (let j=0; j < nested_keys.length+1; j++){
 			  const cell = document.createElement("td");
-			  const cellText = document.createTextNode(`${obj[keys[i]][nested_keys[j]]}`);
+			  var cellText;
+			  if (j == 0) {
+				  cellText = document.createTextNode(`${keys[i]}`);
+			  } else {
+				  var cellText = document.createTextNode(`${obj[keys[i]][nested_keys[j-1]]}`);
+			  }
 			  cell.appendChild(cellText);
 			  row.appendChild(cell);
 		  }
