@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+
+<!-- ---------------------------------------- -->
+<!-- View two split window -->
+<div align="left">
+<table style='text-align: left; width: 500px; display:block'>
+<tr>
+
+<th id="input">
+
+<h3>[Step 0] Select an input example to run.</h3>
+
+<label for="select_dropdown_option_label">Select a text processing example and fill-in the fields:</label>
+<select name="dropdown_options" id="dropdown_options" style="display:block">
+  <option value="---">Select an option</option>
+  <option value="toxicity_model">toxicity_model</option>
+  <option value="BERT_model">BERT_model</option>
+</select>
+  
+<textarea id="input_text" wrap="soft" rows="10" cols="100" placeholder="input text" style="display:block; text-align: left; width: 600px; height: 600px;"></textarea>
+
+<input type="text" name="toxicity_threshold" id="toxicity_threshold" value="" style="display:none;">
+  
+<button id="run_selection" onclick="run_selection()">run_selection</button>
+
+</th>
+
+<!-- ---------------------------------------- -->
+
+<th id="outputs">
+
+<h3>[Step 1] View output result.</h3>
+<div id="data_display" style="display:block; text-align: left; width: 600px;"></div>
+<br>
+<div id="notification"></div>
+</th>
+	
+<!-- ---------------------------------------- -->
+	
+</tr>
+</table>
+
+<!-- ---------------------------------------- -->
+	
+<style>
+table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black;}
+
+tr {vertical-align: top; border: 0px solid black; padding: 30px 30px; }
+
+th, td {vertical-align: top; border: 0px solid black; padding: 10px; }
+</style>
+
+<!-- ---------------------------------------- -->
+  
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script>
+  
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
+
+  
+<!-- ---------------------------------------- -->
+
+<script>
+
+// -----------------------------------------------
+
+window.addEventListener('beforeunload', function() {
+  window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+  document.getElementById("dropdown_options").selectedIndex = 0;
+});
+
+// -------------------------------------------------
+	
+async function processEvent_dropdown_options(event) {
+	
+	if (document.getElementById("dropdown_options").selectedIndex == 1) {
+		document.getElementById("toxicity_threshold").style.display = 'block';
+    document.getElementById("BERT_q").style.display = 'none';
+
+	} else if (document.getElementById("dropdown_options").selectedIndex == 2) {
+		document.getElementById("toxicity_threshold").style.display = 'none';
+    document.getElementById("BERT_q").style.display = 'block';
+		
+	} else {
+    document.getElementById("toxicity_threshold").style.display = 'none';
+    document.getElementById("BERT_q").style.display = 'none';
+	}
+	
+}
+
+document.getElementById("dropdown_options").addEventListener("change", processEvent_dropdown_options, false);
+	
+// -------------------------------------------------
+
+async function run_selection() {
+
+  // Put in a function in <script>
+var dropdown_option_type = document.getElementById("dropdown_options").value;
+
+if (dropdown_option_type == 'toxicity_model') {
+
+} else if (dropdown_option_type == 'BERT_model') {
+
+} else {
+	document.getElementById('notification').innerHTML = "Please select a drop down option type."; 
+}
+    
+
+
+}
+  
+// -----------------------------------------------
+  
+// -----------------------------------------------
+
+
+  
+</script>
+</body>
+</html>
