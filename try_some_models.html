@@ -20,6 +20,7 @@
   <option value="---">Select an option</option>
   <option value="toxicity_model">toxicity_model</option>
   <option value="BERT_model">BERT_model</option>
+  <option value="embeddings_512_per_sentence">embeddings_512_per_sentence</option>
 </select>
 
 <h4 style="display:block;">Text to use for evaluation (ie: toxicity or to answer a question)</h4>
@@ -76,6 +77,10 @@ div#notification { position: relative; color: #3236a8; }
   
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+
+<script src=" https://cdn.jsdelivr.net/npm/dictionary_output_tokenizer@1.0.2/index.min.js"></script>
+	
 <!-- ---------------------------------------- -->
 
 <script>
@@ -165,22 +170,32 @@ async function run_selection() {
 			const input_text_to_use_to_respond_to_Q = document.getElementById("input_text").value;
 			model.findAnswers(Q, input_text_to_use_to_respond_to_Q).then(output => {
 				console.log('output: ', output);
-	
-				document.getElementById('data_display').innerHTML = input_text_to_use_to_respond_to_Q;
-	
+				
 				// Take the best response
-				const select_word = output[0].text;
-				console.log("select_word: ", select_word);
-				
-				let regexp = new RegExp(`"${select_word}"`, 'g');
+				const best_response = output[0].text;
+				console.log("best_response: ", best_response);
 
-				console.log('innerHTML before: ', document.getElementById('data_display').innerHTML);
-				
-				document.getElementById('data_display').innerHTML = document.getElementById('data_display').textContent.replace(regexp, '<span class="highlight0">'+select_word+'</span>');
-
-				console.log('innerHTML after: ', document.getElementById('data_display').innerHTML);
+				document.getElementById('data_display').innerHTML = best_response;
 			});
 		});
+
+
+
+	} else if (dropdown_option_type == 'embeddings_512_per_sentence') {
+
+		// https://github.com/tensorflow/tfjs-models/tree/master/universal-sentence-encoder
+		// Load the Universal Sentence Encoder model
+		use.load().then(model => {
+			// Embed an array of sentences.
+			const input_text = document.getElementById("input_text").value;
+			const sentences = input_text.split('. ');
+			console.log('sentences: ', sentences);
+			
+			model.embed(sentences).then(embeddings => {
+				console.log("embeddings: ", embeddings); // 2D tensor [sentences.length, 512]
+			});
+		});
+	
 		
 	} else {
 		document.getElementById('notification').innerHTML = "Please select a drop down option type."; 
@@ -188,7 +203,46 @@ async function run_selection() {
 
 
 }
-  
+
+
+
+
+// -------------------------------------------------
+
+	
+async function embedding_similarity() {
+	
+	// Similarity score of embeddings of Q and embeddings of A
+	const scores = tf.matMul(embeddings['queryEmbedding'], embeddings['responseEmbedding'], false, true).dataSync();
+}
+	
+// -------------------------------------------------
+	
+async function tokenize_sentences() {
+
+
+	// Way 0: Universal Sentence Encoder
+	use.loadTokenizer().then(tokenizer => {
+		tokenizer.encode(sentence); // [341, 4125, 8, 140, 31, 19, 54]
+	});
+
+	// OR 
+
+	// url path to read in another tokenizer vocabulary
+	use.loadTokenizer('https://storage.googleapis.com/learnjs-data/bert_vocab/vocab.json').then(tokenizer => {
+		tokenizer.encode(sentence); // [0, 15350, 29623, 2129, 2024, 2017, 29632]
+	});
+
+	// OR
+
+	// dictionary_output_tokenizer
+	// [xs_encoded, tokenizer_obj] = await create_tokenizer(input_text);
+	// tokenizer_obj = await module3.delete_key_value(tokenizer_obj, key_names_str);  // "key0, key1"
+	// xs_encoded = await module4.encode(xs, tokenizer_obj);
+	//var xs_decoded = await module5.decode(xs_encoded, tokenizer_obj);
+
+
+}
 
 // -------------------------------------------------
 	
