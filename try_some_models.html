@@ -75,7 +75,7 @@ div#notification { position: relative; color: #3236a8; }
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script>
   
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
-<!--  crossorigin="anonymous" -->
+
 <!-- ---------------------------------------- -->
 
 <script>
@@ -173,8 +173,12 @@ async function run_selection() {
 				console.log("select_word: ", select_word);
 				
 				let regexp = new RegExp(`"${select_word}"`, 'g');
-				document.getElementById('data_display').innerHTML = document.getElementById('data_display').innerHTML.replace(regexp, `<span class="highlight0">`+select_word+'</span>');
+
+				console.log('innerHTML before: ', document.getElementById('data_display').innerHTML);
 				
+				document.getElementById('data_display').innerHTML = document.getElementById('data_display').value.replace(regexp, '<span class="highlight0">'+select_word+'</span>');
+
+				console.log('innerHTML after: ', document.getElementById('data_display').innerHTML);
 			});
 		});
 		
