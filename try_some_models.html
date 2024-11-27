@@ -108,16 +108,22 @@ if (dropdown_option_type == 'toxicity_model') {
 
 	toxicity.load(threshold)
 		.then(model => {
-
 			const input = document.getElementById("input_text").value;
 			model.classify(input)
 				.then(predictions => {
 					console.log("predictions: ", predictions);
-				})
-			
-		})
+				});
+		});
 
 } else if (dropdown_option_type == 'BERT_model') {
+
+	qna.load().then(model => {
+		const Q = document.getElementById("BERT_q").value;
+		const input_text_to_use_to_respond_to_Q = document.getElementById("input_text").value;
+		model.findAnswers(Q, input_text).then(output => {
+			console.log('output: ', output);
+		});
+	});
 
 } else {
 	document.getElementById('notification').innerHTML = "Please select a drop down option type."; 
