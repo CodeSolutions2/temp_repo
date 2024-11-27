@@ -21,13 +21,13 @@
   <option value="BERT_model">BERT_model</option>
 </select>
 
-<h2 style="display:block;">Text to use for evaluation (ie: toxicity or to answer a question)</h2>
+<h4 style="display:block;">Text to use for evaluation (ie: toxicity or to answer a question)</h4>
 <textarea id="input_text" wrap="soft" rows="10" cols="100" placeholder="input text" style="display:block; text-align: left; width: 600px; height: 600px;"></textarea>
 
-<h2 id="toxicity_threshold_label" style="display:none;">Amount of toxicity text to filter out: 0 (filter no toxic text) to 1 (filter all toxic text)</h2>
+<h4 id="toxicity_threshold_label" style="display:none;">Amount of toxicity text to filter out: 0 (filter no toxic text) to 1 (filter all toxic text)</h4>
 <input type="text" name="toxicity_threshold" id="toxicity_threshold" value="" style="display:none;">
 
-<h2 id="BERT_q_label" style="display:none;">Question (the input text will be used to respond to the question)</h2>
+<h4 id="BERT_q_label" style="display:none;">Question (the input text will be used to respond to the question)</h4>
 <input type="text" name="BERT_q" id="BERT_q" value="" style="display:none; width: 600px;">
 
 <button id="run_selection" onclick="run_selection()">run_selection</button>
