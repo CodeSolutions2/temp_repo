@@ -8,8 +8,8 @@
 <!-- ---------------------------------------- -->
 <!-- View two split window -->
 <div align="left">
-<table id='webapp_table' style='text-align: left; width: 500px; display:block'>
-<tr>
+<table id='outline_table' style='text-align: left; width: 500px; display:block'>
+<tr id='outline_tr' >
 
 <th id="input">
 
@@ -54,11 +54,14 @@
 	
 <style>
 table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 1px solid black;}
-table#webapp_table {border: 0px solid black;}
+table#outline_table {border: 0px solid black;}
 	
-tr {vertical-align: top; border: 0px solid black; padding: 30px 30px; }
-
-th, td {vertical-align: top; border: 0px solid black; padding: 10px; }
+tr {vertical-align: top; border: 1px solid black; padding: 30px 30px; }
+tr#outline_tr {border: 0px solid black;}
+	
+th, td {vertical-align: top; border: 1px solid black; padding: 10px; }
+th#input {border: 0px solid black;}
+th#outputs {border: 0px solid black;}
 
 div#notification { position: relative; color: #3236a8; }
 	
@@ -71,8 +74,8 @@ div#notification { position: relative; color: #3236a8; }
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script>
   
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna" crossorigin="anonymous"></script>
-	
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
+<!--  crossorigin="anonymous" -->
 <!-- ---------------------------------------- -->
 
 <script>
@@ -127,16 +130,16 @@ async function run_selection() {
 				const input = document.getElementById("input_text").value;
 				model.classify(input)
 					.then(predictions => {
-						console.log("predictions: ", predictions);
+						// console.log("predictions: ", predictions);
 
 						var obj_simple = {};
 						for (let i=0; i<predictions.length; i++) {
 
 							var content_name = predictions[i].label;
-							console.log("content_name: ", content_name);
+							// console.log("content_name: ", content_name);
 
 							var content_probability = predictions[i].results[0].probabilities[1] * 100;
-							console.log("content_probability: ", content_probability);
+							// console.log("content_probability: ", content_probability);
 							
 							if (predictions[i].results[0].probabilities[0] > predictions[i].results[0].probabilities[1]) {
 								obj_simple[content_name] = {yesORno: 'no', percentage: content_probability};
@@ -144,7 +147,7 @@ async function run_selection() {
 								obj_simple[content_name] = {yesORno: 'yes', percentage: content_probability};
 							}
 						}
-						console.log("obj_simple: ", obj_simple);
+						// console.log("obj_simple: ", obj_simple);
 
 						// Put object results in a table
 						generateTable_dynamically_for_object_nested2times(obj_simple);
