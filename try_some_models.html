@@ -3,6 +3,7 @@
 <head></head>
 <body>
 
+<h1>Tensorflow.js models: text processing webapp</h1>
 
 <!-- ---------------------------------------- -->
 <!-- View two split window -->
@@ -126,6 +127,22 @@ async function run_selection() {
 				model.classify(input)
 					.then(predictions => {
 						console.log("predictions: ", predictions);
+
+						var obj_simple = {};
+						for (let i=0; i<predictions.length; i++) {
+							if (predictions[i].results.probabilities.0 > predictions[i].results.probabilities.1) {
+								obj_simple[predictions[i].label].yesORno = 'no';
+							} else {
+								obj_simple[predictions[i].label].yesORno = 'yes';
+							}
+							// Percentage strength of the 'no' OR 'yes'
+							obj_simple[predictions[i].label].percentage = predictions[i].results.probabilities.1 * 100;
+						}
+						console.log("obj_simple: ", obj_simple);
+
+						// Put object results in a table
+						generateTable_dynamically_for_object_nested2times(obj_simple);
+						
 					});
 			});
 
@@ -157,8 +174,39 @@ async function run_selection() {
 
 }
   
-// -----------------------------------------------
-  
+
+// -------------------------------------------------
+	
+	async function generateTable_dynamically_for_object_nested2times(obj) {
+	  
+	  const tbl = document.createElement("table");
+	  const tblBody = document.createElement("tbody");
+	  
+	  const keys = Object.keys(obj);
+	  
+	  // Create row cells dynamically
+	  for (let i=0; i < keys.length; i++){
+		  // create a table row
+		  const row = document.createElement("tr");
+
+		  // obtain nested keys of each key
+		  var nested_keys = Object.keys(obj[keys[i]]);
+		  
+		  for (let j=0; j < nested_keys.length; j++){
+			  const cell = document.createElement("td");
+			  const cellText = document.createTextNode(`${obj[keys[i]][nested_keys[j]]}`);
+			  cell.appendChild(cellText);
+			  row.appendChild(cell);
+		  }
+		  
+		  // add a row to the end of the table
+		  tblBody.appendChild(row);
+	  }
+	  tbl.appendChild(tblBody);
+	  
+	  document.getElementById('data_display').appendChild(tbl);
+  }  
+
 // -----------------------------------------------
 
 
