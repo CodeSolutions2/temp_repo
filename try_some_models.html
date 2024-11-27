@@ -104,6 +104,19 @@ var dropdown_option_type = document.getElementById("dropdown_options").value;
 
 if (dropdown_option_type == 'toxicity_model') {
 
+	const threshold = document.getElementById("toxicity_threshold").value;
+
+	toxicity.load(threshold)
+		.then(model => {
+
+			const input = document.getElementById("input_text").value;
+			model.classify(input)
+				.then(predictions => {
+					console.log("predictions: ", predictions);
+				})
+			
+		})
+
 } else if (dropdown_option_type == 'BERT_model') {
 
 } else {
