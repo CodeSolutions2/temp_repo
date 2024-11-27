@@ -130,13 +130,13 @@ async function run_selection() {
 
 						var obj_simple = {};
 						for (let i=0; i<predictions.length; i++) {
-							if (predictions[i].results.probabilities[0] > predictions[i].results.probabilities[1]) {
+							if (predictions[i].results[0].probabilities[0] > predictions[i].results[0].probabilities[1]) {
 								obj_simple[predictions[i].label].yesORno = 'no';
 							} else {
 								obj_simple[predictions[i].label].yesORno = 'yes';
 							}
 							// Percentage strength of the 'no' OR 'yes'
-							obj_simple[predictions[i].label].percentage = predictions[i].results.probabilities[1] * 100;
+							obj_simple[predictions[i].label].percentage = predictions[i].results[0].probabilities[1] * 100;
 						}
 						console.log("obj_simple: ", obj_simple);
 
