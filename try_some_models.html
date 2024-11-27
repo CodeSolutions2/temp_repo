@@ -203,46 +203,6 @@ async function run_selection() {
 
 }
 
-
-
-
-// -------------------------------------------------
-
-	
-async function embedding_similarity() {
-	
-	// Similarity score of embeddings of Q and embeddings of A
-	const scores = tf.matMul(embeddings['queryEmbedding'], embeddings['responseEmbedding'], false, true).dataSync();
-}
-	
-// -------------------------------------------------
-	
-async function tokenize_sentences() {
-
-
-	// Way 0: Universal Sentence Encoder
-	use.loadTokenizer().then(tokenizer => {
-		tokenizer.encode(sentence); // [341, 4125, 8, 140, 31, 19, 54]
-	});
-
-	// OR 
-
-	// url path to read in another tokenizer vocabulary
-	use.loadTokenizer('https://storage.googleapis.com/learnjs-data/bert_vocab/vocab.json').then(tokenizer => {
-		tokenizer.encode(sentence); // [0, 15350, 29623, 2129, 2024, 2017, 29632]
-	});
-
-	// OR
-
-	// dictionary_output_tokenizer
-	// [xs_encoded, tokenizer_obj] = await create_tokenizer(input_text);
-	// tokenizer_obj = await module3.delete_key_value(tokenizer_obj, key_names_str);  // "key0, key1"
-	// xs_encoded = await module4.encode(xs, tokenizer_obj);
-	//var xs_decoded = await module5.decode(xs_encoded, tokenizer_obj);
-
-
-}
-
 // -------------------------------------------------
 	
 	async function generateTable_dynamically_for_object_nested2times(obj) {
