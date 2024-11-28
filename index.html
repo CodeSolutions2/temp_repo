@@ -51,9 +51,9 @@ window.addEventListener('beforeunload', function() {
 async function processEvent_dropdown_options(event) {
 	
 	if (document.getElementById("dropdown_options").selectedIndex == 0) {
-		document.getElementById("url").style.display = 'none';
-	} else {
 		document.getElementById("url").style.display = 'block';
+	} else {
+		document.getElementById("url").style.display = 'none';
 	}
 	
 }
