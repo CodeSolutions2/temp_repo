@@ -137,7 +137,7 @@ async function mobilenet_image_TransferLearning() {
   // is this one layer? or is it from the input to this layer?
   
   // Try to work with the SymbolicTensor class
-  const truncatedLayerOutput = truncatedLayer.output as tf.SymbolicTensor;
+  const truncatedLayerOutput = truncatedLayer.output; // as tf.SymbolicTensor;
 
   // OR
 
