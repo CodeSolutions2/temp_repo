@@ -122,6 +122,7 @@ async function mobilenet_video() {
 	const duration = sourceElement.parentElement.duration;
 	const videoElement_width = sourceElement.parentElement.videoHeight;
 	const videoElement_height = sourceElement.parentElement.videoWidth;
+	const video_fs = sourceElement.parentElement.mozFrameDelay; // 0.00975189
 	
 	// Create a canvas element that is same width and height of the video, to view the frameImage.
 	[ctx, canvasElement] = await create_dynamic_canvasElement(videoElement_width, videoElement_height, 'canvasElement_id', 'canvasElement_className', 0);
