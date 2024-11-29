@@ -139,23 +139,25 @@ async function mobilenet_video() {
 
 	// OR
 	
-	const imageElement = new Image();
-	imageElement.setAttribute('crossOrigin', "anonymous");
-	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
-	imageElement.onload = async () => { 
-	  	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height); 
-	};
-	
-	// OR
-
-	// var url_videoframe = videoElement.toDataURL('image/png');
 	// const imageElement = new Image();
 	// imageElement.setAttribute('crossOrigin', "anonymous");
 	// imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
 	// imageElement.onload = async () => { 
-	// 	ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
+	//   	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height); 
 	// };
-	// imageElement.src = url_videoframe;
+	// RESULT: a small image of the video appeared, then turned back normal size
+	
+	// OR
+
+	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+	var url = canvasElement.toDataURL('image/png');
+	const imageElement = new Image();
+	imageElement.setAttribute('crossOrigin', "anonymous");
+	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
+	imageElement.onload = async () => { 
+		ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
+	};
+	imageElement.src = url;
 	// RESULT: videoElement.toDataURL is not a function
 
 	// OR
