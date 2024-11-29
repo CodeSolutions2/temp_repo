@@ -151,20 +151,28 @@ async function mobilenet_video() {
 	var url = canvasElement.toDataURL('image/png');
 	const imageElement = new Image();
 	imageElement.src = url;
+	// Did not show anything
+
+	// OR
+
+	var normalArray = await convert_canvas_into_ImageData(ctx, canvasElement);
+	const typedarray = await new Uint8ClampedArray(normalArray);
+	var imageData = await new ImageData(typedarray, canvasElement.width, canvasElement.height);
+	ctx.putImageData(imageData, 0, 0);
 	
 	// -------------------------
 
 	// Resize the canvas and frameImage to a desired size, for AI model processing.
-	await resize(width_ORG, heigh_ORG);
+	// await resize(width_ORG, height_ORG);
 
 	// -------------------------
 
 	// Call the AI model to process the image.
 	
   	// Create a url of the frameImage on the canvas
-	url = canvasElement.toDataURL('image/png');
+	// url = canvasElement.toDataURL('image/png');
 	
-	await Image_CORS(true, url);
+	// await Image_CORS(true, url);
 
 	// -------------------------
 }  
@@ -206,8 +214,21 @@ async function resize(width_NEW, height_NEW) {
 
 // -----------------------------------------------
 
+async function convert_canvas_into_ImageData(ctx, canvasElement) {
+	
+	// Get canvas image
+	const uint8ClampedArray = await ctx.getImageData(0, 0, canvasElement.width, canvasElement.height); // TypedArray  Uint8ClampedArray
+	// console.log('uint8ClampedArray: ', uint8ClampedArray);
+  
+	// Convert TypedArray to normalArray
+	return await Array.from(uint8ClampedArray.data);
+}
+
+// -----------------------------------------------
 
 
+
+	
 
 
 	
