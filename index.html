@@ -123,14 +123,15 @@ async function mobilenet_video() {
 	// -------------------------
 	
 	// Put the video frameImage on the canvas
-	var url_videoframe = videoElement.toDataURL('video/webm');
-	const imageElement = new Image();
-	imageElement.setAttribute('crossOrigin', "anonymous");
-	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
-	imageElement.onload = async () => { 
-	 	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height); 
-	};
-	imageElement.src = url_videoframe;
+	// var url_videoframe = videoElement.toDataURL('video/webm');
+	// const imageElement = new Image();
+	// imageElement.setAttribute('crossOrigin', "anonymous");
+	// imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
+	// imageElement.onload = async () => { 
+	//  	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height); 
+	// };
+	// imageElement.src = url_videoframe;
+	// RESULT: videoElement.toDataURL is not a function
 
 	// OR
 
@@ -142,13 +143,14 @@ async function mobilenet_video() {
 	// 	ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
 	// };
 	// imageElement.src = url_videoframe;
+	// RESULT: videoElement.toDataURL is not a function
 
 	// OR
 	
-	// ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-	// const url = canvasElement.toDataURL('image/png');
-	// const imageElement = new Image();
-	// imageElement.src = url;
+	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+	const url = canvasElement.toDataURL('image/png');
+	const imageElement = new Image();
+	imageElement.src = url;
 	
 	// -------------------------
 
