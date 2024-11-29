@@ -190,6 +190,12 @@ async function mobilenet_video() {
 	// Fetch binaryString of video data
 	const [normalArray_video, t1] = await fetch_videoData(document.getElementById("url").value);
 
+	const frame_pixels = videoElement.width * videoElement.height;
+	console.log('frame_pixels: ', frame_pixels);
+	
+	const num_of_frames = normalArray_video.length / frame_pixels;
+	console.log('num_of_frames: ', num_of_frames);
+	
 	const obj = {};
 	obj.trace_x = t1;
 	obj.trace_y = normalArray_video;
@@ -395,7 +401,13 @@ async function Video_CORS() {
 
 	// View video on page
 	document.getElementById('data_display').appendChild(videoElement);
-  
+
+	// -----------------------------------------------
+
+	console.log("videoElement.width: ", videoElement.width);
+	console.log("videoElement.height: ", videoElement.height);
+	
+	// -----------------------------------------------
 }
 
 // -------------------------------------------------
