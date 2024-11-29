@@ -162,24 +162,30 @@ async function create_dynamic_canvasElement() {
 async function mobilenet_model(imageElement) {
   // Mobilenet
     // https://github.com/tensorflow/tfjs-models/tree/master/mobilenet
-			await model.classify(imageElement).then(predictions => { 
-
-        console.log("predictions: ", predictions); }
-
-      //   ctx.font = "bold 14px serif";
+	await mobilenet.load()
+		.then(model => { model.classify(imageElement)
+			.then(predictions => { 
+				
+				console.log("predictions: ", predictions); 
+				
+				ctx.font = "bold 14px serif";
+				
 				// Make an overlay on top of the image
-	// 			ctx.fillStyle = "rgb(0 0 200 / 50%)";  // Background square over image = blue
-    	// 		ctx.fillRect(0, 0, 224, 50);  // fillRect(x, y, width, height)
+				ctx.fillStyle = "rgb(0 0 200 / 50%)";  // Background square over image = blue
+				ctx.fillRect(0, 0, 224, 50);  // fillRect(x, y, width, height)
 
 				// Write on top of the overlay the prediction name
-		// 		ctx.fillStyle = "#ffffff";  // Font color = white, 
-		// 		ctx.fillText("Mobilenet= "+predictions[0].className, 10, 15); // fillText(text, x, y [, maxWidth])
+				ctx.fillStyle = "#ffffff";  // Font color = white
+				ctx.fillText("Mobilenet= "+predictions[0].className, 10, 15); // fillText(text, x, y [, maxWidth])
+				
 				// Store model predictions in array
-    //     const mobilenet_predictionName = predictions[0].className;
-    //     const mobilenet_prediction_probability = predictions[0].probability;
-    //     console.log("mobilenet_predictionName: ", mobilenet_predictionName);
-    //     console.log("mobilenet_prediction_probability: ", mobilenet_prediction_probability);
-   //    }
+				const mobilenet_predictionName = predictions[0].className;
+				console.log("mobilenet_predictionName: ", mobilenet_predictionName);
+				
+				const mobilenet_prediction_probability = predictions[0].probability;
+				console.log("mobilenet_prediction_probability: ", mobilenet_prediction_probability);
+			}
+		});
 
 }
 
