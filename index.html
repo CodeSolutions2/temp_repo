@@ -122,12 +122,11 @@ async function mobilenet_video() {
 	const duration = sourceElement.parentElement.duration;
 	const videoElement_width = sourceElement.parentElement.videoHeight;
 	const videoElement_height = sourceElement.parentElement.videoWidth;
-	const time = sourceElement.parentElement.currentTime;
 
 	// const presents_of_audio = sourceElement.parentElement.mozAudioCaptured;  // false
 ​​	// sourceElement.parentElement.mozHasAudio: true
 	
-	const frame_number = sourceElement.parentElement.mozDecodedFrames: 121
+	const number_of_frames = sourceElement.parentElement.mozDecodedFrames; // 121
 	// OR
 	// sourceElement.parentElement.mozParsedFrames: 121
 ​​
@@ -145,9 +144,9 @@ async function mobilenet_video() {
 	// Obtain a desired frame from the video
 	videoElement.currentTime = 4;
 
+	const time_step = sourceElement.parentElement.currentTime;
+	
 	// -------------------------
-	
-	
 	
 	// Put the video frameImage on the canvas
 	// var url_videoframe = videoElement.toDataURL('video/webm');
