@@ -119,24 +119,35 @@ async function mobilenet_video() {
 	
 	// Obtain a desired frame from the video
 	videoElement.currentTime = 1;
-	var url_videoframe = videoElement.toDataURL('image/png');
 
 	// -------------------------
 	
 	// Put the video frameImage on the canvas 
-	// videoElement.onseeked = function(event) {
-
-	// }
-
-	// OR
-
 	const imageElement = new Image();
 	imageElement.setAttribute('crossOrigin', "anonymous");
 	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
 	imageElement.onload = async () => { 
-		ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
+	 	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height); 
 	};
 	imageElement.src = url_videoframe;
+
+	// OR
+
+	// var url_videoframe = videoElement.toDataURL('image/png');
+	// const imageElement = new Image();
+	// imageElement.setAttribute('crossOrigin', "anonymous");
+	// imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
+	// imageElement.onload = async () => { 
+	// 	ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
+	// };
+	// imageElement.src = url_videoframe;
+
+	// OR
+	
+	// ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+	// const url = canvasElement.toDataURL('image/png');
+	// const imageElement = new Image();
+	// imageElement.src = url;
 	
 	// -------------------------
 
