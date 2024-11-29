@@ -120,13 +120,22 @@ async function mobilenet_video() {
 
 	// Video attributes
 	const duration = sourceElement.parentElement.duration;
+	console.log('duration: ', duration);
+	
 	const videoElement_width = sourceElement.parentElement.videoHeight;
+	console.log('videoElement_width: ', videoElement_width);
+	
 	const videoElement_height = sourceElement.parentElement.videoWidth;
+	console.log('videoElement_height: ', videoElement_height);
+	
 	const video_fs = sourceElement.parentElement.mozFrameDelay; // 0.00975189
+	console.log('video_fs: ', video_fs);
 	
 	// Create a canvas element that is same width and height of the video, to view the frameImage.
 	[ctx, canvasElement] = await create_dynamic_canvasElement(videoElement_width, videoElement_height, 'canvasElement_id', 'canvasElement_className', 0);
-
+	console.log('canvasElement.width: ', canvasElement.width);
+	console.log('canvasElement.height: ', canvasElement.height);
+	
 	// -------------------------
 	
 	// Obtain a desired frame from the video
@@ -197,6 +206,8 @@ async function mobilenet_video() {
 
 	// Fetch binaryString of video data
 	const [normalArray_video, t1] = await fetch_videoData(document.getElementById("url").value, video_fs);
+	console.log('normalArray_video.length: ', normalArray_video.length);
+	console.log('t1.length: ', t1.length);
 
 	const frame_pixels = videoElement_width * videoElement_height;
 	console.log('frame_pixels: ', frame_pixels);
