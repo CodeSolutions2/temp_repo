@@ -10,7 +10,6 @@
   <option value="---">Select an option</option>
   <option value="mobilenet_image_NoTransferLearning">mobilenet_image_NoTransferLearning</option>
   <option value="mobilenet_video">mobilenet_video</option>
-  <option value="fetch_videoData">fetch_videoData</option>
   <option value="object_detection_image">object_detection_image</option>
 </select>
 
@@ -89,9 +88,6 @@ async function run_selection() {
 	} else if (dropdown_option_type == 'mobilenet_video') {
 		await mobilenet_video();
 
-	} else if (dropdown_option_type == 'fetch_videoData') {
-		await fetch_videoData(document.getElementById("url").value);
-
 	} else if (dropdown_option_type == 'object_detection_image') {
 		await object_detection_image();
 		
@@ -126,7 +122,7 @@ async function mobilenet_video() {
 	// -------------------------
 	
 	// Obtain a desired frame from the video
-	videoElement.currentTime = 1;
+	videoElement.currentTime = 4;
 
 	// -------------------------
 	
@@ -142,6 +138,15 @@ async function mobilenet_video() {
 	// RESULT: videoElement.toDataURL is not a function
 
 	// OR
+	
+	const imageElement = new Image();
+	imageElement.setAttribute('crossOrigin', "anonymous");
+	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
+	imageElement.onload = async () => { 
+	  	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height); 
+	};
+	
+	// OR
 
 	// var url_videoframe = videoElement.toDataURL('image/png');
 	// const imageElement = new Image();
@@ -154,7 +159,8 @@ async function mobilenet_video() {
 	// RESULT: videoElement.toDataURL is not a function
 
 	// OR
-	
+
+	// This should plot the video frame on the canvas
 	// ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
 	// var url = canvasElement.toDataURL('image/png');
 	// const imageElement = new Image();
@@ -163,7 +169,8 @@ async function mobilenet_video() {
 
 	// OR
 	
-	// ctx.drawImage(sourceElement, 0, 0, canvasElement.width, canvasElement.height); // CanvasRenderingContext2D.drawImage: Argument 1 could not be converted to any of: HTMLImageElement, SVGImageElement, HTMLCanvasElement, HTMLVideoElement, OffscreenCanvas, ImageBitmap, VideoFrame.
+	// ctx.drawImage(sourceElement, 0, 0, canvasElement.width, canvasElement.height); 
+	// RESULT: CanvasRenderingContext2D.drawImage: Argument 1 could not be converted to any of: HTMLImageElement, SVGImageElement, HTMLCanvasElement, HTMLVideoElement, OffscreenCanvas, ImageBitmap, VideoFrame.
 
 	// OR
 	
@@ -172,44 +179,26 @@ async function mobilenet_video() {
 	// const typedarray = await new Uint8ClampedArray(normalArray);
 	// var imageData = await new ImageData(typedarray, canvasElement.width, canvasElement.height);
 	// ctx.putImageData(imageData, 0, 0);
-	// Index or size is negative or greater than the allowed amount
+	// RESULT: Index or size is negative or greater than the allowed amount
 
 	// OR
 
 	// Fetch binaryString of video data
-	var settings = {
-		type : 'GET',
-		async: true,
-		crossDomain: true,
-		xhrFields: {responseType: 'arrayBuffer'},
-		dataType: 'binary',
-		beforeSend: function(xhr) {xhr.withCredentials = true;},
-		success: function(response) { console.log('Success'); },
-		error: function(xhr, status, error) { console.log('Error:', error); }
-	};
- 
-	var binaryString = await $.ajax(url, [,settings]).done(function(response) { return response; });
-	console.log('binaryString: ', binaryString);
-
-	// -----------------------------------------------
-
-	// Normalize the video data
-	const normalArray_normalized = await decodeAudioData_from_binaryString_to_uint8Array(binaryString);
-
+	await fetch_videoData(document.getElementById("url").value);
 	
 	// -------------------------
 
 	// Resize the canvas and frameImage to a desired size, for AI model processing.
-	// await resize(width_ORG, height_ORG);
+	await resize(width_ORG, height_ORG);
 
 	// -------------------------
 
 	// Call the AI model to process the image.
 	
   	// Create a url of the frameImage on the canvas
-	// url = canvasElement.toDataURL('image/png');
+	url = canvasElement.toDataURL('image/png');
 	
-	// await Image_CORS(true, url);
+	await Image_CORS(true, url);
 
 	// -------------------------
 }  
@@ -473,7 +462,7 @@ async function convert_textStr_to_utf8Array_way1(text_str) {
 
 // -------------------------------------------------
 
-async function convert_utf8Array_to_arrayBuffer(uint8Array) {
+async function convert_utf8Array_to_arrayBuffer(uint8Array_nonfixedLength) {
 
 	// Convert UTF-8 array [non-fixed length array] to a binary arrayBuffer [fixed-length array]
 	const arrayBuffer = uint8Array_nonfixedLength.buffer;
