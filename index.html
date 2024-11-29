@@ -108,18 +108,15 @@ async function object_detection_image() {
 	// Single url
 	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
 	
-	 try {
-
-     // outp.innerHTML = canvasElement.toDataURL();
-
-      // -------------------------------------------------
-      // Way 0
-      await cocoSsd.load().then(model => {
+	
+      await cocoSsd.load()
+	      .then(model => {
 
 
 	const image = new Image();
 	image.src = canvasElement.toDataURL();  // This gives the url to the image drawn on the canvas
 	image.onload = async () => {
+		
 		ctx.drawImage(image, 0, 0, canvasElement.width, canvasElement.height);
 		ctx.beginPath();
 		ctx.strokeStyle = "red";  // color of line
@@ -127,30 +124,21 @@ async function object_detection_image() {
 		var tensor_image = tf.browser.fromPixels(image); // This is size 224,224,3
 		document.getElementById("notification") = tf.max(tensor_image);
 
-		await model.detect(image).then(predictions => { predictions.forEach(prediction => {
-      ctx.beginPath();
-      ctx.lineWidth = '2';
-      ctx.strokeStyle = 'red';
-      ctx.fillStyle = 'red';
-      ctx.rect(
-        prediction.bbox[0],
-        prediction.bbox[1],
-        prediction.bbox[2],
-        prediction.bbox[3]
-      );
-      ctx.stroke();
-      ctx.fillText(
-        `${prediction.class} (${Math.round(prediction.score * 100)}%)`,
-        prediction.bbox[0],
-        prediction.bbox[1] > 10 ? prediction.bbox[1] - 5 : 10
-      );
-    }); });
+		await model.detect(image)
+			.then(predictions => { predictions.forEach(prediction => {
+				ctx.beginPath();
+				ctx.lineWidth = '2';
+				ctx.strokeStyle = 'red';
+				ctx.fillStyle = 'red';
+				ctx.rect(prediction.bbox[0], prediction.bbox[1], prediction.bbox[2], prediction.bbox[3]);
+				ctx.stroke();
+				ctx.fillText(`${prediction.class} (${Math.round(prediction.score * 100)}%)`, prediction.bbox[0], prediction.bbox[1] > 10 ? prediction.bbox[1] - 5 : 10);
+			}); 
+			});
 
 	  };
-       
-    } catch (error) {
-      document.getElementById("notification") = error
-    }
+      }
+		    
 }
 
 // -------------------------------------------------
@@ -248,147 +236,6 @@ async function Image_CORS(callModel, url) {
 
 // -------------------------------------------------
 
-
-  
-async function Video_CORS() {
-  
-	videoElement = document.createElement('video');
-	videoElement.setAttribute("controls", true);
-	videoElement.setAttribute('crossOrigin', "anonymous");
-	console.log('videoElement: ', videoElement);
-
-	// -----------------------------------------------
-	
-	sourceElement = document.createElement('source');
-	sourceElement.src = document.getElementById("url").value;
-	// sourceElement.start(0); // start the video at t=0secs
-	console.log('sourceElement: ', sourceElement);
-
-	// -----------------------------------------------
-	
-	videoElement.appendChild(sourceElement);
-
-	// View video on page
-	document.getElementById('data_display').appendChild(videoElement);
-
-	// -----------------------------------------------
-	
-}
-
-// -------------------------------------------------
-
-
-async function fetch_videoData(url, video_fs) {
-
-	// Fetch binaryString of audio data
-	var settings = {
-		type : 'GET',
-		async: true,
-		crossDomain: true,
-		xhrFields: {responseType: 'arrayBuffer'},
-		dataType: 'binary',
-		beforeSend: function(xhr) {xhr.withCredentials = true;},
-		success: function(response) { console.log('Success'); },
-		error: function(xhr, status, error) { console.log('Error:', error); }
-	};
- 
-	const binaryString = await $.ajax(url, [,settings]).done(function(response) { return response; });
-	console.log('binaryString: ', binaryString);
-
-	// --------------------
-	
-	// Obtain TypedArray of data
-	const uint8Array = await convert_textStr_to_utf8Array_way1(binaryString);
-
-	// --------------------
-	
-	// (Optional) Obtain ArrayBuffer
-	const arrayBuffer = await convert_utf8Array_to_arrayBuffer(uint8Array);
-
-	// --------------------
-	
-	// Convert the TypedArray into a normal array
-	const normalArray = await Array.from(uint8Array);
-	console.log('normalArray: ', normalArray);
-
-	// --------------------
-	
-	// Normalize data
-
-	// Way 0
-	const normalArray_sorted  = await normalArray.sort();
-	const [min_val, max_val] = await [normalArray_sorted.shift(), normalArray_sorted.pop()];
-	var normalArray_normalized_way0 = await normalArray.map((val, ind) => { return val/max_val; });
-	console.log('Verify normalArray max min way0: ', [normalArray_normalized_way0.sort().shift(), normalArray_normalized_way0.sort().pop()]); //  gave values from 0 to 2.5656
-	
-	// Way 1
-	const tf_normalArray = tf.tensor1d(normalArray);
-	var normalArray_normalized_tf = await tf_normalArray.div(tf.scalar(255));
-	const normalArray_normalized_way1 = normalArray_normalized_tf.arraySync();
-	console.log('Verify normalArray max min way1: ', [normalArray_normalized_way1.sort().shift(), normalArray_normalized_way1.sort().pop()]);  //  gave values from 0 to 1
-	
-	// --------------------
-	
-	// Separate the channels of the audio data
-	// const [channel1, channel2] = await separate_stero_channels(normalArray_normalized, channel_num);
-
-	// --------------------
-	
-	// Average the audio data channels
-	// const x_avg = await channel1.map((val, ind) => { return (val + channel2.at(ind))/2; });
-	// console.log('x_avg.length : ', x_avg.length);
-
-	// --------------------
-
-	const time_sample_rate_OR_timePeriod = video_fs;
-	const t1 = Array.from({ length: normalArray.length }, (_, i) => i * time_sample_rate_OR_timePeriod);
-
-	// --------------------
-	
-	return [normalArray, t1];
-}
-
-
-// -------------------------------------------------
-	
-async function convert_textStr_to_utf8Array_way1(text_str) {
-
-	// Way 1
-	// Transform text_str into Typed array.
-	var character_array = text_str.split('');
-	console.log("character_array: ", character_array);
-	// Array(38190) [ "�", "�", "�", "d", "\u0000", "\u0000", "\u0000", "\u0000", "\u0000", "\u0000", … ]
-	// length = 349528
-			
-	// Map each [binary string character; a subset of binary string characters is UTF-8] as an [ASCII number; a number from 0 to number_of_characters]
-	var byteArray = character_array.map((character) => { return character.charCodeAt(0); });
-	console.log("byteArray: ", byteArray);
-	
-	// The importance of this mapping is to limit the array values from 0 to 255.
-	const uint8Array_nonfixedLength_way1 = await new Uint8Array(byteArray);
-	console.log('uint8Array_nonfixedLength_way1: ', uint8Array_nonfixedLength_way1);
-
-	return uint8Array_nonfixedLength_way1;
-}
-
-// -------------------------------------------------
-
-async function convert_utf8Array_to_arrayBuffer(uint8Array_nonfixedLength) {
-
-	// Convert UTF-8 array [non-fixed length array] to a binary arrayBuffer [fixed-length array]
-	const arrayBuffer = uint8Array_nonfixedLength.buffer;
-	console.log("arrayBuffer:", arrayBuffer);
-
-	// Determine the length of the typedArray_arrayBuffer
-	console.log('arrayBuffer.byteLength: ', arrayBuffer.byteLength);
-	
-	return arrayBuffer;
-}
-	
-// -------------------------------------------------
-
-
-// -------------------------------------------------
 
 	
 </script>
