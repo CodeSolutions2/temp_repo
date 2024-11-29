@@ -147,18 +147,20 @@ async function mobilenet_video() {
 
 	// OR
 	
-	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-	var url = canvasElement.toDataURL('image/png');
-	const imageElement = new Image();
-	imageElement.src = url;
+	// ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+	// var url = canvasElement.toDataURL('image/png');
+	// const imageElement = new Image();
+	// imageElement.src = url;
 	// Did not show anything
 
 	// OR
 
+	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
 	var normalArray = await convert_canvas_into_ImageData(ctx, canvasElement);
 	const typedarray = await new Uint8ClampedArray(normalArray);
 	var imageData = await new ImageData(typedarray, canvasElement.width, canvasElement.height);
 	ctx.putImageData(imageData, 0, 0);
+	// Index or size is negative or greater than the allowed amount
 	
 	// -------------------------
 
