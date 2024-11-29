@@ -122,7 +122,8 @@ async function mobilenet_video() {
 
 	// -------------------------
 	
-	// Put the video frameImage on the canvas 
+	// Put the video frameImage on the canvas
+	var url_videoframe = videoElement.toDataURL('video/webm');
 	const imageElement = new Image();
 	imageElement.setAttribute('crossOrigin', "anonymous");
 	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
