@@ -148,7 +148,7 @@ async function mobilenet_video() {
 	// OR
 	
 	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-	const url = canvasElement.toDataURL('image/png');
+	var url = canvasElement.toDataURL('image/png');
 	const imageElement = new Image();
 	imageElement.src = url;
 	
@@ -162,7 +162,7 @@ async function mobilenet_video() {
 	// Call the AI model to process the image.
 	
   	// Create a url of the frameImage on the canvas
-	var url = canvasElement.toDataURL('image/png');
+	url = canvasElement.toDataURL('image/png');
 	
 	await Image_CORS(true, url);
 
