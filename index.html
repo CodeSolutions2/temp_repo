@@ -123,19 +123,13 @@ async function mobilenet_video() {
 	const videoElement_width = sourceElement.parentElement.videoHeight;
 	const videoElement_height = sourceElement.parentElement.videoWidth;
 
-	// const presents_of_audio = sourceElement.parentElement.mozAudioCaptured;  // false
-​​	// sourceElement.parentElement.mozHasAudio // true
 	
 	const number_of_frames = sourceElement.parentElement.mozDecodedFrames; // 121
-	// OR
-	// sourceElement.parentElement.mozParsedFrames // 121
+	
 ​​
 	const videoLength = sourceElement.parentElement.mozFragmentEnd; // 5.059
 ​​	const video_fs = sourceElement.parentElement.mozFrameDelay;  // 0.00975189
 ​​
-	// sourceElement.parentElement.mozPaintedFrames // 2
-	// sourceElement.parentElement.mozPresentedFrames // 0
-	
 	// Create a canvas element that is same width and height of the video, to view the frameImage.
 	[ctx, canvasElement] = await create_dynamic_canvasElement(videoElement_width, videoElement_height, 'canvasElement_id', 'canvasElement_className', 0);
 
