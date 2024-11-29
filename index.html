@@ -188,13 +188,13 @@ async function mobilenet_video() {
 	// OR
 
 	// Fetch binaryString of video data
-	await fetch_videoData(document.getElementById("url").value);
+	const [normalArray_video, t1] = await fetch_videoData(document.getElementById("url").value);
 
 	const obj = {};
 	obj.trace_x = t1;
-	obj.trace_y = x_avg;
+	obj.trace_y = normalArray_video;
 	obj.title_text = "Video data";
-	obj.x_text_trace = "";
+	obj.x_text_trace = "data points";
 	obj.y_text_trace = "Video amplitude";
 	obj.unique_div_name = "video_data";
 	await plotly_line_chart(obj);
@@ -462,8 +462,13 @@ async function fetch_videoData(url) {
 	// console.log('x_avg.length : ', x_avg.length);
 
 	// --------------------
+
+	const time_sample_rate_OR_timePeriod = 1; // for now
+	const t1 = Array.from({ length: normalArray.length }, (_, i) => i * time_sample_rate_OR_timePeriod);
+
+	// --------------------
 	
-	// return x_avg;
+	return [normalArray, t1];
 }
 
 
