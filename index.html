@@ -97,8 +97,16 @@ async function mobilenet_image_NoTransferLearning() {
 	
 	// Single url
 	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
+
+	const imageElement = new Image();  // image is 'HTMLImageElement'
+	imageElement.setAttribute('crossOrigin', "anonymous");
+	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
+	imageElement.onload = async () => { 
+		ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
+		await mobilenet_model(imageElement);
+	};
+	imageElement.src = document.getElementById("url").value;
 	
-	await Image_CORS(true, document.getElementById("url").value);
 }  
 
 // -------------------------------------------------
@@ -196,38 +204,25 @@ async function object_detection_model(imageElement) {
 	
 	await cocoSsd.load()
 	      .then(model => { model.detect(imageElement)
-			      .then(predictions => { predictions.forEach(prediction => {
-				ctx.beginPath();
-				ctx.lineWidth = '2';
-				ctx.strokeStyle = 'red';
-				ctx.fillStyle = 'red';
-				ctx.rect(prediction.bbox[0], prediction.bbox[1], prediction.bbox[2], prediction.bbox[3]);
-				ctx.stroke();
-				ctx.fillText(`${prediction.class} (${Math.round(prediction.score * 100)}%)`, prediction.bbox[0], prediction.bbox[1] > 10 ? prediction.bbox[1] - 5 : 10);
-				}); 
-			});
+			      .then(predictions => { 
+
+				      console.log("predictions: ", predictions); 
+				      
+				      predictions.forEach(prediction => {
+					      ctx.beginPath();
+					      ctx.lineWidth = '2';
+					      ctx.strokeStyle = 'red';
+					      ctx.fillStyle = 'red';
+					      ctx.rect(prediction.bbox[0], prediction.bbox[1], prediction.bbox[2], prediction.bbox[3]);
+					      ctx.stroke();
+					      ctx.fillText(`${prediction.class} (${Math.round(prediction.score * 100)}%)`, prediction.bbox[0], prediction.bbox[1] > 10 ? prediction.bbox[1] - 5 : 10);
+				      }); 
+			      });
 	      });
 		    
 }
 	
 // -------------------------------------------------
-  
-async function Image_CORS(callModel, url) {
-  
-	const imageElement = new Image();  // image is 'HTMLImageElement'
-	imageElement.setAttribute('crossOrigin', "anonymous");
-	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
-	imageElement.onload = async () => { 
-    ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
-    if (callModel == true) {
-      await mobilenet_model(imageElement);
-    }
-  };
-	imageElement.src = url;
-}
-
-// -------------------------------------------------
-
 
 	
 </script>
