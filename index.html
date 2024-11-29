@@ -117,9 +117,28 @@ async function mobilenet_video() {
 	await Video_CORS();
 
 	// -------------------------
+
+	// Video attributes
+	const duration = sourceElement.parentElement.duration;
+	const videoElement_width = sourceElement.parentElement.videoHeight;
+	const videoElement_height = sourceElement.parentElement.videoWidth;
+	const time = sourceElement.parentElement.currentTime;
+
+	// const presents_of_audio = sourceElement.parentElement.mozAudioCaptured;  // false
+​​	// sourceElement.parentElement.mozHasAudio: true
+	
+	const frame_number = sourceElement.parentElement.mozDecodedFrames: 121
+	// OR
+	// sourceElement.parentElement.mozParsedFrames: 121
+​​
+	const videoLength = sourceElement.parentElement.mozFragmentEnd; // 5.059
+​​	const video_fs = sourceElement.parentElement.mozFrameDelay;  // 0.00975189
+​​
+	// sourceElement.parentElement.mozPaintedFrames: 2
+	// sourceElement.parentElement.mozPresentedFrames: 0
 	
 	// Create a canvas element that is same width and height of the video, to view the frameImage.
-	[ctx, canvasElement] = await create_dynamic_canvasElement(videoElement.width, videoElement.height, 'canvasElement_id', 'canvasElement_className', 0);
+	[ctx, canvasElement] = await create_dynamic_canvasElement(videoElement_width, videoElement_height, 'canvasElement_id', 'canvasElement_className', 0);
 
 	// -------------------------
 	
@@ -127,6 +146,8 @@ async function mobilenet_video() {
 	videoElement.currentTime = 4;
 
 	// -------------------------
+	
+	
 	
 	// Put the video frameImage on the canvas
 	// var url_videoframe = videoElement.toDataURL('video/webm');
@@ -188,9 +209,9 @@ async function mobilenet_video() {
 	// OR
 
 	// Fetch binaryString of video data
-	const [normalArray_video, t1] = await fetch_videoData(document.getElementById("url").value);
+	const [normalArray_video, t1] = await fetch_videoData(document.getElementById("url").value, video_fs);
 
-	const frame_pixels = videoElement.width * videoElement.height;
+	const frame_pixels = videoElement_width * videoElement_height;
 	console.log('frame_pixels: ', frame_pixels);
 	
 	const num_of_frames = normalArray_video.length / frame_pixels;
@@ -200,7 +221,7 @@ async function mobilenet_video() {
 	obj.trace_x = t1;
 	obj.trace_y = normalArray_video;
 	obj.title_text = "Video data";
-	obj.x_text_trace = "data points";
+	obj.x_text_trace = "Video pixels across time (s)";
 	obj.y_text_trace = "Video amplitude";
 	obj.unique_div_name = "video_data";
 	await plotly_line_chart(obj);
@@ -403,17 +424,13 @@ async function Video_CORS() {
 	document.getElementById('data_display').appendChild(videoElement);
 
 	// -----------------------------------------------
-
-	console.log("videoElement.width: ", videoElement.width);
-	console.log("videoElement.height: ", videoElement.height);
 	
-	// -----------------------------------------------
 }
 
 // -------------------------------------------------
 
 
-async function fetch_videoData(url) {
+async function fetch_videoData(url, video_fs) {
 
 	// Fetch binaryString of audio data
 	var settings = {
@@ -475,7 +492,7 @@ async function fetch_videoData(url) {
 
 	// --------------------
 
-	const time_sample_rate_OR_timePeriod = 1; // for now
+	const time_sample_rate_OR_timePeriod = video_fs;
 	const t1 = Array.from({ length: normalArray.length }, (_, i) => i * time_sample_rate_OR_timePeriod);
 
 	// --------------------
