@@ -35,6 +35,8 @@ div#notification { position: relative; color: #3236a8; }
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"></script>
 
+	
+
 <!-- ---------------------------------------- -->
 
 <script>
@@ -42,7 +44,8 @@ div#notification { position: relative; color: #3236a8; }
 // -----------------------------------------------
 
 window.addEventListener('beforeunload', function() {
-  window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+	document.getElementById("dropdown_options").selectedIndex = 0;
 });
 
 // -------------------------------------------------
