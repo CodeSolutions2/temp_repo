@@ -105,6 +105,7 @@ async function mobilenet_image_NoTransferLearning() {
 }  
 
 // -----------------------------------------------
+	
 async function mobilenet_video() {
 	
 	// Fetch the video from the url and view on page
@@ -154,8 +155,8 @@ async function mobilenet_video() {
 	// Did not show anything
 
 	// OR
-
-	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+	
+	ctx.drawImage(sourceElement, 0, 0, canvasElement.width, canvasElement.height);
 	var normalArray = await convert_canvas_into_ImageData(ctx, canvasElement);
 	const typedarray = await new Uint8ClampedArray(normalArray);
 	var imageData = await new ImageData(typedarray, canvasElement.width, canvasElement.height);
