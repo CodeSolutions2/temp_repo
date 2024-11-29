@@ -9,7 +9,6 @@
 <select name="dropdown_options" id="dropdown_options" style="display:block">
   <option value="---">Select an option</option>
   <option value="mobilenet_image_NoTransferLearning">mobilenet_image_NoTransferLearning</option>
-  <option value="mobilenet_video">mobilenet_video</option>
   <option value="object_detection_image">object_detection_image</option>
 </select>
 
@@ -32,14 +31,10 @@ div#notification { position: relative; color: #3236a8; }
 <!-- ---------------------------------------- -->
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"></script>
-
-	
-<script src="https://cdn.plot.ly/plotly-2.30.0.min.js" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 
 
 <!-- ---------------------------------------- -->
@@ -86,9 +81,6 @@ async function run_selection() {
 
 	if (dropdown_option_type == 'mobilenet_image_NoTransferLearning') {
 		await mobilenet_image_NoTransferLearning();
-		
-	} else if (dropdown_option_type == 'mobilenet_video') {
-		await mobilenet_video();
 
 	} else if (dropdown_option_type == 'object_detection_image') {
 		await object_detection_image();
@@ -111,200 +103,58 @@ async function mobilenet_image_NoTransferLearning() {
 
 // -----------------------------------------------
 	
-async function mobilenet_video() {
-	
-	// Fetch the video from the url and view on page
-	await Video_CORS();
+async function object_detection_image() {
 
-	// -------------------------
+	// Single url
+	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
+	
+	 try {
 
-	// Video attributes
-	const duration = sourceElement.parentElement.duration;
-	console.log('duration: ', duration);
-	
-	const videoElement_width = sourceElement.parentElement.videoHeight;
-	console.log('videoElement_width: ', videoElement_width);
-	
-	const videoElement_height = sourceElement.parentElement.videoWidth;
-	console.log('videoElement_height: ', videoElement_height);
-	
-	const video_fs = sourceElement.parentElement.mozFrameDelay; // 0.00975189
-	console.log('video_fs: ', video_fs);
-	
-	// Create a canvas element that is same width and height of the video, to view the frameImage.
-	[ctx, canvasElement] = await create_dynamic_canvasElement(videoElement_width, videoElement_height, 'canvasElement_id', 'canvasElement_className', 0);
-	console.log('canvasElement.width: ', canvasElement.width);
-	console.log('canvasElement.height: ', canvasElement.height);
-	
-	// -------------------------
-	
-	// Obtain a desired frame from the video
-	videoElement.currentTime = 4;
+     // outp.innerHTML = canvasElement.toDataURL();
 
-	const time_step = sourceElement.parentElement.currentTime;
-	
-	// -------------------------
-	
-	// Put the video frameImage on the canvas
-	// var url_videoframe = videoElement.toDataURL('video/webm');
-	// const imageElement = new Image();
-	// imageElement.setAttribute('crossOrigin', "anonymous");
-	// imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
-	// imageElement.onload = async () => { 
-	//  	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height); 
-	// };
-	// imageElement.src = url_videoframe;
-	// RESULT: videoElement.toDataURL is not a function
+      // -------------------------------------------------
+      // Way 0
+      await cocoSsd.load().then(model => {
 
-	// OR
-	
-	// const imageElement = new Image();
-	// imageElement.setAttribute('crossOrigin', "anonymous");
-	// imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
-	// imageElement.onload = async () => { 
-	//   	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height); 
-	// };
-	// RESULT: a small image of the video appeared, then turned back normal size
-	
-	// OR
 
-	ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-	var url = canvasElement.toDataURL('image/png');
-	const imageElement = new Image();
-	imageElement.setAttribute('crossOrigin', "anonymous");
-	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
-	imageElement.onload = async () => { 
-		ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
-	};
-	imageElement.src = url;
-	// RESULT: videoElement.toDataURL is not a function
+	const image = new Image();
+	image.src = canvasElement.toDataURL();  // This gives the url to the image drawn on the canvas
+	image.onload = async () => {
+		ctx.drawImage(image, 0, 0, canvasElement.width, canvasElement.height);
+		ctx.beginPath();
+		ctx.strokeStyle = "red";  // color of line
 
-	// OR
+		var tensor_image = tf.browser.fromPixels(image); // This is size 224,224,3
+		document.getElementById("notification") = tf.max(tensor_image);
 
-	// This should plot the video frame on the canvas
-	// ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-	// var url = canvasElement.toDataURL('image/png');
-	// const imageElement = new Image();
-	// imageElement.src = url;
-	// Did not show anything
+		await model.detect(image).then(predictions => { predictions.forEach(prediction => {
+      ctx.beginPath();
+      ctx.lineWidth = '2';
+      ctx.strokeStyle = 'red';
+      ctx.fillStyle = 'red';
+      ctx.rect(
+        prediction.bbox[0],
+        prediction.bbox[1],
+        prediction.bbox[2],
+        prediction.bbox[3]
+      );
+      ctx.stroke();
+      ctx.fillText(
+        `${prediction.class} (${Math.round(prediction.score * 100)}%)`,
+        prediction.bbox[0],
+        prediction.bbox[1] > 10 ? prediction.bbox[1] - 5 : 10
+      );
+    }); });
 
-	// OR
-	
-	// ctx.drawImage(sourceElement, 0, 0, canvasElement.width, canvasElement.height); 
-	// RESULT: CanvasRenderingContext2D.drawImage: Argument 1 could not be converted to any of: HTMLImageElement, SVGImageElement, HTMLCanvasElement, HTMLVideoElement, OffscreenCanvas, ImageBitmap, VideoFrame.
-
-	// OR
-	
-	// ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-	// var normalArray = await convert_canvas_into_ImageData(ctx, canvasElement);
-	// const typedarray = await new Uint8ClampedArray(normalArray);
-	// var imageData = await new ImageData(typedarray, canvasElement.width, canvasElement.height);
-	// ctx.putImageData(imageData, 0, 0);
-	// RESULT: Index or size is negative or greater than the allowed amount
-
-	// OR
-
-	// Fetch binaryString of video data
-	const [normalArray_video, t1] = await fetch_videoData(document.getElementById("url").value, video_fs);
-	console.log('normalArray_video.length: ', normalArray_video.length);
-	console.log('t1.length: ', t1.length);
-
-	const frame_pixels = videoElement_width * videoElement_height;
-	console.log('frame_pixels: ', frame_pixels);
-	
-	const num_of_frames = normalArray_video.length / frame_pixels;
-	console.log('num_of_frames: ', num_of_frames);
-	
-	const obj = {};
-	obj.trace_x = t1;
-	obj.trace_y = normalArray_video;
-	obj.title_text = "Video data";
-	obj.x_text_trace = "Video pixels across time (s)";
-	obj.y_text_trace = "Video amplitude";
-	obj.unique_div_name = "video_data";
-	await plotly_line_chart(obj);
-	
-	// -------------------------
-
-	// Resize the canvas and frameImage to a desired size, for AI model processing.
-	await resize(width_ORG, height_ORG);
-
-	// -------------------------
-
-	// Call the AI model to process the image.
-	
-  	// Create a url of the frameImage on the canvas
-	url = await canvasElement.toDataURL('image/png');
-	
-	await Image_CORS(true, url);
-
-	// -------------------------
-}  
-
-// -------------------------------------------------
-
-async function plotly_line_chart(obj) {
-	
-        const trace_items = { x: obj.trace_x, y: obj.trace_y, type: 'line' };
-        const layout = {title: obj.title_text, xaxis: {title: obj.x_text_trace}, yaxis: {title: obj.y_text_trace} };
-
-	// Create a new div element to display data on
-	const div = document.createElement('div');
-	div.id = "data_display" + "_" + obj.unique_div_name;
-	div.style = "display:block; text-align: left; width: 600px; height: 600px";
-	document.getElementById("data_display").appendChild(div);
-	
-        Plotly.newPlot(div.id, [trace_items], layout);
+	  };
+       
+    } catch (error) {
+      document.getElementById("notification") = error
+    }
 }
 
 // -------------------------------------------------
 
-async function resize(width_NEW, height_NEW) {
-
-	// Use src, resize canvas, make new image
-
-	// [0] get copy of original canvas image
-	var url = canvasElement.toDataURL('image/png');  // WORKS
-	console.log('url: ', url);
-		
-	// [1] define resizing parameters
-	var sx = 0; // for cropping the image: distance from the [original left edge of the image] to the [deisred left edge of image]
-	var sy = 0; // for cropping the image: distance from the [original top edge of the image] to the [deisred top edge of image]
-	var image_width = width_ORG; // width_NEW; // for cropping the image: desired image width
-	var image_height = height_ORG; // height_NEW; // for cropping the image: desired image height
-	var dx = 0;  // location to place image on canvas: distance from the [left edge of the canvas] to the [left edge of image]
-	var dy = 0;  // location to place image on canvas: distance from the [top edge of the canvas] to the [top edge of image]
-	var dWidth = width_NEW; // for resizing the image on the canvas: desired image width on canvas
-	var dHeight = height_NEW; // for resizing the image on the canvas: desired image width on canvas
-
-	const imageElement = new Image();
-	imageElement.crossOrigin = "anonymous";
-	imageElement.onload = async () => {
-
-		// [2] resize canvas
-		canvasElement.width = width_NEW;
-		canvasElement.height = height_NEW;
-
-		// [3] put the image back onto the canvas at the new size using image.src and defining the new size
-		ctx.drawImage(imageElement, sx, sy, image_width, image_height, dx, dy, dWidth, dHeight); // only imageElement, sx, sy, image_width, image_height need to be set
-	};
-	imageElement.src = url;
-	
-}
-
-// -----------------------------------------------
-
-async function convert_canvas_into_ImageData(ctx, canvasElement) {
-	
-	// Get canvas image
-	const uint8ClampedArray = await ctx.getImageData(0, 0, canvasElement.width, canvasElement.height); // TypedArray  Uint8ClampedArray
-	// console.log('uint8ClampedArray: ', uint8ClampedArray);
-  
-	// Convert TypedArray to normalArray
-	return await Array.from(uint8ClampedArray.data);
-}
-
-// -----------------------------------------------
 
 
 
