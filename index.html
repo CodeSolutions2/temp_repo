@@ -97,68 +97,76 @@ async function run_selection() {
 // -----------------------------------------------
 
 async function mobilenet_image_NoTransferLearning() {
-
-  // Single url
-    await create_dynamic_canvasElement();
-  
-  await Image_CORS(true, document.getElementById("url").value);
+	
+	// Single url
+	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
+	
+	await Image_CORS(true, document.getElementById("url").value);
 }  
 
 // -----------------------------------------------
 async function mobilenet_video() {
+	
+	// Fetch the video from the url and view on page
+	await Video_CORS();
+	
+	// Obtain a desired frame from the video
+	videoElement.currentTime = 1;
 
-  // Fetch the video from the url and view on page
-    await Video_CORS();
+	// Create a canvas element to view the frameImage
+	[ctx, canvasElement] = await create_dynamic_canvasElement(videoElement.width, videoElement.height, 'canvasElement_id', 'canvasElement_className', 0);
 
-  // Obtain a desired frame from the video
-  videoElement.currentTime = 1;
+	// put the desired frame from the video on the canvas 
+	ctx.drawImage(videoElement, 0, 0, videoElement.width, videoElement.height);
 
-  // Create a canvas element to view the frameImage
-  await create_dynamic_canvasElement();
-
- // put the desired frame from the video on the canvas 
-ctx.drawImage(videoElement, 0, 0, width_ORG, height_ORG);
-
-  // Create a url of the image on the canvas
-  var url = canvasElement.toDataURL('image/png');
+	// Create a url of the image on the canvas
+	var url = canvasElement.toDataURL('image/png');
   
-  await Image_CORS(true, url);
-
-
+	await Image_CORS(true, url);
 }  
 
 // -----------------------------------------------
 
 
 
+
+
+	
 // -------------------------------------------------
 // IMAGE SUBFUNCTIONS
 // -------------------------------------------------
-async function create_dynamic_canvasElement() {
-
-// -------------------------
-  // Create a canvas element
-	canvasElement = document.createElement('canvas');
+async function create_dynamic_canvasElement(width, height, canvasElement_id, canvasElement_className, canvas_number=0) {
+  
+	// Create a canvas element
+	var canvasElement = document.createElement('canvas');
 
 	// Set attributes of the canvas
-	canvasElement.width = width_ORG;
-	canvasElement.height = height_ORG;
-  	canvasElement.id = "canvasElement_id";
-	canvasElement.class = "canvasElement_className";
+	canvasElement.width = width;
+	canvasElement.height = height;
+  	canvasElement.id = canvasElement_id;
+	canvasElement.class = canvasElement_className;
 	
 	// Get the 2D rendering context of the canvas
-	ctx = canvasElement.getContext("2d");
-  
-  // Add the canvas to the DOM
-	document.getElementById('data_display').appendChild(canvasElement);
+	var ctx = canvasElement.getContext("2d");
 
-  // -------------------------
-  
-  // Make a canvas border
+	// -------------------------
+
+	// (Optional) Parameter to put canvas next to each other
+	if (canvas_number == 0) {
+		canvasElement.style.left = 40+'px';
+	} else {
+		// Append a canvas to the right of an existing canvas
+		let tot = canvas_number*canvasElement.width + 40;
+		canvasElement.style.left = tot+'px';
+	}
+
+	// -------------------------
+
+	// Make a canvas border
 	canvasElement.style.border = '1px solid black';
 
+	return [ctx, canvasElement];
 }
-
 
 // -------------------------------------------------
   
@@ -200,7 +208,7 @@ async function Image_CORS(callModel, url) {
 	imageElement.setAttribute('crossOrigin', "anonymous");
 	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
 	imageElement.onload = async () => { 
-    ctx.drawImage(imageElement, 0, 0, width_ORG, height_ORG); 
+    ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
     if (callModel == true) {
       await mobilenet_model(imageElement);
     }
