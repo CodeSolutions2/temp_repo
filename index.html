@@ -109,21 +109,86 @@ async function mobilenet_video() {
 	
 	// Fetch the video from the url and view on page
 	await Video_CORS();
+
+	// -------------------------
+	
+	// Create a canvas element that is same width and height of the video, to view the frameImage.
+	[ctx, canvasElement] = await create_dynamic_canvasElement(videoElement.width, videoElement.height, 'canvasElement_id', 'canvasElement_className', 0);
+
+	// -------------------------
 	
 	// Obtain a desired frame from the video
 	videoElement.currentTime = 1;
+	var url_videoframe = videoElement.toDataURL('image/png');
 
-	// Create a canvas element to view the frameImage
-	[ctx, canvasElement] = await create_dynamic_canvasElement(videoElement.width, videoElement.height, 'canvasElement_id', 'canvasElement_className', 0);
+	// -------------------------
+	
+	// Put the video frameImage on the canvas 
+	// videoElement.onseeked = function(event) {
 
-	// put the desired frame from the video on the canvas 
-	ctx.drawImage(videoElement, 0, 0, videoElement.width, videoElement.height);
+	// }
 
-	// Create a url of the image on the canvas
+	// OR
+
+	const imageElement = new Image();
+	imageElement.setAttribute('crossOrigin', "anonymous");
+	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
+	imageElement.onload = async () => { 
+		ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
+	};
+	imageElement.src = url_videoframe;
+	
+	// -------------------------
+
+	// Resize the canvas and frameImage to a desired size, for AI model processing.
+	await resize(width_ORG, heigh_ORG);
+
+	// -------------------------
+
+	// Call the AI model to process the image.
+	
+  	// Create a url of the frameImage on the canvas
 	var url = canvasElement.toDataURL('image/png');
-  
+	
 	await Image_CORS(true, url);
+
+	// -------------------------
 }  
+
+// -------------------------------------------------
+	
+async function resize(width_NEW, height_NEW) {
+
+	// Use src, resize canvas, make new image
+
+	// [0] get copy of original canvas image
+	var url = canvasElement.toDataURL('image/png');  // WORKS
+	console.log('url: ', url);
+		
+	// [1] define resizing parameters
+	var sx = 0; // for cropping the image: distance from the [original left edge of the image] to the [deisred left edge of image]
+	var sy = 0; // for cropping the image: distance from the [original top edge of the image] to the [deisred top edge of image]
+	var image_width = width_ORG; // width_NEW; // for cropping the image: desired image width
+	var image_height = height_ORG; // height_NEW; // for cropping the image: desired image height
+	var dx = 0;  // location to place image on canvas: distance from the [left edge of the canvas] to the [left edge of image]
+	var dy = 0;  // location to place image on canvas: distance from the [top edge of the canvas] to the [top edge of image]
+	var dWidth = width_NEW; // for resizing the image on the canvas: desired image width on canvas
+	var dHeight = height_NEW; // for resizing the image on the canvas: desired image width on canvas
+
+	const imageElement = new Image();
+	imageElement.crossOrigin = "anonymous";
+	imageElement.onload = async () => {
+
+		// [2] resize canvas
+		canvasElement.width = width_NEW;
+		canvasElement.height = height_NEW;
+
+		// [3] put the image back onto the canvas at the new size using image.src and defining the new size
+		ctx.drawImage(imageElement, sx, sy, image_width, image_height, dx, dy, dWidth, dHeight); // only imageElement, sx, sy, image_width, image_height need to be set
+	};
+	imageElement.src = url;
+	
+}
 
 // -----------------------------------------------
 
