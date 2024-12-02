@@ -107,6 +107,8 @@ async function run_selection() {
 // -----------------------------------------------
 
 async function mobilenet_image_NoTransferLearning() {
+
+	// Example (a post-it note): https://storage.googleapis.com/memetics-motivation/success_512x512_0.png
 	
 	// Single url
 	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
@@ -126,6 +128,9 @@ async function mobilenet_image_NoTransferLearning() {
 
 async function object_detection_image() {
 
+	// Example (an apple): https://raw.githubusercontent.com/CodeSolutions2/image_classification/main/apple3D_1.png
+
+	
 	// Single url
 	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
 	
@@ -144,6 +149,8 @@ async function object_detection_image() {
 
 async function posenet_model_singlePose() {
 
+	// Example (a person running) : https://storage.googleapis.com/image-segmentation-mask-samples/mid_size2_image_segmentation.png
+	
 	// Single url
 	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
 	
@@ -262,16 +269,17 @@ async function object_detection_model(imageElement) {
 			      .then(predictions => { 
 
 				      console.log("predictions: ", predictions); 
-				      
-				      predictions.forEach(prediction => {
+
+				      for (let i=0; i<predictions.length; i++) {
 					      ctx.beginPath();
 					      ctx.lineWidth = '2';
 					      ctx.strokeStyle = 'red';
 					      ctx.fillStyle = 'red';
-					      ctx.rect(prediction.bbox[0], prediction.bbox[1], prediction.bbox[2], prediction.bbox[3]);
+					      ctx.rect(predictions[i].bbox[0], predictions[i].bbox[1], predictions[i].bbox[2], predictions[i].bbox[3]);
 					      ctx.stroke();
-					      ctx.fillText(`${prediction.class} (${Math.round(prediction.score * 100)}%)`, prediction.bbox[0], prediction.bbox[1] > 10 ? prediction.bbox[1] - 5 : 10);
-				      }); 
+					      ctx.fillText(`${predictions[i].class} (${Math.round(predictions[i].score * 100)}%)`, predictions[i].bbox[0], predictions[i].bbox[1] > 10 ? predictions[i].bbox[1] - 5 : 10);
+				      }
+				      
 			      });
 	      });
 		    
