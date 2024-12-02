@@ -8,7 +8,7 @@
 <label for="select_dropdown_option_label">Select a choice:</label>
 <select name="dropdown_options" id="dropdown_options" style="display:block">
   <option value="---">Select an option</option>
-  <option value="Image_CORS">Image_CORS</option>
+  <option value="get_image_data">get_image_data</option>
   <option value="mobilenet_image_NoTransferLearning">mobilenet_image_NoTransferLearning</option>
   <option value="object_detection_image">object_detection_image</option>
   <option value="posenet_model_singlePose">posenet_model_singlePose</option>
@@ -42,7 +42,9 @@ div#notification { position: relative; color: #3236a8; }
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 <script src="https://unpkg.com/@tensorflow-models/posenet"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+	
 <!-- ---------------------------------------- -->
 
 <script>
@@ -87,11 +89,11 @@ async function run_selection() {
 
   var dropdown_option_type = document.getElementById("dropdown_options").value;
 
-	if (dropdown_option_type == 'Image_CORS') {
+	if (dropdown_option_type == 'get_image_data') {
 
 		[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
 		
-		await Image_CORS();
+		await get_image_data();
 
 	} else if (dropdown_option_type == 'mobilenet_image_NoTransferLearning') {
 		await mobilenet_image_NoTransferLearning();
@@ -113,15 +115,45 @@ async function run_selection() {
 
 // -----------------------------------------------
 
-async function Image_CORS() {
-  
-	const imageElement = new Image();  // image is 'HTMLImageElement'
-	imageElement.setAttribute('crossOrigin', "anonymous");
-	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
-	imageElement.onload = async () => { 
-    ctx.drawImage(imageElement, 0, 0, width_ORG, height_ORG); 
-  };
-	imageElement.src = document.getElementById("url").value;
+async function get_image_data() {
+
+	var url = document.getElementById("url").value;
+
+    // Determine request method
+	var headers = {
+		"Content-Type": "application/json",
+		"Referer": url,
+		"Origin": "https://codesolutions2.github.io",
+		"Connection": "keep-alive",
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+		"Access-Control-Allow-Origin": "*"
+	};
+
+    var settings = {
+		// url: url,
+		type : method,
+		async: true,
+		crossDomain: true,
+      xhrFields: {responseType: 'blob'},
+      dataType: 'binary',
+		beforeSend: function(xhr) {xhr.withCredentials = true;},
+		// headers: new Headers(headers_final),
+		success: function(response) { console.log('Success'); },
+		error: function(xhr, status, error) { console.log('Error:', error); }
+	};
+
+		var blob_object = await $.ajax(url, [,settings]).done(function(response) { return response; });
+
+    
+    const blobURL = await URL.createObjectURL(blob_object);
+
+    // Create an image element and set its source to the Blob URL
+    const imageElement = await new Image();
+    imageElement.onload = await function() {
+      ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height);
+    };
+    imageElement.src = blobUrl;
+	
 }
   
 // -------------------------------------------------
@@ -147,7 +179,7 @@ async function mobilenet_image_NoTransferLearning() {
 	// -----------------------
 
 	// Way 1
-	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
+	// [ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
 
 	// Print the image on the canvas
 
