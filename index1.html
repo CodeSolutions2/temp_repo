@@ -291,25 +291,24 @@ async function posenet_model(imageElement, pose_type) {
 	
 	const net = await posenet.load();
 
-const scaleFactor = 0.50;
-const flipHorizontal = false;
-const outputStride = 16;
+	const scaleFactor = 0.50;
+	const flipHorizontal = false;
+	const outputStride = 16;
 
-  if (pose_type == "single") {
-// Estimate a single pose
-const pose = await net.estimateSinglePose(imageElement, scaleFactor, flipHorizontal, outputStride);
-console.log("pose: ", pose); 
+	if (pose_type == "single") {
+		// Estimate a single pose
+		const pose = await net.estimateSinglePose(imageElement, scaleFactor, flipHorizontal, outputStride);
+		console.log("pose: ", pose); 
 
-  } else {
-
-    const maxPoseDetections = 5;
-const scoreThreshold = 0.5; // minimum confidence of the root part of a pose
-const nmsRadius = 20; // minimum distance in pixels between the root parts of pose
+	} else {
+		const maxPoseDetections = 5;
+		const scoreThreshold = 0.5; // minimum confidence of the root part of a pose
+		const nmsRadius = 20; // minimum distance in pixels between the root parts of pose
   
-// Estimate multiple person poses
-const pose = await net.estimateMultiplePoses(imageElement, scaleFactor, flipHorizontal, outputStride, maxPoseDetections, scoreThreshold, nmsRadius); 
-    console.log("pose: ", pose); 
-  }
+		// Estimate multiple person poses
+		const pose = await net.estimateMultiplePoses(imageElement, scaleFactor, flipHorizontal, outputStride, maxPoseDetections, scoreThreshold, nmsRadius); 
+		console.log("pose: ", pose); 
+	}
     
 }
 	
