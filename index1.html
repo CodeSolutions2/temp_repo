@@ -326,7 +326,7 @@ async function posenet_model(imageElement, pose_type) {
 		const pose = await net.estimateSinglePose(imageElement, scaleFactor, flipHorizontal, outputStride);
 		console.log("pose: ", pose); 
 
-	} if else (pose_type == "multiple") {
+	} else if (pose_type == "multiple") {
 		
 		const net = await posenet.load();
 
