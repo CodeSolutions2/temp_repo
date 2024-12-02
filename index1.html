@@ -8,7 +8,6 @@
 <label for="select_dropdown_option_label">Select a choice:</label>
 <select name="dropdown_options" id="dropdown_options" style="display:block">
   <option value="---">Select an option</option>
-  <option value="get_image_data">get_image_data</option>
   <option value="mobilenet_image_NoTransferLearning">mobilenet_image_NoTransferLearning</option>
   <option value="object_detection_image">object_detection_image</option>
   <option value="posenet_model_singlePose">posenet_model_singlePose</option>
@@ -42,9 +41,7 @@ div#notification { position: relative; color: #3236a8; }
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 <script src="https://unpkg.com/@tensorflow-models/posenet"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-	
 <!-- ---------------------------------------- -->
 
 <script>
@@ -89,13 +86,7 @@ async function run_selection() {
 
   var dropdown_option_type = document.getElementById("dropdown_options").value;
 
-	if (dropdown_option_type == 'get_image_data') {
-
-		[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
-		
-		await get_image_data();
-
-	} else if (dropdown_option_type == 'mobilenet_image_NoTransferLearning') {
+	if (dropdown_option_type == 'mobilenet_image_NoTransferLearning') {
 		await mobilenet_image_NoTransferLearning();
 
 	} else if (dropdown_option_type == 'object_detection_image') {
@@ -113,133 +104,6 @@ async function run_selection() {
 
 }
 
-// -----------------------------------------------
-
-async function get_image_data() {
-
-	const blobUrl = await call_json_fetch_methods();
-	
-	// Display the image
-	await display_an_image(blobUrl);
-
-}
-
-
-
-// -----------------------------------------------
-
-async function display_an_image(blobUrl) {
-
-	// Create an image element and set its source to the Blob URL
-	const imageElement = await new Image();
-	imageElement.onload = await function() {
-		ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height);
-	};
-	imageElement.src = blobUrl;
-}
-
-// -------------------------------------------------
-
-async function call_json_fetch_methods() {
-	
-	const CORS_method_list = ['jQuery_CORS', 'fetch_CORS'];
-
-	const method = "GET";
-  
-	var response = undefined;
-	// response = undefined means that blob_object = null
-	// response = {} is not blob_object = null
-
-	for (var i=0; i<CORS_method_list.length; i++) {
-		try {
-			if (i == 0) {
-				response = await jQuery_image_CORS(method);
-			} else {
-				response = await fetch_image_CORS(method);
-			}
-			console.log('response: ', response);
-		} catch (error) {
-			console.log('error: ', error);
-		}
-    
-		if (response != undefined) {
-			break;
-		}
-	}
-	return response;
-}
-
-// -------------------------------------------------
-
-async function jQuery_image_CORS(method) {
-	
-	var url = document.getElementById("url").value;
-	
-	// Determine request method
-	var headers = {
-		"Content-Type": "application/json",
-		"Referer": url,
-		"Origin": "https://codesolutions2.github.io",
-		"Connection": "keep-alive",
-		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
-		"Access-Control-Allow-Origin": "*"
-	};
-
-    var settings = {
-	    // url: url,
-	    type : method,
-		async: true,
-		crossDomain: true,
-	    xhrFields: {responseType: 'blob'},
-      dataType: 'binary',
-		beforeSend: function(xhr) {xhr.withCredentials = true;},
-		// headers: new Headers(headers_final),
-		success: function(response) { console.log('Success'); },
-		error: function(xhr, status, error) { console.log('Error:', error); }
-	};
-
-		var blob_object = await $.ajax(url, [,settings]).done(function(response) { return response; });
-
-    
-    return await URL.createObjectURL(blob_object);
-}
-	
-// -------------------------------------------------
-
-async function fetch_image_CORS(method) {
-	
-	var url = document.getElementById("url").value;
-
-	// Determine request method
-	var headers = {
-		"Content-Type": "application/json",
-		"Referer": url,
-		"Origin": "https://codesolutions2.github.io",
-		"Connection": "keep-alive",
-		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
-		"Access-Control-Allow-Origin": "*"
-	};
-	
-	var options = { 
-		method : "GET",
-		mode: 'cors',
-		headers: new Headers(headers),
-		cache: "no-cache",
-		crossorigin: 'anonymous',
-		redirect: "follow"
-	};
-	
-	var blob_object = await fetch(url, options)
-		.then(response => response.blob())
-		.then(function(blob_object) {
-			console.log("blob_object: ", blob_object);
-			return blob_object;
-	})
-	.catch(error => console.error("error: ", error));
-
-	return await URL.createObjectURL(blob_object);
-}
-  
 // -------------------------------------------------
 	
 async function mobilenet_image_NoTransferLearning() {
@@ -258,19 +122,6 @@ async function mobilenet_image_NoTransferLearning() {
 		await mobilenet_model(imageElement);
 	};
 	imageElement.src = document.getElementById("url").value;
-	// RESULT: problem is that I can not see the image
-
-	// -----------------------
-
-	// Way 1
-	// [ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
-
-	// Print the image on the canvas
-
-	// Take the image from the canvas and give it to the model
-	
-
-	// -----------------------
 	
 }  
 
@@ -280,7 +131,6 @@ async function object_detection_image() {
 
 	// Example (an apple): https://raw.githubusercontent.com/CodeSolutions2/image_classification/main/apple3D_1.png
 
-	
 	// Single url
 	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
 	
@@ -318,7 +168,9 @@ async function posenet_model_singlePose() {
 // -------------------------------------------------
   
 async function posenet_model_multiplePose() {
-
+	
+	// Example (a person running) : https://storage.googleapis.com/image-segmentation-mask-samples/mid_size2_image_segmentation.png
+	
 	// Single url
 	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
 	
