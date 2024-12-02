@@ -159,7 +159,7 @@ async function posenet_model_singlePose() {
 	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
 	imageElement.onload = async () => { 
 		ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
-		//await posenet_model(imageElement, "single");
+		await posenet_model(imageElement, "single");
 	};
 	imageElement.src = document.getElementById("url").value;
 
