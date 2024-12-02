@@ -8,6 +8,7 @@
 <label for="select_dropdown_option_label">Select a choice:</label>
 <select name="dropdown_options" id="dropdown_options" style="display:block">
   <option value="---">Select an option</option>
+  <option value="Image_CORS">Image_CORS</option>
   <option value="mobilenet_image_NoTransferLearning">mobilenet_image_NoTransferLearning</option>
   <option value="object_detection_image">object_detection_image</option>
   <option value="posenet_model_singlePose">posenet_model_singlePose</option>
@@ -86,7 +87,10 @@ async function run_selection() {
 
   var dropdown_option_type = document.getElementById("dropdown_options").value;
 
-	if (dropdown_option_type == 'mobilenet_image_NoTransferLearning') {
+	if (dropdown_option_type == 'Image_CORS') {
+		await Image_CORS();
+
+	} else if (dropdown_option_type == 'mobilenet_image_NoTransferLearning') {
 		await mobilenet_image_NoTransferLearning();
 
 	} else if (dropdown_option_type == 'object_detection_image') {
@@ -106,6 +110,19 @@ async function run_selection() {
 
 // -----------------------------------------------
 
+async function Image_CORS() {
+  
+	const imageElement = new Image();  // image is 'HTMLImageElement'
+	imageElement.setAttribute('crossOrigin', "anonymous");
+	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
+	imageElement.onload = async () => { 
+    ctx.drawImage(imageElement, 0, 0, width_ORG, height_ORG); 
+  };
+	imageElement.src = document.getElementById("url").value;
+}
+  
+// -------------------------------------------------
+	
 async function mobilenet_image_NoTransferLearning() {
 
 	// Example (a post-it note): https://storage.googleapis.com/memetics-motivation/success_512x512_0.png
@@ -313,9 +330,6 @@ async function posenet_model(imageElement, pose_type) {
 }
 	
 // -------------------------------------------------
-
-  
-  
 
 	
 </script>
