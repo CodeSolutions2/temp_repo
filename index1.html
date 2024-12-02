@@ -12,6 +12,7 @@
   <option value="object_detection_image">object_detection_image</option>
   <option value="posenet_model_singlePose">posenet_model_singlePose</option>
   <option value="posenet_model_multiplePose">posenet_model_multiplePose</option>
+  <option value="posenet_detection_model">posenet_detection_model</option>
 </select>
 
 	
@@ -40,7 +41,7 @@ div#notification { position: relative; color: #3236a8; }
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 <script src="https://unpkg.com/@tensorflow-models/posenet"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
 
 <!-- ---------------------------------------- -->
 
@@ -97,6 +98,9 @@ async function run_selection() {
 
 	} else if (dropdown_option_type == 'posenet_model_multiplePose') {
 		await posenet_model_multiplePose();
+
+	} else if (dropdown_option_type == 'posenet_detection_model') {
+		await posenet_detection_model();
 		
 	} else {
 		document.getElementById("notification") = "No dropdown type selected";
@@ -187,7 +191,26 @@ async function posenet_model_multiplePose() {
 	
 // -------------------------------------------------
 
+async function posenet_detection_model() {
+	
+	// Example (a person running) : https://storage.googleapis.com/image-segmentation-mask-samples/mid_size2_image_segmentation.png
+	
+	// Single url
+	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
+	
+	const imageElement = new Image();  // image is 'HTMLImageElement'
+	imageElement.setAttribute('crossOrigin', "anonymous");
+	imageElement.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
+	imageElement.onload = async () => { 
+		ctx.drawImage(imageElement, 0, 0, canvasElement.width, canvasElement.height); 
+		await posenet_model(imageElement, "multiple");
+	};
+	imageElement.src = document.getElementById("url").value;
 
+}
+	
+// -------------------------------------------------
+	
 
 
 
@@ -290,26 +313,39 @@ async function object_detection_model(imageElement) {
 // -------------------------------------------------
   
 async function posenet_model(imageElement, pose_type) {
-	
-	const net = await posenet.load();
-
-	const scaleFactor = 0.50;
-	const flipHorizontal = false;
-	const outputStride = 16;
 
 	if (pose_type == "single") {
+		
+		const net = await posenet.load();
+
+		const scaleFactor = 0.50;
+		const flipHorizontal = false;
+		const outputStride = 16;
+		
 		// Estimate a single pose
 		const pose = await net.estimateSinglePose(imageElement, scaleFactor, flipHorizontal, outputStride);
 		console.log("pose: ", pose); 
 
-	} else {
+	} if else (pose_type == "multiple") {
+		
+		const net = await posenet.load();
+
+		const scaleFactor = 0.50;
+		const flipHorizontal = false;
+		const outputStride = 16;
 		const maxPoseDetections = 5;
 		const scoreThreshold = 0.5; // minimum confidence of the root part of a pose
 		const nmsRadius = 20; // minimum distance in pixels between the root parts of pose
   
 		// Estimate multiple person poses
 		const pose = await net.estimateMultiplePoses(imageElement, scaleFactor, flipHorizontal, outputStride, maxPoseDetections, scoreThreshold, nmsRadius); 
-		console.log("pose: ", pose); 
+		console.log("pose: ", pose);
+
+	} else {
+
+		const model = poseDetection.SupportedModels.MoveNet;
+		const detector = await poseDetection.createDetector(model);
+		const poses = await detector.estimatePoses(imageElement);
 	}
     
 }
