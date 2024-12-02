@@ -91,6 +91,12 @@ async function run_selection() {
 
 	} else if (dropdown_option_type == 'object_detection_image') {
 		await object_detection_image();
+
+	} else if (dropdown_option_type == 'posenet_model_singlePose') {
+		await posenet_model_singlePose();
+
+	} else if (dropdown_option_type == 'posenet_model_multiplePose') {
+		await posenet_model_multiplePose();
 		
 	} else {
 		document.getElementById("notification") = "No dropdown type selected";
