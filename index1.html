@@ -88,6 +88,9 @@ async function run_selection() {
   var dropdown_option_type = document.getElementById("dropdown_options").value;
 
 	if (dropdown_option_type == 'Image_CORS') {
+
+		[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
+		
 		await Image_CORS();
 
 	} else if (dropdown_option_type == 'mobilenet_image_NoTransferLearning') {
@@ -126,7 +129,8 @@ async function Image_CORS() {
 async function mobilenet_image_NoTransferLearning() {
 
 	// Example (a post-it note): https://storage.googleapis.com/memetics-motivation/success_512x512_0.png
-	
+
+	// Way 0
 	// Single url
 	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
 
@@ -138,6 +142,19 @@ async function mobilenet_image_NoTransferLearning() {
 		await mobilenet_model(imageElement);
 	};
 	imageElement.src = document.getElementById("url").value;
+	// RESULT: problem is that I can not see the image
+
+	// -----------------------
+
+	// Way 1
+	[ctx, canvasElement] = await create_dynamic_canvasElement(width_ORG, height_ORG, 'canvasElement_id', 'canvasElement_className', 0);
+
+	// Print the image on the canvas
+
+	// Take the image from the canvas and give it to the model
+	
+
+	// -----------------------
 	
 }  
 
