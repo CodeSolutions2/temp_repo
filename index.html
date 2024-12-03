@@ -4,8 +4,9 @@
 <body>
 
 <input id="url" type="text" value="" placeholder="url" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
-<button id="run_selection" onclick='run_selection()'>run_selection</button>
-
+	
+<button id="load_csv_JS" onclick="load_csv_JS()">load_csv_JS</button>
+<button id="load_csv_TF" onclick="load_csv_TF()">load_csv_TF</button>
 
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
@@ -17,37 +18,61 @@
 
 // -----------------------------------------------
 
-async function run_selection() {
+async function load_csv_JS() {
 	
 	const url = document.getElementById("url").value;
 
 	// Use JavaScript to fetch csv_data from Bucket
-	// const out = await call_fetch_method(url);
-	// console.log('out: ', out);
+	const out = await call_fetch_method(url);
+	console.log('out: ', out);
+}
+
+
+// -----------------------------------------------
+
+async function load_csv_TF() {
 	
-	// OR
-	
+	const url = document.getElementById("url").value;
+
 	// Use Tensorflow.js
 	const out = await tf.data.csv(url, {columnConfigs: {ys: {isLabel: true}}});
 	console.log('out: ', out);
-
-	// Change numerical data to descriptive
-
-
-
-	//
-	
 }
 
 // -----------------------------------------------
 
-	// -----------------------------------------------
+// Change numerical data to descriptive
 
+	// Upload descriptive to GCP
+
+	// Fetch descriptive from GCP - tokenize - create frequency_count matrix - build nn or ML - save model to bucket - 
+	
+	// Predict: fetch model from bucket - user input sample - predict
+
+// -----------------------------------------------
+
+// async function parse_text_to_array(ys_cols, headerORnot) {
+
+// 	var arr = text_str.split('\n');
+	
+// 	var xs = [];
+// 	var ys = [];
+// 	for (let i=0; i<arr.length; i++) {
+		
+// 		if (i == 0){
+			// determine header - which column is xs and ys
+	// 		var row_arr = arr.at(i).split(',');
+			// if 
+	// 	}
+	// }
+// }
+
+	
 // -----------------------------------------------
 
 async function call_fetch_method(url) {
 	
-	var CORS_method_list = ["jQuery_csv_GET", "fetch_csv_GET"];
+	const CORS_method_list = ["jQuery_csv_GET", "fetch_csv_GET"];
 	
 	var response = undefined;
 		
