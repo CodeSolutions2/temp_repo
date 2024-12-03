@@ -15,44 +15,108 @@
 
 <script>
 
-async function load() {
+// -----------------------------------------------
 
-const url = document.getElementById("url").value;
-
+async function run_selection() {
+	
+	const url = document.getElementById("url").value;
+	
+	const out = await call_fetch_method(url);
 }
 
 
+// -----------------------------------------------
 
-
-async function call_fetch_method() {
-
-  var CORS_method_list = ["fetch", "jQuery"];
-  
-  var response = undefined;
+async function call_fetch_method(url) {
+	
+	var CORS_method_list = ["fetch_csv_GET", "jQuery_csv_GET"];
+	
+	var response = undefined;
 		
-		for (var i=0; i<CORS_method_list.length; i++) {
-			fetch_method = CORS_method_list.at(i);
-			try {
-				response = await fetch_parameters_for_media_type(url, desired_media_type, fetch_method, automatic_OR_manual);
-				console.log('response: ', response);
-			} catch (err) {
-				document.getElementById('error').innerHTML = 'Check if url is typed in correctly. ' + err;
+	for (var i=0; i<CORS_method_list.length; i++) {
+		try {
+			if (i == 0) {
+				response = await fetch_csv_GET(url);
+			} else {
+				response = await jQuery_csv_GET(url);
 			}
-			if (response != undefined) {
-				break;
-			}
+			console.log('response: ', response);
+		} catch (error) {
+			cnsole.log("error: ", error);
 		}
+		if (response != undefined) {
+			break;
+		}
+	}
+	return response;
+}
+
+// -----------------------------------------------
+
+async function fetch_csv_GET(url) {
+	
+	var headers = {
+		"Content-Type": "application/json",
+		"Referer": url,
+		"Origin": "https://codesolutions2.github.io",
+		"Connection": "keep-alive",
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+		"Access-Control-Allow-Origin": "*",
+	};
+	
+	var options = { 
+		method : "GET",
+		mode: 'cors',
+		headers: new Headers(headers),
+		cache: "no-cache",
+		crossorigin: 'anonymous',
+		redirect: "follow"
+	};
+	
+	return await fetch(url, options)
+		.then(res => res.text())
+		.then(str_data => { console.log('str_data: ', str_data); return str_data; })
+		.catch(error => console.error("error: ", error));
 
 }
 
-async function fetch_CORS(url, method, data, headers, return_type) {
+// -----------------------------------------------
 
+async function jQuery_csv_GET(url) {
+	
+	var headers = {
+		"Content-Type": "application/json",
+		"Referer": url,
+		"Origin": "https://codesolutions2.github.io",
+		"Connection": "keep-alive",
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+		"Access-Control-Allow-Origin": "*",
+	};
+	
+	var settings = {
+		// url: url,
+		type : "GET",
+		async: true,
+		crossDomain: true,
+		beforeSend: function(xhr) {xhr.withCredentials = true;},
+		// headers: new Headers(headers),
+		xhrFields: {responseType: 'text'},
+		dataType: 'text',
+		success: function(response) { console.log('Success'); },
+		error: function(xhr, status, error) { console.log('Error:', error); }
+	};
+	
+	return $.ajax(url, [,settings]).done(function(response) { return response; });
 
+}
 
-return await fetch(url)
-				.then(res => res.text())
-				.then(str_data => { console.log('str_data: ', str_data); return str_data; })
-				.catch(error => console.error("error: ", error));
+// -----------------------------------------------
+
+// -----------------------------------------------
+
+// -----------------------------------------------
+
+// -----------------------------------------------
 
 </script>
 </body>
