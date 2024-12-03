@@ -119,7 +119,7 @@ async function fetch_csv_GET(url) {
 	return await fetch(url, options)
 		.then(res => res.text())
 		.then(str_data => { return str_data; })
-		.catch(error => console.error("error: ", error); );
+		.catch(error => { console.error("error: ", error); });
 
 }
 
