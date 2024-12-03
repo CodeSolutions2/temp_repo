@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+<input id="url" type="text" value="" placeholder="url" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+<button id="run_selection" onclick='run_selection()'>run_selection</button>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script>
+
+async function load() {
+
+const url = document.getElementById("url").value;
+
+}
+
+
+
+
+async function call_fetch_method() {
+
+  var CORS_method_list = ["fetch", "jQuery"];
+  
+  var response = undefined;
+		
+		for (var i=0; i<CORS_method_list.length; i++) {
+			fetch_method = CORS_method_list.at(i);
+			try {
+				response = await fetch_parameters_for_media_type(url, desired_media_type, fetch_method, automatic_OR_manual);
+				console.log('response: ', response);
+			} catch (err) {
+				document.getElementById('error').innerHTML = 'Check if url is typed in correctly. ' + err;
+			}
+			if (response != undefined) {
+				break;
+			}
+		}
+
+}
+
+async function fetch_CORS(url, method, data, headers, return_type) {
+
+
+
+return await fetch(url)
+				.then(res => res.text())
+				.then(str_data => { console.log('str_data: ', str_data); return str_data; })
+				.catch(error => console.error("error: ", error));
+
+</script>
+</body>
+</html>
