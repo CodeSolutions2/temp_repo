@@ -20,16 +20,34 @@
 async function run_selection() {
 	
 	const url = document.getElementById("url").value;
+
+	// Use JavaScript to fetch csv_data from Bucket
+	// const out = await call_fetch_method(url);
+	// console.log('out: ', out);
 	
-	const out = await call_fetch_method(url);
+	// OR
+	
+	// Use Tensorflow.js
+	const out = await tf.data.csv(url, {columnConfigs: {ys: {isLabel: true}}});
+	console.log('out: ', out);
+
+	// Change numerical data to descriptive
+
+
+
+	//
+	
 }
 
+// -----------------------------------------------
+
+	// -----------------------------------------------
 
 // -----------------------------------------------
 
 async function call_fetch_method(url) {
 	
-	var CORS_method_list = ["fetch_csv_GET", "jQuery_csv_GET"];
+	var CORS_method_list = ["jQuery_csv_GET", "fetch_csv_GET"];
 	
 	var response = undefined;
 		
@@ -40,7 +58,7 @@ async function call_fetch_method(url) {
 			} else {
 				response = await jQuery_csv_GET(url);
 			}
-			console.log('response: ', response);
+			
 		} catch (error) {
 			cnsole.log("error: ", error);
 		}
@@ -75,8 +93,8 @@ async function fetch_csv_GET(url) {
 	
 	return await fetch(url, options)
 		.then(res => res.text())
-		.then(str_data => { console.log('str_data: ', str_data); return str_data; })
-		.catch(error => console.error("error: ", error));
+		.then(str_data => { return str_data; })
+		.catch(error => console.error("error: ", error); );
 
 }
 
@@ -103,7 +121,7 @@ async function jQuery_csv_GET(url) {
 		xhrFields: {responseType: 'text'},
 		dataType: 'text',
 		success: function(response) { console.log('Success'); },
-		error: function(xhr, status, error) { console.log('Error:', error); }
+		error: function(xhr, status, error) { console.error("error: ", error); }
 	};
 	
 	return $.ajax(url, [,settings]).done(function(response) { return response; });
