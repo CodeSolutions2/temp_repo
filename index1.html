@@ -86,18 +86,21 @@ async function parse_text_to_array(text_str, ys_selected_ColNum, headerORnot) {
 	if (headerORnot == true) {
 		row_arr = row_arr.slice(1,row_arr.length-1);
 	}
+	console.log('row_arr: ', row_arr);
 	
 	var xs = [];
 	var ys = [];
 	for (let i=0; i<row_arr.length; i++) {
-		var col_arr = row_arr.split(',');
+		var col_arr = row_arr[i].split(',');
+		console.log('col_arr: ', col_arr);
+		
 		var c = 0
 		var xs_cols = [];
 		var ys_cols = [];
 		for (let j=0; j<col_arr.length; j++) {
 			
 			// Convert strings to number if needed
-			var datatype = Number(j) == Number(j) ? Number(j) : String(j);
+			var datatype = Number(col_arr[j]) == Number(col_arr[j]) ? Number(col_arr[j]) : String(col_arr[j]);
 			// console.log('datatype: ', datatype);
 			// console.log('data type [number, string]: ', typeof datatype);
 			
