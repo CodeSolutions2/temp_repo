@@ -38,17 +38,6 @@ async function load_csv_JS() {
 	return await call_fetch_method(url);
 }
 
-
-// -----------------------------------------------
-
-async function load_csv_TF() {
-	
-	const url = document.getElementById("url").value;
-
-	// Use Tensorflow.js
-	return await tf.data.csv(url, {columnConfigs: {ys: {isLabel: true}}});
-}
-
 // -----------------------------------------------
 
 async function train_predict_data() {
@@ -56,8 +45,6 @@ async function train_predict_data() {
 	// Fetch data 
 	const data_str = await load_csv_JS();
 	console.log('data_str: ', data_str);
-	// OR
-	// const data_obj = await load_csv_TF();
 	
 
 	const [xs, ys] = await parse_text_to_array(data_str, [1], true);
@@ -70,31 +57,9 @@ async function train_predict_data() {
 	// console.log('tokenizer_obj: ', tokenizer_obj);
 
 	// Remove unneccessary keys OR stopwords
-	const key_names_str = "<OOV>, -";
+	const key_names_str = '<OOV>, "–"';
 	tokenizer_obj = await module1.delete_key_value(tokenizer_obj, key_names_str);
 	console.log('tokenizer_obj: ', tokenizer_obj);
-	
-	// Create frequency_count matrix (row=xs.length, col=tokenizer_obj.length)
-	// const dims = [xs.length, tokenizer_obj.length];
-	// var xs_mat = await zeros(dims);
-
-	// for (let i=0; i<xs.length; i++) {
-	// 	var sentence = xs.at(i);
-
-		// encode the sentence 
-
-		// put a 1 in the column index of each encoded value
-		
-		
-	// }
-	
-
-
-  // build nn or ML
-
-
-
-  // save model to bucket
   
 }
   
