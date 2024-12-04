@@ -84,7 +84,7 @@ async function parse_text_to_array(text_str, ys_selected_ColNum, headerORnot) {
 	var row_arr = text_str.split('\n');
 
 	if (headerORnot == true) {
-		row_arr = slice(1,row_arr.length-1);
+		row_arr = row_arr.slice(1,row_arr.length-1);
 	}
 	
 	var xs = [];
