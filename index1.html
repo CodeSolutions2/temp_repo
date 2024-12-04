@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+<input id="url" type="text" value="" placeholder="url" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+	
+<button id="train_predict_data" onclick="train_predict_data()">train_predict_data</button>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/dictionary_output_tokenizer@1.0.2/dist/tokenizer.js"></script>
+
+<!-- <script type="module">
+import dictionaryOutputTokenizer from 'https://cdn.jsdelivr.net/npm/dictionary_output_tokenizer@1.0.2/+esm'
+module.dictionaryOutputTokenizer = dictionaryOutputTokenizer;
+</script> -->
+
+<!-- <script type="module">
+import { create_tokenizer } from "./dist/tokenizer.js";
+module.create_tokenizer = create_tokenizer;
+</script> -->
+
+  
+<script>
+
+const module;
+
+// -----------------------------------------------
+
+async function load_csv_JS() {
+	
+	const url = document.getElementById("url").value;
+
+	// Use JavaScript to fetch csv_data from Bucket
+	const out = await call_fetch_method(url);
+	console.log('out: ', out);
+}
+
+
+// -----------------------------------------------
+
+async function load_csv_TF() {
+	
+	const url = document.getElementById("url").value;
+
+	// Use Tensorflow.js
+	const out = await tf.data.csv(url, {columnConfigs: {ys: {isLabel: true}}});
+	console.log('out: ', out);
+}
+
+// -----------------------------------------------
+
+async function train_predict_data() {
+
+  // Fetch data 
+  // const data = await load_csv_JS();
+  // OR
+  const data_obj = await load_csv_TF();
+  console.log('data_obj: ', data_obj);
+
+
+  
+  // Tokenize
+  // [xs, tokenizer_obj] = await module.create_tokenizer(input_text);
+  [xs, tokenizer_obj] = await create_tokenizer('input_text');
+
+  // Create frequency_count matrix
+
+
+
+  // build nn or ML
+
+
+
+  // save model to bucket
+  
+}
+  
+
+
+	
+// -----------------------------------------------
+
+async function call_fetch_method(url) {
+	
+	const CORS_method_list = ["jQuery_csv_GET", "fetch_csv_GET"];
+	
+	var response = undefined;
+		
+	for (var i=0; i<CORS_method_list.length; i++) {
+		try {
+			if (i == 0) {
+				response = await fetch_csv_GET(url);
+			} else {
+				response = await jQuery_csv_GET(url);
+			}
+			
+		} catch (error) {
+			cnsole.log("error: ", error);
+		}
+		if (response != undefined) {
+			break;
+		}
+	}
+	return response;
+}
+
+// -----------------------------------------------
+
+async function fetch_csv_GET(url) {
+	
+	var headers = {
+		"Content-Type": "application/json",
+		"Referer": url,
+		"Origin": "https://codesolutions2.github.io",
+		"Connection": "keep-alive",
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+		"Access-Control-Allow-Origin": "*",
+	};
+	
+	var options = { 
+		method : "GET",
+		mode: 'cors',
+		headers: new Headers(headers),
+		cache: "no-cache",
+		crossorigin: 'anonymous',
+		redirect: "follow"
+	};
+	
+	return await fetch(url, options)
+		.then(res => res.text())
+		.then(str_data => { return str_data; })
+		.catch(error => { console.error("error: ", error); });
+
+}
+
+// -----------------------------------------------
+
+async function jQuery_csv_GET(url) {
+	
+	var headers = {
+		"Content-Type": "application/json",
+		"Referer": url,
+		"Origin": "https://codesolutions2.github.io",
+		"Connection": "keep-alive",
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+		"Access-Control-Allow-Origin": "*",
+	};
+	
+	var settings = {
+		// url: url,
+		type : "GET",
+		async: true,
+		crossDomain: true,
+		beforeSend: function(xhr) {xhr.withCredentials = true;},
+		// headers: new Headers(headers),
+		xhrFields: {responseType: 'text'},
+		dataType: 'text',
+		success: function(response) { console.log('Success'); },
+		error: function(xhr, status, error) { console.error("error: ", error); }
+	};
+	
+	return $.ajax(url, [,settings]).done(function(response) { return response; });
+
+}
+
+// -----------------------------------------------
+
+// -----------------------------------------------
+
+// -----------------------------------------------
+
+// -----------------------------------------------
+
+</script>
+</body>
+</html>
