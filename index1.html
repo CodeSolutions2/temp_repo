@@ -8,26 +8,27 @@
 <button id="train_predict_data" onclick="train_predict_data()">train_predict_data</button>
 
 
+<!-- --------------------------------------------------- -->	
+
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/dictionary_output_tokenizer@1.0.2/dist/tokenizer.js"></script>
-
+<script type="module" crossorigin="*" redirect="follow" mode="cors">
+import { create_tokenizer } from "https://cdn.jsdelivr.net/npm/dictionary_output_tokenizer@1.0.2/dist/tokenizer.js";
+module.create_tokenizer = create_tokenizer;
+</script>
+	
 <!-- <script type="module">
 import dictionaryOutputTokenizer from 'https://cdn.jsdelivr.net/npm/dictionary_output_tokenizer@1.0.2/+esm'
 module.dictionaryOutputTokenizer = dictionaryOutputTokenizer;
 </script> -->
 
-<!-- <script type="module">
-import { create_tokenizer } from "./dist/tokenizer.js";
-module.create_tokenizer = create_tokenizer;
-</script> -->
-
+<!-- --------------------------------------------------- -->	
   
 <script>
 
-const module;
+const module = {};
 
 // -----------------------------------------------
 
@@ -65,8 +66,7 @@ async function train_predict_data() {
 
   
   // Tokenize
-  // [xs, tokenizer_obj] = await module.create_tokenizer(input_text);
-  [xs, tokenizer_obj] = await create_tokenizer('input_text');
+  [xs, tokenizer_obj] = await module.create_tokenizer('input_text');
 
   // Create frequency_count matrix
 
