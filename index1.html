@@ -15,8 +15,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script type="module" crossorigin="*" redirect="follow" mode="cors">
-import { create_tokenizer } from "https://cdn.jsdelivr.net/npm/dictionary_output_tokenizer@1.0.2/dist/tokenizer.js";
+import { create_tokenizer, delete_key_value } from "https://cdn.jsdelivr.net/npm/dictionary_output_tokenizer@1.0.2/dist/tokenizer.js";
 module.create_tokenizer = create_tokenizer;
+module1.delete_key_value = delete_key_value;
 </script>
 	
 
@@ -25,7 +26,8 @@ module.create_tokenizer = create_tokenizer;
 <script>
 
 const module = {};
-
+const module1 = {};
+	
 // -----------------------------------------------
 
 async function load_csv_JS() {
@@ -65,9 +67,26 @@ async function train_predict_data() {
 	
 	// Tokenize
 	const [xs_encoded, tokenizer_obj] = await module.create_tokenizer(xs.join(" ")+" "+ys_unique.join(" "));
+	// console.log('tokenizer_obj: ', tokenizer_obj);
+
+	// Remove unneccessary keys OR stopwords
+	key_names_str = "<OOV>, -"
+	tokenizer_obj = await module1.delete_key_value(tokenizer_obj, key_names_str);
 	console.log('tokenizer_obj: ', tokenizer_obj);
-  
-	// Create frequency_count matrix
+	
+	// Create frequency_count matrix (row=xs.length, col=tokenizer_obj.length)
+	// const dims = [xs.length, tokenizer_obj.length];
+	// var xs_mat = await zeros(dims);
+
+	// for (let i=0; i<xs.length; i++) {
+	// 	var sentence = xs.at(i);
+
+		// encode the sentence 
+
+		// put a 1 in the column index of each encoded value
+		
+		
+	// }
 	
 
 
@@ -207,7 +226,48 @@ async function jQuery_csv_GET(url) {
 }
 
 // -----------------------------------------------
+	
+async function zeros(dims) {
 
+	// dims: [desired_0th_dim, desired_1st_dim, desired_2nd_dim]
+
+	var out = [];
+	
+	if (dims.length == 1) {
+		var desired_0th_dim = dims.at(0);
+		
+		out = Array.from({length: desired_0th_dim}, (val, ind) => { return 0; }); 
+
+	} else if (dims.length == 2) {
+		var desired_0th_dim = dims.at(0);
+		var desired_1st_dim = dims.at(1);
+		
+		for (var i=0; i<desired_0th_dim; i++) {
+			var arr = Array.from({length: desired_1st_dim}, (val, ind) => { return 0; }); 
+			out.push(arr);
+		}
+
+	} else if (dims.length == 3) {
+		var desired_0th_dim = dims.at(0);
+		var desired_1st_dim = dims.at(1);
+		var desired_2nd_dim = dims.at(2);
+		
+		for (var i=0; i<desired_0th_dim; i++) {
+			temp = [];
+			for (var j=0; j<desired_1st_dim; j++) {
+				var arr = Array.from({length: desired_2nd_dim}, (val, ind) => { return 0; }); 
+				temp.push(arr);
+			}
+			out.push(temp);
+		}
+		
+	} else {
+		console.log('Enter an array of length 1, 2, or 3. (ie: [desired_0th_dim, desired_1st_dim, desired_2nd_dim])')
+	}
+	
+	return out;
+}
+	
 // -----------------------------------------------
 
 // -----------------------------------------------
