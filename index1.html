@@ -60,10 +60,11 @@ async function train_predict_data() {
 
 	const [xs, ys] = await parse_text_to_array(data_str, [1], true);
 	console.log('xs: ', xs);
-	console.log('ys: ', ys);
+	const ys_unique = [... new Set(ys)];
+	console.log('ys_unique: ', ys_unique);
 	
 	// Tokenize
-	const [xs_encoded, tokenizer_obj] = await module.create_tokenizer(xs.join("")+" "+ys.join(""));
+	const [xs_encoded, tokenizer_obj] = await module.create_tokenizer(xs.join(" ")+" "+ys_unique.join(" "));
 	console.log('tokenizer_obj: ', tokenizer_obj);
   
 	// Create frequency_count matrix
