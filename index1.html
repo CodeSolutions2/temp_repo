@@ -58,7 +58,7 @@ async function train_predict_data() {
 	// const data_obj = await load_csv_TF();
 	
 
-	const [xs, ys] = await parse_text_to_array(data_str, ys_selected_ColNum, headerORnot);
+	const [xs, ys] = await parse_text_to_array(data_str, [1], true);
 	console.log('xs: ', xs);
 	console.log('ys: ', ys);
 	
