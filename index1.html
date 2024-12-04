@@ -19,10 +19,6 @@ import { create_tokenizer } from "https://cdn.jsdelivr.net/npm/dictionary_output
 module.create_tokenizer = create_tokenizer;
 </script>
 	
-<!-- <script type="module">
-import dictionaryOutputTokenizer from 'https://cdn.jsdelivr.net/npm/dictionary_output_tokenizer@1.0.2/+esm'
-module.dictionaryOutputTokenizer = dictionaryOutputTokenizer;
-</script> -->
 
 <!-- --------------------------------------------------- -->	
   
@@ -37,8 +33,7 @@ async function load_csv_JS() {
 	const url = document.getElementById("url").value;
 
 	// Use JavaScript to fetch csv_data from Bucket
-	const out = await call_fetch_method(url);
-	console.log('out: ', out);
+	return await call_fetch_method(url);
 }
 
 
@@ -49,27 +44,30 @@ async function load_csv_TF() {
 	const url = document.getElementById("url").value;
 
 	// Use Tensorflow.js
-	const out = await tf.data.csv(url, {columnConfigs: {ys: {isLabel: true}}});
-	console.log('out: ', out);
+	return await tf.data.csv(url, {columnConfigs: {ys: {isLabel: true}}});
 }
 
 // -----------------------------------------------
 
 async function train_predict_data() {
+	
+	// Fetch data 
+	const data_str = await load_csv_JS();
+	console.log('data_str: ', data_str);
+	// OR
+	// const data_obj = await load_csv_TF();
+	
 
-  // Fetch data 
-  // const data = await load_csv_JS();
-  // OR
-  const data_obj = await load_csv_TF();
-  console.log('data_obj: ', data_obj);
-
-
+	const [xs, ys] = await parse_text_to_array(data_str, ys_selected_ColNum, headerORnot);
+	console.log('xs: ', xs);
+	console.log('ys: ', ys);
+	
+	// Tokenize
+	const [xs_encoded, tokenizer_obj] = await module.create_tokenizer(xs.join("")+" "+ys.join(""));
+	console.log('tokenizer_obj: ', tokenizer_obj);
   
-  // Tokenize
-  [xs, tokenizer_obj] = await module.create_tokenizer('input_text');
-
-  // Create frequency_count matrix
-
+	// Create frequency_count matrix
+	
 
 
   // build nn or ML
@@ -80,6 +78,42 @@ async function train_predict_data() {
   
 }
   
+
+async function parse_text_to_array(text_str, ys_selected_ColNum, headerORnot) {
+	
+	var row_arr = text_str.split('\n');
+
+	if (headerORnot == true) {
+		row_arr = slice(1,row_arr.length-1);
+	}
+	
+	var xs = [];
+	var ys = [];
+	for (let i=0; i<row_arr.length; i++) {
+		var col_arr = row_arr.split(',');
+		var c = 0
+		var xs_cols = [];
+		var ys_cols = [];
+		for (let j=0; j<col_arr.length; j++) {
+			
+			// Convert strings to number if needed
+			var datatype = Number(j) == Number(j) ? Number(j) : String(j);
+			// console.log('datatype: ', datatype);
+			// console.log('data type [number, string]: ', typeof datatype);
+			
+			if (j == ys_selected_ColNum[c]) {
+				ys_cols.push(datatype);
+				c = c + 1;
+			} else {
+				xs_cols.push(datatype);
+			}
+		}
+		// pack xs and ys
+		xs.push(xs_cols);
+		ys.push(ys_cols);
+	}
+	return [xs, ys];
+}
 
 
 	
