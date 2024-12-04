@@ -66,11 +66,11 @@ async function train_predict_data() {
 	console.log('ys_unique: ', ys_unique);
 	
 	// Tokenize
-	const [xs_encoded, tokenizer_obj] = await module.create_tokenizer(xs.join(" ")+" "+ys_unique.join(" "));
+	var [xs_encoded, tokenizer_obj] = await module.create_tokenizer(xs.join(" ")+" "+ys_unique.join(" "));
 	// console.log('tokenizer_obj: ', tokenizer_obj);
 
 	// Remove unneccessary keys OR stopwords
-	key_names_str = "<OOV>, -"
+	const key_names_str = "<OOV>, -";
 	tokenizer_obj = await module1.delete_key_value(tokenizer_obj, key_names_str);
 	console.log('tokenizer_obj: ', tokenizer_obj);
 	
