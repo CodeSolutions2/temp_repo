@@ -51,9 +51,9 @@ async function train_predict_data() {
 	// --------------------------------
 	
 	// If [0]
-	// const ys_selected_ColNum = [1];
+	const ys_selected_ColNum = [1];
 	// If [1]
-	const ys_selected_ColNum = [0];
+	// const ys_selected_ColNum = [0];
 	
 	// --------------------------------
 	
@@ -65,7 +65,9 @@ async function train_predict_data() {
 	
 	// Remove \t from ys
 	const regex = /\t/g;
-	ys = ys.map((val, ind) => { return val.at(0).replace(regex, ""); });
+	ys = ys.map((val, ind) => { 
+		
+		return val.at(0).replace(regex, ""); });
 	const ys_unique = [... new Set(ys)];
 	console.log('ys_unique: ', ys_unique);
 
