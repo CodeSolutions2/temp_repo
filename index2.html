@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+<input id="url" type="text" value="" placeholder="url" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+	
+<button id="train_predict_data" onclick="train_predict_data()">train_predict_data</button>
+
+
+<!-- --------------------------------------------------- -->	
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script type="module" crossorigin="*" redirect="follow" mode="cors">
+import { create_tokenizer, delete_key_value, encode } from "https://cdn.jsdelivr.net/npm/dictionary_output_tokenizer@1.0.2/dist/tokenizer.js";
+module.create_tokenizer = create_tokenizer;
+module.delete_key_value = delete_key_value;
+module.encode = encode;
+</script>
+	
+
+<!-- --------------------------------------------------- -->	
+  
+<script>
+
+const module = {};
+const module1 = {};
+const module2 = {};
+	
+// -----------------------------------------------
+
+async function load_csv_JS() {
+	
+	const url = document.getElementById("url").value;
+
+	// Use JavaScript to fetch csv_data from Bucket
+	return await call_fetch_method(url);
+}
+
+// -----------------------------------------------
+
+async function train_predict_data() {
+	
+	// Fetch data 
+	const data_str = await load_csv_JS();
+	console.log('data_str: ', data_str);
+	
+
+	var [xs, ys] = await parse_text_to_array(data_str, [1], true);
+	console.log('xs: ', xs);
+
+  // Remove \t from ys
+  const regex = /\t/g;
+  ys = ys.map((val, ind) => { return val.replace(regex, ""); });
+	const ys_unique = [... new Set(ys)];
+	console.log('ys_unique: ', ys_unique);
+
+  
+	// Tokenize
+	var [xs_encoded, tokenizer_obj] = await module.create_tokenizer(xs.join(" ")+" "+ys_unique.join(" "));
+	// console.log('tokenizer_obj: ', tokenizer_obj);
+
+  
+	// Remove unneccessary keys OR stopwords
+	const key_names_str = '<OOV>, "–"';
+	tokenizer_obj = await module.delete_key_value(tokenizer_obj, key_names_str);
+	console.log('tokenizer_obj: ', tokenizer_obj);
+
+  
+  // Create frequency_count matrix (row=xs.length, col=tokenizer_obj.length)
+	const dims = [xs.length, tokenizer_obj.length];
+	var xs_mat = await zeros(dims);
+
+  var xs_mat_shape = await shape(xs_mat);
+  console.log("xs_mat_shape: ", xs_mat_shape);
+
+	for (let i=0; i<xs.length; i++) {
+    var sentence = xs.at(i);
+
+		// encode the sentence 
+    var sentence_encoded = await module.encode(sentence, tokenizer_obj);
+		console.log("sentence_encoded: ", sentence_encoded);
+
+		// add a 1 in the respective row and column of xs_mat for each token
+    for (let col=0; col<sentence_encoded.length; col++) {
+      xs_mat[i][sentence_encoded.at(col)] = xs_mat[i][sentence_encoded.at(col)] + 1;
+    }
+  }
+	
+
+
+  // build nn or ML
+
+  const inputShape = xs_mat_shape.at(1); // number of features, also called num of columns
+  
+
+  // Input layer
+  const input = tf.input({inputShape: inputShape});  // batchShape: [batch_size, XX, XX]
+	console.log("input: ", input.name);
+			
+	console.log("Input: ", JSON.stringify(input.shape));
+
+
+  // save model to bucket
+  
+}
+
+
+
+
+
+
+
+
+// -----------------------------------------------
+// SUBFUNCTIONS
+// -----------------------------------------------
+async function parse_text_to_array(text_str, ys_selected_ColNum, headerORnot) {
+	
+	var row_arr = text_str.split('\n');
+
+	if (headerORnot == true) {
+		row_arr = row_arr.slice(1,row_arr.length-1);
+	}
+	console.log('row_arr: ', row_arr);
+	
+	var xs = [];
+	var ys = [];
+	for (let i=0; i<row_arr.length; i++) {
+		var col_arr = row_arr[i].split(',');
+		console.log('col_arr: ', col_arr);
+		
+		var c = 0
+		var xs_cols = [];
+		var ys_cols = [];
+		for (let j=0; j<col_arr.length; j++) {
+			
+			// Convert strings to number if needed
+			var datatype = Number(col_arr[j]) == Number(col_arr[j]) ? Number(col_arr[j]) : String(col_arr[j]);
+			// console.log('datatype: ', datatype);
+			// console.log('data type [number, string]: ', typeof datatype);
+			
+			if (j == ys_selected_ColNum[c]) {
+				ys_cols.push(datatype);
+				c = c + 1;
+			} else {
+				xs_cols.push(datatype);
+			}
+		}
+		// pack xs and ys
+		xs.push(xs_cols);
+		ys.push(ys_cols);
+	}
+	return [xs, ys];
+}
+
+// -----------------------------------------------
+
+async function call_fetch_method(url) {
+	
+	const CORS_method_list = ["jQuery_csv_GET", "fetch_csv_GET"];
+	
+	var response = undefined;
+		
+	for (var i=0; i<CORS_method_list.length; i++) {
+		try {
+			if (i == 0) {
+				response = await fetch_csv_GET(url);
+			} else {
+				response = await jQuery_csv_GET(url);
+			}
+			
+		} catch (error) {
+			cnsole.log("error: ", error);
+		}
+		if (response != undefined) {
+			break;
+		}
+	}
+	return response;
+}
+
+// -----------------------------------------------
+
+async function fetch_csv_GET(url) {
+	
+	var headers = {
+		"Content-Type": "application/json",
+		"Referer": url,
+		"Origin": "https://codesolutions2.github.io",
+		"Connection": "keep-alive",
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+		"Access-Control-Allow-Origin": "*",
+	};
+	
+	var options = { 
+		method : "GET",
+		mode: 'cors',
+		headers: new Headers(headers),
+		cache: "no-cache",
+		crossorigin: 'anonymous',
+		redirect: "follow"
+	};
+	
+	return await fetch(url, options)
+		.then(res => res.text())
+		.then(str_data => { return str_data; })
+		.catch(error => { console.error("error: ", error); });
+
+}
+
+// -----------------------------------------------
+
+async function jQuery_csv_GET(url) {
+	
+	var headers = {
+		"Content-Type": "application/json",
+		"Referer": url,
+		"Origin": "https://codesolutions2.github.io",
+		"Connection": "keep-alive",
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+		"Access-Control-Allow-Origin": "*",
+	};
+	
+	var settings = {
+		// url: url,
+		type : "GET",
+		async: true,
+		crossDomain: true,
+		beforeSend: function(xhr) {xhr.withCredentials = true;},
+		// headers: new Headers(headers),
+		xhrFields: {responseType: 'text'},
+		dataType: 'text',
+		success: function(response) { console.log('Success'); },
+		error: function(xhr, status, error) { console.error("error: ", error); }
+	};
+	
+	return $.ajax(url, [,settings]).done(function(response) { return response; });
+
+}
+
+// -----------------------------------------------
+	
+async function zeros(dims) {
+
+	// dims: [desired_0th_dim, desired_1st_dim, desired_2nd_dim]
+
+	var out = [];
+	
+	if (dims.length == 1) {
+		var desired_0th_dim = dims.at(0);
+		
+		out = Array.from({length: desired_0th_dim}, (val, ind) => { return 0; }); 
+
+	} else if (dims.length == 2) {
+		var desired_0th_dim = dims.at(0);
+		var desired_1st_dim = dims.at(1);
+		
+		for (var i=0; i<desired_0th_dim; i++) {
+			var arr = Array.from({length: desired_1st_dim}, (val, ind) => { return 0; }); 
+			out.push(arr);
+		}
+
+	} else if (dims.length == 3) {
+		var desired_0th_dim = dims.at(0);
+		var desired_1st_dim = dims.at(1);
+		var desired_2nd_dim = dims.at(2);
+		
+		for (var i=0; i<desired_0th_dim; i++) {
+			temp = [];
+			for (var j=0; j<desired_1st_dim; j++) {
+				var arr = Array.from({length: desired_2nd_dim}, (val, ind) => { return 0; }); 
+				temp.push(arr);
+			}
+			out.push(temp);
+		}
+		
+	} else {
+		console.log('Enter an array of length 1, 2, or 3. (ie: [desired_0th_dim, desired_1st_dim, desired_2nd_dim])')
+	}
+	
+	return out;
+}
+	
+// -----------------------------------------------
+  
+async function recur_func(arr) {
+	if (arr != undefined) {
+		return [arr[0], arr.length];
+	} else {
+		return arr;
+	}
+}
+
+async function shape(arr) {
+	var out = await recur_func(arr);
+	var shape_out = [out[1]];
+	var c = 0; // typically work with 4D arrays or less
+	
+	while (out != undefined && c < 4) {
+		out = await recur_func(out[0]);
+		
+		if (out != undefined) {
+			shape_out.push(out[1]);
+		}
+			c = c + 1;
+		}
+
+		if (shape_out.length > 1) {
+			shape_out = shape_out.slice(0, shape_out.length-1);
+		}
+
+	return shape_out;
+}
+
+// -----------------------------------------------
+
+// -----------------------------------------------
+
+</script>
+</body>
+</html>
