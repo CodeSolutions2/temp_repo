@@ -51,10 +51,14 @@ async function train_predict_data() {
 
 	var [xs, ys] = await parse_text_to_array(data_str, [1], true);
 	console.log('xs: ', xs);
+	console.log('ys: ', ys);
 
   // Remove \t from ys
   const regex = /\t/g;
-  ys = ys.map((val, ind) => { return val.replace(regex, ""); });
+  ys = ys.map((val, ind) => { 
+	  console.log('val: ', val);
+	  return val.replace(regex, ""); 
+  });
 	const ys_unique = [... new Set(ys)];
 	console.log('ys_unique: ', ys_unique);
 
