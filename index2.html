@@ -63,11 +63,6 @@ async function train_predict_data() {
 
 	// --------------------------------
 	
-	// Remove \t from ys
-	const regex = /\t/g;
-	ys = ys.map((val, ind) => { 
-		
-		return val.at(0).replace(regex, ""); });
 	const ys_unique = [... new Set(ys)];
 	console.log('ys_unique: ', ys_unique);
 
@@ -216,7 +211,16 @@ async function parse_text_to_array(text_str, ys_selected_ColNum, headerORnot) {
 		var c = 0
 		var xs_cols = [];
 		var ys_cols = [];
+
+		var regex = ['\t']; // Remove additional characters from text
+		
 		for (let j=0; j<col_arr.length; j++) {
+
+			// Remove additional characters from text
+			for (let k=0; k<regex.length; k++) {
+				var regexp = new RegExp(`${regex.at(k)}`, 'g');
+				col_arr[j] = col_arr[j].replace(regexp, "");
+			}
 			
 			// Convert strings to number if needed
 			var datatype = Number(col_arr[j]) == Number(col_arr[j]) ? Number(col_arr[j]) : String(col_arr[j]);
