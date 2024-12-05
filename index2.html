@@ -89,7 +89,7 @@ async function train_predict_data() {
 	
 	// --------------------------------
 	
-	var ys_onehot = tf.oneHot(tf.tensor1d(ys, 'int32'), ys_unique.length);
+	var ys_onehot = await tf.oneHot(tf.tensor1d(ys, 'int32'), ys_unique.length);
 	console.log('ys_onehot: ', ys_onehot);
 
 	// --------------------------------
@@ -101,30 +101,39 @@ async function train_predict_data() {
 	// --------------------------------
   
 	// Remove unneccessary keys OR stopwords
-	const key_names_str = '<OOV>, "–"';
+	const key_names_str = '<OOV>, "–", ""';
 	tokenizer_obj = await module.delete_key_value(tokenizer_obj, key_names_str);
 	console.log('tokenizer_obj: ', tokenizer_obj);
 
 	// --------------------------------
 	
 	// Create frequency_count matrix (row=xs.length, col=tokenizer_obj.length)
-	const dims = [xs.length, tokenizer_obj.length];
+	const dims = [xs.length, Object.keys(tokenizer_obj).length];
+	console.log('dims: ', dims);
+	
 	var xs_mat = await zeros(dims);
+	console.log('xs_mat: ', xs_mat);
+	
 	var xs_mat_shape = await shape(xs_mat);
 	console.log("xs_mat_shape: ", xs_mat_shape);
 
 	// --------------------------------
 
 	for (let i=0; i<xs.length; i++) {
-		var sentence = xs.at(i);
+		var sentence = await xs.at(i);
+		console.log("sentence: ", sentence);
 
 		// Encode the sentence 
 		var sentence_encoded = await module.encode(sentence, tokenizer_obj);
 		console.log("sentence_encoded: ", sentence_encoded);
 
+		// Remove values that are undefined
+		sentence_encoded = await sentence_encoded.filter((x) => x != undefined);
+		console.log("sentence_encoded filter: ", sentence_encoded);
+
 		// add a 1 in the respective row and column of xs_mat for each token
-		for (let col=0; col<sentence_encoded.length; col++) {
-			xs_mat[i][sentence_encoded.at(col)] = xs_mat[i][sentence_encoded.at(col)] + 1;
+		for (let j=0; j<sentence_encoded.length; j++) {
+			xs_mat[i][sentence_encoded.at(j)] = xs_mat[i][sentence_encoded.at(j)] + 1;
 		}
 	}
 	console.log("xs_mat: ", xs_mat);
@@ -204,7 +213,7 @@ async function parse_text_to_array(text_str, ys_selected_ColNum, headerORnot) {
 	var ys = [];
 	for (let i=0; i<row_arr.length; i++) {
 		var col_arr = row_arr[i].split(',');
-		console.log('col_arr: ', col_arr);
+		// console.log('col_arr: ', col_arr);
 		
 		var c = 0
 		var xs_cols = [];
