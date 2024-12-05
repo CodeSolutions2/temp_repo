@@ -62,29 +62,14 @@ async function train_predict_data() {
 	console.log('ys: ', ys);
 
 	// --------------------------------
-	
-	const ys_unique = [... new Set(ys)];
-	console.log('ys_unique: ', ys_unique);
 
-	// --------------------------------
+	const ys_colArr = await convert_rowArr_to_columnArr(ys);
+	console.log('ys_colArr: ', ys_colArr);
 	
-	for (let i=0; i<ys_unique.length; i++) {
-		var regexp = new RegExp(`${ys_unique.at(i)}`, 'g');
-		ys.map((val, ind) => {
-			if (val.match(regexp) == true) {
-				return val.replace(regexp, i);
-			} else {
-				return val;
-			}
-		});
-	}
-	console.log('ys: ', ys);
-	
-	// --------------------------------
-	
-	var ys_onehot = await tf.oneHot(tf.tensor1d(ys, 'int32'), ys_unique.length);
-	console.log('ys_onehot: ', ys_onehot);
+	var ys_NumericalArr = await convert_ysString_to_ysNumerical(ys_colArr);
+	console.log('ys_NumericalArr: ', ys_NumericalArr);
 
+	
 	// --------------------------------
   
 	// Tokenize
@@ -130,57 +115,9 @@ async function train_predict_data() {
 		}
 	}
 	console.log("xs_mat: ", xs_mat);
-
-	// --------------------------------
-	// Build nn or ML
-	// --------------------------------
- 	// Input layer
-	const inputShape = xs_mat_shape.at(1); // number of features, also called num of columns
-  	const input = tf.input({shape: shape});  // batchShape: [batch_size, XX, XX]
-	console.log("input: ", input.name);
-			
-	console.log("Input: ", JSON.stringify(input.shape));
-
-	// Denselayer
-	const denseLayer0 = tf.layers.dense({units: 36, activation: "relu", kernelRegularizer: tf.regularizers.l2()});
-	const input_dense0 = denseLayer0.apply(input);
-
-	// Denselayer1
-	const denseLayer1 = tf.layers.dense({units: 24, activation: "relu", kernelRegularizer: tf.regularizers.l2()});
-	const input_dense0_dense1 = denseLayer1.apply(input_dense0);
-
-	// Denselayer2
-	const denseLayer2 = tf.layers.dense({units: 12, activation: "relu", kernelRegularizer: tf.regularizers.l2()});
-	const input_dense0_dense1_dense2 = denseLayer2.apply(input_dense0_dense1);
-
-	// Denselayer3
-	const denseLayer3 = tf.layers.dense({units: 6, activation: "relu", kernelRegularizer: tf.regularizers.l2()});
-	const input_dense0_dense1_dense2_dense3 = denseLayer3.apply(input_dense0_dense1_dense2);
-
-	// Denselayer4
-	const denseLayer4 = tf.layers.dense({units: ys_unique.length, activation: "softmax", kernelRegularizer: tf.regularizers.l2(), kernelInitializer: tf.initializers.heUniform()});
-	const output = denseLayer4.apply(input_dense0_dense1_dense2_dense3);
-
-	const model = tf.model({inputs: input, outputs: output});
-
-	model.summary();
 	
-	model.compile({loss: "categoricalCrossentropy", optimizer: tf.train.adam(0.001), metrics: ['accuracy']});
-	
-	const history = await model.fit(xs_mat, ys_onehot, {
-		epochs: 10,
-		// validationData: [xsVal, ysVal],
-		callbacks: tf.callbacks.earlyStopping({monitor: 'val_acc'})
-	});
-
-	console.log(history.history.val_acc);
-
 	// --------------------------------
-	
-	// save model
-	// await model.save("")
 
-	// --------------------------------
 }
 
 // -----------------------------------------------
@@ -236,7 +173,7 @@ async function parse_text_to_array(text_str, ys_selected_ColNum, headerORnot) {
 		}
 		// pack xs and ys
 		xs.push(xs_cols);
-		ys.push(ys_cols);
+		ys.push(ys_cols.replace(/\s+/g, ''));
 	}
 	return [xs, ys];
 }
@@ -402,6 +339,31 @@ async function shape(arr) {
 
 // -----------------------------------------------
 
+async function convert_rowArr_to_columnArr(rowArr) {
+	return rowArr.map((val, ind) => { return val.at(0); });
+}
+	
+// -----------------------------------------------
+
+async function convert_ysString_to_ysNumerical(ys_colArr) {
+	
+	const ys_unique = [... new Set(ys_colArr)];
+	console.log('ys_unique: ', ys_unique);
+	
+	for (let i=0; i<ys_unique.length; i++) {
+		var regexp = new RegExp(`${ys_unique.at(i)}`, 'g');
+		ys_colArr = ys_colArr.map((val, ind) => {
+			if (val.match(regexp) == true) {
+				return val.replace(regexp, i);
+			} else {
+				return val;
+			}
+		});
+	}
+	
+	return ys_colArr;
+}
+	
 // -----------------------------------------------
 
 </script>
