@@ -85,7 +85,7 @@ async function train_predict_data() {
 	// --------------------------------
   
 	// Remove unneccessary keys OR stopwords
-	const key_names_str = '<OOV>, "–", , do?, don’t, in, infected?, is, its, so, up';
+	const key_names_str = '<OOV>, "–", , do?, don’t, in, is, its, so, up';
 	tokenizer_obj = await module.delete_key_value(tokenizer_obj, key_names_str);
 	console.log('tokenizer_obj: ', tokenizer_obj);
 
@@ -227,6 +227,9 @@ async function parse_text_to_array(text_str, ys_selected_ColNum, headerORnot) {
 		}
 		// pack xs and ys
 		xs.push(xs_cols);
+
+		console.log('ys_cols: ', ys_cols);
+		
 		ys.push(ys_cols.replace(/\s+/g, ''));
 	}
 	return [xs, ys];
