@@ -75,10 +75,6 @@ async function train_predict_data() {
 	// OR
 	// var ys_onehot = await tf.oneHot(tf.tensor1d(ys, 'int32'), ys_unique.length);
 	console.log('ys_onehot: ', ys_onehot);
-
-
-	var c = ys_NumericalArr
-	for (let i)
 	
 	// --------------------------------
   
@@ -423,6 +419,23 @@ async function convert_ysString_to_ysNumerical(ys_colArr) {
 }
 	
 // -----------------------------------------------
+
+async function convert_ysNumerical_to_Onehot(ys_NumericalArr) {
+	
+	const num_of_columns = [... new Set(ys_NumericalArr)];
+	console.log('num_of_columns: ', num_of_columns);
+
+	var ys_onehot = await zeros([ys_NumericalArr.length, num_of_columns]);
+	
+	for (let i=0; i<ys_NumericalArr.length; i++) {
+		ys_onehot[i][ys_NumericalArr.at(i)] = 1;
+	}
+	return ys_onehot;
+}
+
+// -----------------------------------------------
+
+	
 
 </script>
 </body>
