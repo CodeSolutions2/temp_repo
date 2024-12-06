@@ -223,12 +223,12 @@ async function parse_text_to_array(text_str, ys_selected_ColNum, headerORnot) {
 				xs_cols.push(datatype);
 			}
 		}
-		// pack xs and ys
-		xs.push(xs_cols);
 
-		console.log('ys_cols: ', ys_cols);
-	
-		ys.push([ys_cols.at(0).replace(/\s+/g, '')]);
+		// Only keep samples that are correctly labeled
+		if (ys_cols.length == ys_selected_ColNum.length) {
+			xs.push(xs_cols);
+			ys.push([ys_cols.at(0).replace(/\s+/g, '')]);
+		}
 	}
 	return [xs, ys]; // returns row arrays
 }
