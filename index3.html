@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+<input id="url" type="text" value="" placeholder="url" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+	
+<button id="train_predict_data" onclick="train_predict_data()">train_predict_data</button>
+
+
+<!-- --------------------------------------------------- -->	
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script type="module" crossorigin="*" redirect="follow" mode="cors">
+import { create_tokenizer, delete_key_value, encode } from "https://cdn.jsdelivr.net/npm/dictionary_output_tokenizer@1.0.2/dist/tokenizer.js";
+module.create_tokenizer = create_tokenizer;
+module.delete_key_value = delete_key_value;
+module.encode = encode;
+</script>
+	
+
+<!-- --------------------------------------------------- -->	
+  
+<script>
+
+const module = {};
+const module1 = {};
+const module2 = {};
+	
+// -----------------------------------------------
+
+async function load_csv_JS() {
+	
+	const url = document.getElementById("url").value;
+
+	// Use JavaScript to fetch csv_data from Bucket
+	return await call_fetch_method(url);
+}
+
+// -----------------------------------------------
+
+async function train_predict_data() {
+	
+	// Fetch data 
+	const data_str = await load_csv_JS();
+	console.log('data_str: ', data_str);
+
+	// --------------------------------
+	
+	// If [0]
+	const ys_selected_ColNum = [1];
+	// If [1]
+	// const ys_selected_ColNum = [0];
+	
+	// --------------------------------
+	
+	var [xs, ys] = await parse_text_to_array(data_str, ys_selected_ColNum, "no_header");
+	console.log('xs: ', xs);
+	console.log('ys: ', ys);
+
+	// --------------------------------
+
+	const ys_colArr = await convert_rowArr_to_columnArr(ys);
+	console.log('ys_colArr: ', ys_colArr);
+	
+	var ys_NumericalArr = await convert_ysString_to_ysNumerical(ys_colArr);
+	console.log('ys_NumericalArr: ', ys_NumericalArr);
+	
+	// --------------------------------
+
+	var ys_onehot = await convert_ysNumerical_to_Onehot(ys_NumericalArr);
+	// OR
+	// var ys_onehot = await tf.oneHot(tf.tensor1d(ys, 'int32'), ys_unique.length);
+	console.log('ys_onehot: ', ys_onehot);
+
+
+	var c = ys_NumericalArr
+	for (let i)
+	
+	// --------------------------------
+  
+	// Tokenize
+	var [xs_encoded, tokenizer_obj] = await module.create_tokenizer(xs.join(" ")+" "+ys_unique.join(" "));
+	// console.log('tokenizer_obj: ', tokenizer_obj);
+
+	// --------------------------------
+  
+	// Remove unneccessary keys OR stopwords
+	const key_names_str = '<OOV>, "–", , do?, don’t, in, infected?, is, its, so, up';
+	tokenizer_obj = await module.delete_key_value(tokenizer_obj, key_names_str);
+	console.log('tokenizer_obj: ', tokenizer_obj);
+
+	// --------------------------------
+	
+	// Create frequency_count matrix (row=xs.length, col=tokenizer_obj.length)
+	const dims = [xs.length, Object.keys(tokenizer_obj).length];
+	console.log('dims: ', dims);
+	
+	var xs_mat = await zeros(dims);
+	console.log('xs_mat: ', xs_mat);
+	
+	var xs_mat_shape = await shape(xs_mat);
+	console.log("xs_mat_shape: ", xs_mat_shape);
+
+	// --------------------------------
+
+	for (let i=0; i<xs.length; i++) {
+		var sentence = await xs.at(i);
+		console.log("sentence: ", sentence);
+
+		// Encode the sentence 
+		var sentence_encoded = await module.encode(sentence, tokenizer_obj).filter((x) => x != undefined).filter((x) => x != "undefined").filter((x) => x != null);
+		console.log("sentence_encoded: ", sentence_encoded);
+
+		// Remove values that are undefined
+		// sentence_encoded = await sentence_encoded.filter((x) => x != undefined).filter((x) => x != "undefined").filter((x) => x != null);
+		// console.log("sentence_encoded filter: ", sentence_encoded);
+
+		// add a 1 in the respective row and column of xs_mat for each token
+		for (let j=0; j<sentence_encoded.length; j++) {
+			xs_mat[i][sentence_encoded.at(j)] = xs_mat[i][sentence_encoded.at(j)] + 1;
+		}
+	}
+	console.log("xs_mat: ", xs_mat);
+
+	// --------------------------------
+	// Build nn or ML
+	// --------------------------------
+ 	// Input layer
+	const inputShape = xs_mat_shape.at(1); // number of features, also called num of columns
+  	const input = tf.input({shape: shape});  // batchShape: [batch_size, XX, XX]
+	console.log("input: ", input.name);
+			
+	console.log("Input: ", JSON.stringify(input.shape));
+
+	// Denselayer
+	const denseLayer0 = tf.layers.dense({units: 36, activation: "relu", kernelRegularizer: tf.regularizers.l2()});
+	const input_dense0 = denseLayer0.apply(input);
+
+	// Denselayer1
+	const denseLayer1 = tf.layers.dense({units: 24, activation: "relu", kernelRegularizer: tf.regularizers.l2()});
+	const input_dense0_dense1 = denseLayer1.apply(input_dense0);
+
+	// Denselayer2
+	const denseLayer2 = tf.layers.dense({units: 12, activation: "relu", kernelRegularizer: tf.regularizers.l2()});
+	const input_dense0_dense1_dense2 = denseLayer2.apply(input_dense0_dense1);
+
+	// Denselayer3
+	const denseLayer3 = tf.layers.dense({units: 6, activation: "relu", kernelRegularizer: tf.regularizers.l2()});
+	const input_dense0_dense1_dense2_dense3 = denseLayer3.apply(input_dense0_dense1_dense2);
+
+	// Denselayer4
+	const denseLayer4 = tf.layers.dense({units: ys_unique.length, activation: "softmax", kernelRegularizer: tf.regularizers.l2(), kernelInitializer: tf.initializers.heUniform()});
+	const output = denseLayer4.apply(input_dense0_dense1_dense2_dense3);
+
+	const model = tf.model({inputs: input, outputs: output});
+
+	model.summary();
+	
+	model.compile({loss: "categoricalCrossentropy", optimizer: tf.train.adam(0.001), metrics: ['accuracy']});
+	
+	const history = await model.fit(xs_mat, ys_onehot, {
+		epochs: 10,
+		// validationData: [xsVal, ysVal],
+		callbacks: tf.callbacks.earlyStopping({monitor: 'val_acc'})
+	});
+
+	console.log(history.history.val_acc);
+
+	// --------------------------------
+	
+	// save model
+	// await model.save("")
+
+	// --------------------------------
+}
+
+// -----------------------------------------------
+
+
+
+
+
+
+// -----------------------------------------------
+// SUBFUNCTIONS
+// -----------------------------------------------
+async function parse_text_to_array(text_str, ys_selected_ColNum, headerORnot) {
+	
+	var row_arr = text_str.split('\n');
+
+	if (headerORnot == "no_header") {
+		row_arr = row_arr.slice(1,row_arr.length);
+	}
+	console.log('row_arr: ', row_arr);
+	
+	var xs = [];
+	var ys = [];
+	for (let i=0; i<row_arr.length; i++) {
+		var col_arr = row_arr[i].split(',');
+		// console.log('col_arr: ', col_arr);
+		
+		var c = 0
+		var xs_cols = [];
+		var ys_cols = [];
+
+		var regex = ['\t']; // Remove additional characters from text
+		
+		for (let j=0; j<col_arr.length; j++) {
+
+			// Remove additional characters from text
+			for (let k=0; k<regex.length; k++) {
+				var regexp = new RegExp(`${regex.at(k)}`, 'g');
+				col_arr[j] = col_arr[j].replace(regexp, "");
+			}
+			
+			// Convert strings to number if needed
+			var datatype = Number(col_arr[j]) == Number(col_arr[j]) ? Number(col_arr[j]) : String(col_arr[j]);
+			// console.log('datatype: ', datatype);
+			// console.log('data type [number, string]: ', typeof datatype);
+			
+			if (j == ys_selected_ColNum[c]) {
+				ys_cols.push(datatype);
+				c = c + 1;
+			} else {
+				xs_cols.push(datatype);
+			}
+		}
+		// pack xs and ys
+		xs.push(xs_cols);
+		ys.push(ys_cols.replace(/\s+/g, ''));
+	}
+	return [xs, ys];
+}
+
+// -----------------------------------------------
+
+async function call_fetch_method(url) {
+	
+	const CORS_method_list = ["jQuery_csv_GET", "fetch_csv_GET"];
+	
+	var response = undefined;
+		
+	for (var i=0; i<CORS_method_list.length; i++) {
+		try {
+			if (i == 0) {
+				response = await fetch_csv_GET(url);
+			} else {
+				response = await jQuery_csv_GET(url);
+			}
+			
+		} catch (error) {
+			cnsole.log("error: ", error);
+		}
+		if (response != undefined) {
+			break;
+		}
+	}
+	return response;
+}
+
+// -----------------------------------------------
+
+async function fetch_csv_GET(url) {
+	
+	var headers = {
+		"Content-Type": "application/json",
+		"Referer": url,
+		"Origin": "https://codesolutions2.github.io",
+		"Connection": "keep-alive",
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+		"Access-Control-Allow-Origin": "*",
+	};
+	
+	var options = { 
+		method : "GET",
+		mode: 'cors',
+		headers: new Headers(headers),
+		cache: "no-cache",
+		crossorigin: 'anonymous',
+		redirect: "follow"
+	};
+	
+	return await fetch(url, options)
+		.then(res => res.text())
+		.then(str_data => { return str_data; })
+		.catch(error => { console.error("error: ", error); });
+
+}
+
+// -----------------------------------------------
+
+async function jQuery_csv_GET(url) {
+	
+	var headers = {
+		"Content-Type": "application/json",
+		"Referer": url,
+		"Origin": "https://codesolutions2.github.io",
+		"Connection": "keep-alive",
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+		"Access-Control-Allow-Origin": "*",
+	};
+	
+	var settings = {
+		// url: url,
+		type : "GET",
+		async: true,
+		crossDomain: true,
+		beforeSend: function(xhr) {xhr.withCredentials = true;},
+		// headers: new Headers(headers),
+		xhrFields: {responseType: 'text'},
+		dataType: 'text',
+		success: function(response) { console.log('Success'); },
+		error: function(xhr, status, error) { console.error("error: ", error); }
+	};
+	
+	return $.ajax(url, [,settings]).done(function(response) { return response; });
+
+}
+
+// -----------------------------------------------
+	
+async function zeros(dims) {
+
+	// dims: [desired_0th_dim, desired_1st_dim, desired_2nd_dim]
+
+	var out = [];
+	
+	if (dims.length == 1) {
+		var desired_0th_dim = dims.at(0);
+		
+		out = Array.from({length: desired_0th_dim}, (val, ind) => { return 0; }); 
+
+	} else if (dims.length == 2) {
+		var desired_0th_dim = dims.at(0);
+		var desired_1st_dim = dims.at(1);
+		
+		for (var i=0; i<desired_0th_dim; i++) {
+			var arr = Array.from({length: desired_1st_dim}, (val, ind) => { return 0; }); 
+			out.push(arr);
+		}
+
+	} else if (dims.length == 3) {
+		var desired_0th_dim = dims.at(0);
+		var desired_1st_dim = dims.at(1);
+		var desired_2nd_dim = dims.at(2);
+		
+		for (var i=0; i<desired_0th_dim; i++) {
+			temp = [];
+			for (var j=0; j<desired_1st_dim; j++) {
+				var arr = Array.from({length: desired_2nd_dim}, (val, ind) => { return 0; }); 
+				temp.push(arr);
+			}
+			out.push(temp);
+		}
+		
+	} else {
+		console.log('Enter an array of length 1, 2, or 3. (ie: [desired_0th_dim, desired_1st_dim, desired_2nd_dim])')
+	}
+	
+	return out;
+}
+	
+// -----------------------------------------------
+  
+async function recur_func(arr) {
+	if (arr != undefined) {
+		return [arr[0], arr.length];
+	} else {
+		return arr;
+	}
+}
+
+async function shape(arr) {
+	var out = await recur_func(arr);
+	var shape_out = [out[1]];
+	var c = 0; // typically work with 4D arrays or less
+	
+	while (out != undefined && c < 4) {
+		out = await recur_func(out[0]);
+		
+		if (out != undefined) {
+			shape_out.push(out[1]);
+		}
+			c = c + 1;
+		}
+
+		if (shape_out.length > 1) {
+			shape_out = shape_out.slice(0, shape_out.length-1);
+		}
+
+	return shape_out;
+}
+
+// -----------------------------------------------
+
+async function convert_rowArr_to_columnArr(rowArr) {
+	return rowArr.map((val, ind) => { return val.at(0); });
+}
+	
+// -----------------------------------------------
+
+async function convert_ysString_to_ysNumerical(ys_colArr) {
+	
+	const ys_unique = [... new Set(ys_colArr)];
+	console.log('ys_unique: ', ys_unique);
+	
+	for (let i=0; i<ys_unique.length; i++) {
+		var regexp = new RegExp(`${ys_unique.at(i)}`, 'g');
+		ys_colArr = ys_colArr.map((val, ind) => {
+			if (val.match(regexp) == true) {
+				return val.replace(regexp, i);
+			} else {
+				return val;
+			}
+		});
+	}
+	
+	return ys_colArr;
+}
+	
+// -----------------------------------------------
+
+</script>
+</body>
+</html>
