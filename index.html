@@ -52,23 +52,19 @@ const config = { attributes: true, childList: true, subtree: true };
 	
 // -----------------------------------------------
 	
-async function processEvent_text_input(event) {
+async function processEvent_div_change(event) {
 	
 	console.log('counter changed', Number(document.getElementById("counter_display").textContent));
 	
 	if (Number(document.getElementById("counter_display").textContent) < 10) {
-		await run_counter();
+		// await run_counter();
 		console.log("here");
-		// -------------------
-		
-		// Update event
-		// document.getElementById("counter_display").textContent = counter_value_number;
 	} 
 	
 }
 	
-document.getElementById("counter_display").addEventListener("change", processEvent_text_input, false);
-document.getElementById("counter_display").addEventListener("input", processEvent_text_input, false);
+document.getElementById("counter_display").addEventListener("change", processEvent_div_change, false);
+document.getElementById("counter_display").addEventListener("input", processEvent_div_change, false);
 
 // -----------------------------------------------
 
@@ -94,21 +90,14 @@ async function run_counter() {
 	
 	// -------------------
 	
-	// if (Number(document.getElementById("counter_display").textContent) == 1 ) {
-	// 	// Run again because the second count is when the observer and start ??
-	// 	await count_up();
-	// }
+	if (Number(document.getElementById("counter_display").textContent) == 1 ) {
+		// Run again because the second count is when the observer starts
+		await count_up();
+	}
 
 	// -------------------
 
 	// Determine if the HTML DOM value has changed 
-	
-	// Callback function to execute when a change in the HTML DOM is observed
-	// window.processCallback_to_detect_change = (mutationList) => { console.log('mutationList: ', mutationList); }
-	// const observer = new MutationObserver(processCallback_to_detect_change);
-
-	// OR
-	
 	observer.observe(document.getElementById("counter_display"), config);
 
 	// -------------------
