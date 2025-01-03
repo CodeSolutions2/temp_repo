@@ -7,8 +7,6 @@
 <div id="counter_display" contenteditable="true" style="display:block; text-align: left; width: 600px;"></div>
 
 <button id="run_counter" onclick="run_counter()" style="display:block">run_counter</button>
-
-<button id="disconnect" onclick="disconnect()" style="display:block">disconnect</button>
 	
 </body>
 
@@ -30,10 +28,24 @@ window.addEventListener('beforeunload', function() {
 	// observer.observe(document.getElementById("counter_display"), config);
 });
 
+// OR
+	
 var observer = new MutationObserver(function(mutationList) {
-		console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
-		console.log('mutationList: ', mutationList);
-	});
+	
+	console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
+
+	// The value of a div element is found under (type: childList)
+	console.log('mutationList: ', mutationList);
+
+	// Another way to view document.getElementById("counter_display").textContent
+	console.log('div value : ', mutationList[0].target.innerHTML);  // or innerText
+
+	if (Number(document.getElementById("counter_display").textContent) < 10) {
+		await run_counter();
+	} else {
+		observer.disconnect();
+	}
+});
 
 const config = { attributes: true, childList: true, subtree: true };
 
@@ -60,8 +72,7 @@ document.getElementById("counter_display").addEventListener("input", processEven
 
 // -----------------------------------------------
 
-async function run_counter() {
-
+async function count_up() {
 	// Update the HTML DOM value
 	
 	// Way 0: with div element
@@ -71,7 +82,23 @@ async function run_counter() {
 	// Way 1: with global variable and div element
 	// console.log('counter_value_number: ', counter_value_number);
 	// document.getElementById("counter_display").textContent = await String(counter_value_number + 1);
+
+	await new Promise(r => setTimeout(r, 2000));
+}
+
+// -----------------------------------------------
+
+async function run_counter() {
+
+	await count_up();
 	
+	// -------------------
+	
+	// if (Number(document.getElementById("counter_display").textContent) == 1 ) {
+	// 	// Run again because the second count is when the observer and start ??
+	// 	await count_up();
+	// }
+
 	// -------------------
 
 	// Determine if the HTML DOM value has changed 
@@ -87,16 +114,7 @@ async function run_counter() {
 	// -------------------
 }
 
-
-async function disconnect() {
-	observer.disconnect();
-}
 // -----------------------------------------------
-
-
 	
-// -----------------------------------------------
-
-// -----------------------------------------------
 </script>
 </html>
