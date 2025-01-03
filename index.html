@@ -10,7 +10,8 @@
 
 <button id="run_counter1" onclick="run_counter1()" style="display:block">run_counter1</button>
 
-<input type="range" id="slider" name="slider" value="0" min="1" max="10" step="1" /><label for="slider">slider: <div id="slider_value" style="display:block; text-align: left; width: 600px;"></div></label>
+<label for="slider">slider: <div id="slider_value" style="display:block; text-align: left; width: 600px;"></div></label>
+<input type="range" id="slider" name="slider" value="0" min="1" max="10" step="1" />
 
 
 <!-- ----------------------------------------------- -->
@@ -29,6 +30,9 @@ input#slider { accent-color: green; }
 window.addEventListener('beforeunload', function() {
 	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
 	document.getElementById("counter_display").textContent = 0;
+
+	document.getElementById("slider").value = 0;
+	document.getElementById("slider_value").textContent = document.getElementById("slider").value;
 });
 
 // -----------------------------------------------
