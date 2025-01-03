@@ -14,7 +14,6 @@
 
 <script>
 
-var observer;
   
 // -----------------------------------------------
 	
@@ -22,7 +21,7 @@ window.addEventListener('beforeunload', function() {
 	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
 	document.getElementById("counter_display").textContent = 0;
 
-	observer = new MutationObserver(function(mutationList) {
+	window.observer = new MutationObserver(function(mutationList) {
 		console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
 		console.log('mutationList: ', mutationList);
 	});
