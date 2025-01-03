@@ -30,7 +30,7 @@ window.addEventListener('beforeunload', function() {
 
 // OR
 	
-var observer = new MutationObserver(function(mutationList) {
+var observer = new MutationObserver(async function(mutationList) {
 	
 	console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
 
