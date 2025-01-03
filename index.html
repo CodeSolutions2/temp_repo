@@ -27,7 +27,7 @@ window.addEventListener('beforeunload', function() {
 	});
 	
 	const config = { attributes: true, childList: true, subtree: true };
-	observer.observe(targetNode, config);
+	observer.observe(document.getElementById("counter_display"), config);
 });
 
 
@@ -56,10 +56,9 @@ document.getElementById("counter_display").addEventListener("input", processEven
 async function run_counter() {
 
 	// Update the HTML DOM value
-	var targetNode = document.getElementById("counter_display");
 	
 	// Way 0: with div element
-	targetNode.textContent = await Number(targetNode.textContent) + 1;
+	document.getElementById("counter_display").textContent = await Number(document.getElementById("counter_display").textContent) + 1;
 	// RESULT: it can count only once, but it can not trigger the eventlistener
 	
 	// Way 1: with global variable and div element
