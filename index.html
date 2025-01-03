@@ -41,19 +41,19 @@ const config = { attributes: true, childList: true, subtree: true };
 	
 // -----------------------------------------------
 	
-async function processEvent_div_change(event) {
+// async function processEvent_div_change(event) {
 	
-	console.log('counter changed', Number(document.getElementById("counter_display").textContent));
+// 	console.log('counter changed', Number(document.getElementById("counter_display").textContent));
 	
-	if (Number(document.getElementById("counter_display").textContent) < 10) {
+// 	if (Number(document.getElementById("counter_display").textContent) < 10) {
 		// await run_counter();
-		console.log("here");
-	} 
+// 		console.log("here");
+// 	} 
 	
-}
+// }
 	
-document.getElementById("counter_display").addEventListener("change", processEvent_div_change, false);
-document.getElementById("counter_display").addEventListener("input", processEvent_div_change, false);
+// document.getElementById("counter_display").addEventListener("change", processEvent_div_change, false);
+// document.getElementById("counter_display").addEventListener("input", processEvent_div_change, false);
 
 // -----------------------------------------------
 
@@ -81,6 +81,7 @@ async function run_counter() {
 	
 	if (Number(document.getElementById("counter_display").textContent) == 1 ) {
 		// Run again because the second count is when the observer starts
+		await count_up();
 		await count_up();
 	}
 
