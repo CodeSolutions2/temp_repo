@@ -44,7 +44,7 @@ var observer = new MutationObserver(async function(mutationList) {
 	console.log('div value : ', mutationList[0].target.innerHTML);  // or innerText
 	
 	if (Number(document.getElementById("counter_display").textContent) < 10) {
-		await run_counter();
+		await run_counter0();
 	} else {
 		observer.disconnect();
 	}
@@ -59,7 +59,7 @@ const config = { attributes: true, childList: true, subtree: true };
 // 	console.log('counter changed', Number(document.getElementById("counter_display").textContent));
 	
 // 	if (Number(document.getElementById("counter_display").textContent) < 10) {
-		// await run_counter();
+		// await run_counter0();
 // 		console.log("here");
 // 	} 
 	
@@ -123,6 +123,10 @@ async function run_counter1() {
 	
 	// -------------------
 
+	console.log('slider_changed: ', slider_changed);
+	
+	// -------------------
+	
 	if (slider_changed == false) {
 		// keep running
 		if (Number(document.getElementById("counter_display").textContent) < 10) {
@@ -137,6 +141,7 @@ async function run_counter1() {
 		// reset count
 		slider_changed = false;
 		document.getElementById("counter_display").textContent = 0;
+		await run_counter1();
 	}
 		
 }
