@@ -6,8 +6,21 @@
 
 <div id="counter_display" contenteditable="true" style="display:block; text-align: left; width: 600px;"></div>
 
-<button id="run_counter" onclick="run_counter()" style="display:block">run_counter</button>
+<button id="run_counter0" onclick="run_counter0()" style="display:block">run_counter0</button>
 
+<button id="run_counter1" onclick="run_counter1()" style="display:block">run_counter1</button>
+
+<input type="range" id="slider" name="slider" value="0" min="1" max="10" step="1" /><label for="slider">slider: <div id="slider_value" style="display:block; text-align: left; width: 600px;"></div></label>
+
+
+<!-- ----------------------------------------------- -->
+	
+<style>
+input#slider { accent-color: green; }
+</style>
+
+<!-- ----------------------------------------------- -->
+	
 <script>
 
   
@@ -68,22 +81,14 @@ async function count_up() {
 	// console.log('counter_value_number: ', counter_value_number);
 	// document.getElementById("counter_display").textContent = await String(counter_value_number + 1);
 
-	await new Promise(r => setTimeout(r, 2000));
+	await new Promise(r => setTimeout(r, 500));
 }
 
 // -----------------------------------------------
 
-async function run_counter() {
+async function run_counter0() {
 
 	await count_up();
-	
-	// -------------------
-	
-	if (Number(document.getElementById("counter_display").textContent) == 1 ) {
-		// Run again because the second count is when the observer starts
-		await count_up();
-		await count_up();
-	}
 
 	// -------------------
 
@@ -91,6 +96,49 @@ async function run_counter() {
 	observer.observe(document.getElementById("counter_display"), config);
 
 	// -------------------
+}
+
+// -----------------------------------------------
+
+var slider_changed = false;
+	
+async function processEvent_slider_change(event) {
+	
+	const slider_value = document.getElementById("slider").value;
+	console.log('slider_value: ', slider_value);
+	
+	document.getElementById("slider_value").textContent = slider_value;
+	
+	// Denote that slider changed
+	slider_changed = true;
+}
+	
+document.getElementById("slider").addEventListener("change", processEvent_slider_change, false);
+
+// -----------------------------------------------
+
+async function run_counter1() {
+
+	await count_up();
+	
+	// -------------------
+
+	if (slider_changed == false) {
+		// keep running
+		if (Number(document.getElementById("counter_display").textContent) < 10) {
+			// keep running
+			await run_counter1();
+		} else {
+			// stop running - do nothing
+			console.log('stop running - do nothing')
+		}
+
+	} else {
+		// reset count
+		slider_changed = false;
+		document.getElementById("counter_display").textContent = 0;
+	}
+		
 }
 
 // -----------------------------------------------
