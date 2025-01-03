@@ -21,16 +21,23 @@ window.addEventListener('beforeunload', function() {
 	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
 	document.getElementById("counter_display").textContent = 0;
 
-	window.observer = new MutationObserver(function(mutationList) {
+	// window.observer = new MutationObserver(function(mutationList) {
+	// 	console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
+	// 	console.log('mutationList: ', mutationList);
+	// });
+	
+	// const config = { attributes: true, childList: true, subtree: true };
+	// observer.observe(document.getElementById("counter_display"), config);
+});
+
+var observer = new MutationObserver(function(mutationList) {
 		console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
 		console.log('mutationList: ', mutationList);
 	});
+
+const config = { attributes: true, childList: true, subtree: true };
+
 	
-	const config = { attributes: true, childList: true, subtree: true };
-	observer.observe(document.getElementById("counter_display"), config);
-});
-
-
 // -----------------------------------------------
 	
 async function processEvent_text_input(event) {
@@ -75,7 +82,7 @@ async function run_counter() {
 
 	// OR
 	
-	
+	observer.observe(document.getElementById("counter_display"), config);
 
 	// -------------------
 }
