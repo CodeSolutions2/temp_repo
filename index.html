@@ -19,35 +19,44 @@ window.addEventListener('beforeunload', function() {
 	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
 	document.getElementById("counter_display").textContent = 0;
 
-	// window.observer = new MutationObserver(function(mutationList) {
-	// 	console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
-	// 	console.log('mutationList: ', mutationList);
-	// });
+	window.observer = new MutationObserver(async function(mutationList) {
 	
-	// const config = { attributes: true, childList: true, subtree: true };
-	// observer.observe(document.getElementById("counter_display"), config);
+	console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
+	
+		// The value of a div element is found under (type: childList)
+		console.log('mutationList: ', mutationList);
+	
+		// Another way to view document.getElementById("counter_display").textContent
+		console.log('div value : ', mutationList[0].target.innerHTML);  // or innerText
+	
+		if (Number(document.getElementById("counter_display").textContent) < 10) {
+			await run_counter();
+		} else {
+			observer.disconnect();
+		}
+	});
 });
 
 // OR
 	
-var observer = new MutationObserver(async function(mutationList) {
+// var observer = new MutationObserver(async function(mutationList) {
 	
-	console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
+// 	console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
 
 	// The value of a div element is found under (type: childList)
-	console.log('mutationList: ', mutationList);
+// 	console.log('mutationList: ', mutationList);
 
 	// Another way to view document.getElementById("counter_display").textContent
-	console.log('div value : ', mutationList[0].target.innerHTML);  // or innerText
+// 	console.log('div value : ', mutationList[0].target.innerHTML);  // or innerText
 
-	if (Number(document.getElementById("counter_display").textContent) < 10) {
-		await run_counter();
-	} else {
-		observer.disconnect();
-	}
-});
+// 	if (Number(document.getElementById("counter_display").textContent) < 10) {
+// 		await run_counter();
+// 	} else {
+// 		observer.disconnect();
+// 	}
+// });
 
-const config = { attributes: true, childList: true, subtree: true };
+// const config = { attributes: true, childList: true, subtree: true };
 
 	
 // -----------------------------------------------
