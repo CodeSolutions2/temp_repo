@@ -7,8 +7,6 @@
 <div id="counter_display" contenteditable="true" style="display:block; text-align: left; width: 600px;"></div>
 
 <button id="run_counter" onclick="run_counter()" style="display:block">run_counter</button>
-	
-</body>
 
 <script>
 
@@ -18,46 +16,28 @@
 window.addEventListener('beforeunload', function() {
 	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
 	document.getElementById("counter_display").textContent = 0;
-
-	window.observer = new MutationObserver(async function(mutationList) {
-	
-	console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
-	
-		// The value of a div element is found under (type: childList)
-		console.log('mutationList: ', mutationList);
-	
-		// Another way to view document.getElementById("counter_display").textContent
-		console.log('div value : ', mutationList[0].target.innerHTML);  // or innerText
-	
-		if (Number(document.getElementById("counter_display").textContent) < 10) {
-			await run_counter();
-		} else {
-			observer.disconnect();
-		}
-	});
 });
 
-// OR
+// -----------------------------------------------
 	
-// var observer = new MutationObserver(async function(mutationList) {
+var observer = new MutationObserver(async function(mutationList) {
 	
-// 	console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
+	console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
 
 	// The value of a div element is found under (type: childList)
-// 	console.log('mutationList: ', mutationList);
+	console.log('mutationList: ', mutationList);
 
 	// Another way to view document.getElementById("counter_display").textContent
-// 	console.log('div value : ', mutationList[0].target.innerHTML);  // or innerText
+	console.log('div value : ', mutationList[0].target.innerHTML);  // or innerText
+	
+	if (Number(document.getElementById("counter_display").textContent) < 10) {
+		await run_counter();
+	} else {
+		observer.disconnect();
+	}
+});
 
-// 	if (Number(document.getElementById("counter_display").textContent) < 10) {
-// 		await run_counter();
-// 	} else {
-// 		observer.disconnect();
-// 	}
-// });
-
-// const config = { attributes: true, childList: true, subtree: true };
-
+const config = { attributes: true, childList: true, subtree: true };
 	
 // -----------------------------------------------
 	
@@ -115,4 +95,5 @@ async function run_counter() {
 // -----------------------------------------------
 	
 </script>
+</body>
 </html>
