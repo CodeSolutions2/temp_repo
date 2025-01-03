@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body> 
+
+
+<div id="counter_display" contenteditable="true" style="display:block; text-align: left; width: 600px;"></div>
+
+<button id="run_counter" onclick="run_counter()" style="display:block">run_counter</button>
+
+<button id="disconnect" onclick="disconnect()" style="display:block">disconnect</button>
+	
+</body>
+
+<script>
+
+var observer;
+  
+// -----------------------------------------------
+	
+window.addEventListener('beforeunload', function() {
+	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+	document.getElementById("counter_display").textContent = 0;
+
+	observer = new MutationObserver(function(mutationList) {
+		console.log('inside MutationObserver: ', document.getElementById("counter_display").textContent);
+		console.log('mutationList: ', mutationList);
+	});
+	
+	const config = { attributes: true, childList: true, subtree: true };
+	observer.observe(targetNode, config);
+});
+
+
+// -----------------------------------------------
+	
+async function processEvent_text_input(event) {
+	
+	console.log('counter changed', Number(document.getElementById("counter_display").textContent));
+	
+	if (Number(document.getElementById("counter_display").textContent) < 10) {
+		await run_counter();
+		console.log("here");
+		// -------------------
+		
+		// Update event
+		// document.getElementById("counter_display").textContent = counter_value_number;
+	} 
+	
+}
+	
+document.getElementById("counter_display").addEventListener("change", processEvent_text_input, false);
+document.getElementById("counter_display").addEventListener("input", processEvent_text_input, false);
+
+// -----------------------------------------------
+
+async function run_counter() {
+
+	// Update the HTML DOM value
+	var targetNode = document.getElementById("counter_display");
+	
+	// Way 0: with div element
+	targetNode.textContent = await Number(targetNode.textContent) + 1;
+	// RESULT: it can count only once, but it can not trigger the eventlistener
+	
+	// Way 1: with global variable and div element
+	// console.log('counter_value_number: ', counter_value_number);
+	// document.getElementById("counter_display").textContent = await String(counter_value_number + 1);
+	
+	// -------------------
+
+	// Determine if the HTML DOM value has changed 
+	
+	// Callback function to execute when a change in the HTML DOM is observed
+	// window.processCallback_to_detect_change = (mutationList) => { console.log('mutationList: ', mutationList); }
+	// const observer = new MutationObserver(processCallback_to_detect_change);
+
+	// OR
+	
+	
+
+	// -------------------
+}
+
+
+async function disconnect() {
+	observer.disconnect();
+}
+// -----------------------------------------------
+
+
+	
+// -----------------------------------------------
+
+// -----------------------------------------------
+</script>
+</html>
