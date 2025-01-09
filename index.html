@@ -6,7 +6,7 @@
 <div id="watermark_image_id"></div>
 <br>
 <div id="watermark_text_id">TEXT WATERMARK</div>
-<p>This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark.</p>
+<p id="text_content">This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark.</p>
 
 <!-- ------------------------------------- -->
 	
@@ -35,6 +35,11 @@ div#watermark_text_id {
 	color: var(--light-green);
 	opacity: 0.5;
 	font-size: 50px;
+}
+
+p#text_content {
+	position: relative;
+	z-index: 2;
 }
   
 </style>
