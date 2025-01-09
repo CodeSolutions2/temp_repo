@@ -4,9 +4,10 @@
 <body>
 
 <div id="watermark_image_id"></div>
-<br><br>
+<br>
 <div id="watermark_text_id">TEXT WATERMARK</div>
-	
+<p>This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark.</p>
+
 <!-- ------------------------------------- -->
 	
 <style>
@@ -16,22 +17,22 @@
   
 div#watermark_image_id {  
 	position: relative;     
-	/* width: 500px;
-	height: 500px; */
-  background-image: url('https://storage.googleapis.com/neural-style-transfer/original/original2.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.2;
+	width: 500px;
+	height: 500px;
+	background-image: url('https://storage.googleapis.com/neural-style-transfer/original/original2.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	opacity: 0.2;
 	background-size: cover;
 }
 
 div#watermark_text_id {  
-  position: relative; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  color: var(--light-green);
+	position: relative; 
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	color: var(--light-green);
 	opacity: 0.5;
 	font-size: 50px;
 }
