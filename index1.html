@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>  
+
+<input id="HF_API_TOKEN" type="text" value="" placeholder="HF_API_TOKEN" rows="10" cols="100" style="display:block; text-align: left; width: 200px;">
+
+<input id="original_sentences" type="text" value="" placeholder="original_sentences" rows="10" cols="100" style="display:block; text-align: left; width: 200px; height: 200px;">
+
+<input id="new_sentences" type="text" value="" placeholder="new_sentences" rows="10" cols="100" style="display:block; text-align: left; width: 200px; height: 200px;">
+  
+<button id="REST_API_model_call" onclick="REST_API_model_call()">REST_API_model_call</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	
+<script>
+
+async function REST_API_model_call() {
+
+
+  // https://huggingface.co/docs/api-inference/detailed_parameters
+
+  // -------------------------------------
+  
+	const HF_API_TOKEN = document.getElementById("HF_API_TOKEN").value;
+
+  const original_sentences = document.getElementById("original_sentences").value;
+
+  const new_sentences = document.getElementById("new_sentences").value;
+  
+	// -------------------------------------
+
+	var url = `https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2`;
+
+  // -------------------------------------
+  
+  var data = {
+		"inputs": {"source_sentence": `${original_sentences}`, "sentences": [`${new_sentences}`]}
+	};
+  
+	// -------------------------------------
+  
+	var headers_additional = {"Authorization": 'Bearer ' + HF_API_TOKEN};
+
+	// -------------------------------------
+
+	var response = await call_fetch_method(url, data, headers_additional)
+		.catch(error => console.error(error));
+
+  console.log('response: ', response);
+
+	// -------------------------------------
+}
+
+
+async function call_fetch_method(url, data, headers_additional) {
+	
+	const CORS_method_list = ["jQuery_json_POST", "fetch_json_POST"];
+	
+	var response = undefined;
+		
+	for (var i=0; i<CORS_method_list.length; i++) {
+		try {
+			if (i == 0) {
+				response = await fetch_json_POST(url, data, headers_additional);
+			} else {
+				response = await jQuery_json_POST(url, data, headers_additional);
+			}
+			
+		} catch (error) {
+			console.log("error: ", error);
+		}
+		if (response != undefined) {
+			break;
+		}
+	}
+	return response;
+}
+
+// -----------------------------------------------
+
+async function fetch_json_POST(url, data, headers_additional) {
+	
+	var headers = {
+		"Content-Type": "application/json",
+		"Referer": url,
+		"Origin": "https://codesolutions2.github.io",
+		"Connection": "keep-alive",
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+		"Access-Control-Allow-Origin": "*",
+	};
+
+  headers = Object.assign({}, headers, headers_additional);
+	
+	var options = { 
+		method : "POST",
+		mode: 'cors',
+		headers: new Headers(headers),
+		cache: "no-cache",
+		crossorigin: 'anonymous',
+		redirect: "follow",
+    body: JSON.stringify(data)
+	};
+	
+	return await fetch(url, options)
+		.then(res => res.json())
+		.then(obj => { return obj; })
+		.catch(error => { console.error("error: ", error); });
+
+}
+
+// -----------------------------------------------
+
+async function jQuery_json_POST(url, data, headers_additional) {
+	
+	var headers = {
+		"Content-Type": "application/json",
+		"Referer": url,
+		"Origin": "https://codesolutions2.github.io",
+		"Connection": "keep-alive",
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
+		"Access-Control-Allow-Origin": "*",
+	};
+
+  headers = Object.assign({}, headers, headers_additional);
+	
+	var settings = {
+		// url: url,
+		type : "POST",
+		async: true,
+		crossDomain: true,
+		beforeSend: function(xhr) {xhr.withCredentials = true;},
+		headers: new Headers(headers),
+    body: JSON.stringify(data),
+		xhrFields: {responseType: 'json'},
+		dataType: 'json',
+		success: function(response) { console.log('Success'); },
+		error: function(xhr, status, error) { console.error("error: ", error); }
+	};
+	
+	return $.ajax(url, [,settings]).done(function(response) { return response; });
+
+}
+
+// -----------------------------------------------
+
+</script>
+</body>
+</html>
