@@ -7,7 +7,11 @@
 <br>
 <div id="watermark_text_id">TEXT WATERMARK</div>
 <p id="text_content">This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark. This is a demonstration of using CSS to create a watermark.</p>
+<br>
+<h3>Input text.</h3>
+<textarea id="input_text"  wrap="soft" rows="10" cols="100" placeholder="input text" style="display:block; text-align: left; width: 600px; height: 400px;"></textarea>
 
+	
 <!-- ------------------------------------- -->
 	
 <style>
@@ -45,7 +49,12 @@ p#text_content {
 	position: relative;
 	z-index: 1; /* the text on the page should have more priority than the -1 value items, like the watermark image and text. */ 
 }
-  
+
+textarea#input_text {
+	position: relative;
+	z-index: 1; /* the text on the page should have more priority than the -1 value items, like the watermark image and text. */ 
+}
+	
 </style>
 
 <script>
