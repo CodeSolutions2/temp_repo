@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+
+<div id="watermark_image_id"></div>
+
+<!-- ------------------------------------- -->
+	
+<style>
+:root {
+	--light-green: #92a892;
+}
+  
+div#watermark_image_id {  
+  position: relative;      
+  background-image: url('image.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.2;
+}
+
+div#watermark_text_id {  
+  position: relative; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: var(--light-green)
+}
+  
+</style>
+
+<script>
+
+// -----------------------------------------
+	
+window.addEventListener('beforeunload', function() {
+	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+});
+
+// -----------------------------------------
+
+
+  
+// -----------------------------------------
+
+// -----------------------------------------
+
+
+</script>
+</body>
+</html>
