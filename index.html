@@ -13,20 +13,26 @@
   
 <button id="run_similarity_methods" onclick="run_similarity_methods()">run_similarity_methods</button>
 
-<div id="temp" style="display:block"></div>
+<div id="temp"></div>
 
 <!-- ---------------------------------------- -->
   
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+<!-- universal-sentence-encoder needs tensorflow/tfjs@latest -->
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
 
-	
+<!-- qna does not need tensorflow/tfjs@latest -->
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
 
 <!-- ---------------------------------------- -->
 
+<style>
+div#temp { display:none; }
+</style>
+
+<!-- ---------------------------------------- -->
 	
 <script>
 
@@ -114,16 +120,20 @@ async function run_similarity_methods() {
 async function tf_BERT(relevant_org_sen_arr) {
 
 	const Q = document.getElementById("new_sentences").value;
-	relevant_org_sen_str = await relevant_org_sen_arr.join(' ');
+	document.getElementById("temp").textContent = await relevant_org_sen_arr.join(' ');
 	
 	return await qna.load().then(model => {
-			model.findAnswers(Q, relevant_org_sen_str).then(output => {
+			return model.findAnswers(Q, document.getElementById("temp").textContent).then(output => {
 				console.log('output: ', output);
-				
-				// Take the best response
-				const best_response = output[0].text;
-				console.log("best_response: ", best_response);
-				return best_response;
+
+				if (output.length > 0) {
+					// Take the best response
+					const best_response = output[0].text;
+					console.log("best_response: ", best_response);
+					return best_response;
+				} else {
+					return "No response found.";
+				}
 			});
 		});
 }
