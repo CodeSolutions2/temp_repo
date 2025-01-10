@@ -38,16 +38,19 @@ async function run_similarity_methods() {
 		
 		var sentence0 = new_sentences_array.at(i);
 		
-		var hf_similarity_temp_org_sen = [];
+		var temp_org_sen = [];
 		for (let j=0; j<original_sentences_array.length; j++) {
 			
 			var sentence1 = original_sentences_array.at(j);
 			
 			var hf_similarity = await HF_similarity(sentence0, sentence1);
-			hf_similarity_temp_org_sen.push({ind: j, value: hf_similarity});
+			// OR
+
+			
+			temp_org_sen.push({ind: j, value: hf_similarity});
 		}
 		// Pick top 2 similar original_sentences_array sentences for each new_sentences_array
-		var out = hf_similarity_temp_org_sen.sort((a,b) => a.value - b.value);
+		var out = temp_org_sen.sort((a,b) => a.value - b.value).toReversed();
 		console.log("out: ", out);
 		
 		var top_2_ind = [out.at(0).ind,  out.at(1).ind];
@@ -60,6 +63,8 @@ async function run_similarity_methods() {
 	// Obtain unique sentences of the original best
 	best_org_sens = best_org_sens.flat(Infinity);
 	var org_sen = [...new Set(best_org_sens)];
+
+	// Reverse the array to count from largest to smallest
 	console.log("org_sen: ", org_sen);
 
 
