@@ -47,18 +47,25 @@ async function run_similarity_methods() {
 			
 			var sentence1 = original_sentences_array.at(j);
 			console.log("sentence1: ", sentence1);
-			
+
+			// --------------------------------
 			var similarity0 = await HF_similarity(sentence0, sentence1);
 			console.log("similarity0: ", similarity0);
+			// --------------------------------
+			
 			// OR
-			var embedding0 = await create_an_embedding([sentence0,]);
+
+			// --------------------------------
+			var embedding0 = await create_an_embedding(sentence0);
 			console.log("embedding0: ", embedding0);
 
-			
 			var embedding1 = await create_an_embedding([sentence1,]);
 			console.log("embedding1: ", embedding1);
+			
 			var similarity1 = await cos_sine_similarity(embedding0, embedding1);
 			console.log("similarity1: ", similarity1);
+			// --------------------------------
+			
 			// OR
 			
 			temp_org_sen.push({ind: j, value: similarity0});
