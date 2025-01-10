@@ -21,6 +21,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+
+	
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
 
 <!-- ---------------------------------------- -->
@@ -205,7 +207,8 @@ async function cos_sine_similarity(vec0, vec1) {
 // -------------------------------------------------
 
 async function create_an_embedding() {
-	return use.load()
+	
+	var embedings_obj = await use.load()
 		.then(model => {
 			var sentences_str = document.getElementById("temp").textContent;
 			// const sentences_array = sentences_str.split(',');
@@ -213,14 +216,20 @@ async function create_an_embedding() {
 			const sentences_array = [sentences_str];
 			console.log("sentences_array: ", sentences_array);
 			
-			model.embed(sentences_array)
-				.then(embeddings => {
-					console.log("embeddings: ", embeddings); // 2D tensor [sentences.length, 512]
-					return embeddings;
-				});
+			return model.embed(sentences_array)
+				.then(embeddings => { return embeddings; });
 		});
+
+	console.log("embedings_obj: ", embedings_obj); // 2D tensor [sentences.length, 512]
+
+	return await convert_TFtensor_to_JSarray(embedings_obj);
 }
 
+// -----------------------------------------------
+
+async function convert_TFtensor_to_JSarray(tensor) {
+	return tensor.arraySync();
+}
 
 // -------------------------------------------------
   
