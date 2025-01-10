@@ -43,7 +43,8 @@ async function run_similarity_methods() {
 	
 	const new_sentences_array = document.getElementById("new_sentences").value.split('.').filter((x) => x.length != 0);
 
-	var best_org_sens = [];
+	var best_org_sens0 = [];
+	var best_org_sens1 = [];
 	
 	// Goal: which original_sentences_array sentences are similar to each new_sentences_array
 	// Pick top 2 similar original_sentences_array sentences for each new_sentences_array
@@ -52,7 +53,9 @@ async function run_similarity_methods() {
 		var sentence0 = new_sentences_array.at(i);
 		console.log("sentence0: ", sentence0);
 		
-		var temp_org_sen = [];
+		var temp_org_sen0 = [];
+		var temp_org_sen1 = [];
+		
 		for (let j=0; j<original_sentences_array.length; j++) {
 			
 			var sentence1 = original_sentences_array.at(j);
@@ -61,6 +64,8 @@ async function run_similarity_methods() {
 			// --------------------------------
 			var similarity0 = await HF_similarity(sentence0, sentence1);
 			console.log("similarity0: ", similarity0);
+
+			temp_org_sen0.push({ind: j, value: similarity0});
 			// --------------------------------
 			
 			// OR
@@ -77,41 +82,79 @@ async function run_similarity_methods() {
 			
 			var similarity1 = await cos_sine_similarity(embedding0.at(0), embedding1.at(0));
 			console.log("similarity1: ", similarity1);
+
+			temp_org_sen1.push({ind: j, value: similarity1});
 			// --------------------------------
 			
 			// OR
 			
-			temp_org_sen.push({ind: j, value: similarity0});
+			// --------------------------------
+
+			// --------------------------------
 		}
+		
+		// --------------------------------
+		
 		// Pick top 2 similar original_sentences_array sentences for each new_sentences_array.
 		// Reverse the array to count from largest to smallest similarity.
-		var out = temp_org_sen.sort((a,b) => a.value - b.value).toReversed();
-		console.log("out: ", out);
-		
-		var top_2_ind = [out.at(0).ind,  out.at(1).ind];
-		var top_2_sen = top_2_ind.map((val, ind) => { return original_sentences_array.at(val); });
-		console.log("top_2_sen: ", top_2_sen);
 
-		best_org_sens.push(top_2_sen);
+		// HF similarity
+		var out0 = temp_org_sen0.sort((a,b) => a.value - b.value).toReversed();
+		var top_2_ind0 = [out0.at(0).ind,  out0.at(1).ind];
+		var top_2_sen0 = top_2_ind0.map((val, ind) => { return original_sentences_array.at(val); });
+		console.log("top_2_sen0: ", top_2_sen0);
+		best_org_sens0.push(top_2_sen0);
+
+		// --------------------------------
+
+		// cosine similarity
+		var out1 = temp_org_sen.sort((a,b) => a.value - b.value).toReversed();
+		var top_2_ind1 = [out1.at(0).ind,  out1.at(1).ind];
+		var top_2_sen1 = top_2_ind1.map((val, ind) => { return original_sentences_array.at(val); });
+		console.log("top_2_sen1: ", top_2_sen1);
+		best_org_sens1.push(top_2_sen1);
+		
+		// --------------------------------
 	}
 
+	// --------------------------------
 	// Obtain unique sentences of the original best
-	best_org_sens = best_org_sens.flat(Infinity);
-	var relevant_org_sen_arr = [...new Set(best_org_sens)];
-	console.log("relevant_org_sen_arr: ", relevant_org_sen_arr);
-
-	// Filter out empty values
-	relevant_org_sen_arr = relevant_org_sen_arr.filter((x) => x.length != 0); 
+	// --------------------------------
+	// HF similarity
+	best_org_sens0 = best_org_sens0.flat(Infinity);
+	var relevant_org_sen_arr0 = [...new Set(best_org_sens0)];
+	relevant_org_sen_arr0 = relevant_org_sen_arr0.filter((x) => x.length != 0); // Filter out empty values
+	console.log("relevant_org_sen_arr0: ", relevant_org_sen_arr0);
 
 	// --------------------------------
-	
-	// Simple RAG - make request to LLM with relevant text selected based on similarity
-	var tf_BERT_response = await tf_BERT(relevant_org_sen_arr);
-	console.log('tf_BERT_response: ', tf_BERT_response);
-	
-  	var OpenAI_GPT_response = await OpenAI_GPT(relevant_org_sen_arr);
-	console.log('OpenAI_GPT_response: ', OpenAI_GPT_response);
 
+	// cosine similarity
+	best_org_sens1 = best_org_sens1.flat(Infinity);
+	var relevant_org_sen_arr1 = [...new Set(best_org_sens1)];
+	relevant_org_sen_arr1 = relevant_org_sen_arr1.filter((x) => x.length != 0); // Filter out empty values
+	console.log("relevant_org_sen_arr1: ", relevant_org_sen_arr1);
+	
+	// --------------------------------
+
+	// --------------------------------
+	// Simple RAG - make request to LLM with relevant text selected based on similarity
+	// --------------------------------
+	// HF similarity
+	var tf_BERT_response0 = await tf_BERT(relevant_org_sen_arr0);
+	console.log('tf_BERT_response0: ', tf_BERT_response0);
+	
+  	var OpenAI_GPT_response0 = await OpenAI_GPT(relevant_org_sen_arr0);
+	console.log('OpenAI_GPT_response0: ', OpenAI_GPT_response0);
+
+	// --------------------------------
+
+	// cosine similarity
+	var tf_BERT_response1 = await tf_BERT(relevant_org_sen_arr1);
+	console.log('tf_BERT_response1: ', tf_BERT_response1);
+	
+  	var OpenAI_GPT_response1 = await OpenAI_GPT(relevant_org_sen_arr1);
+	console.log('OpenAI_GPT_response1: ', OpenAI_GPT_response1);
+	
 	// --------------------------------
 }
 
@@ -120,7 +163,7 @@ async function run_similarity_methods() {
 async function tf_BERT(relevant_org_sen_arr) {
 
 	const Q = document.getElementById("new_sentences").value;
-	document.getElementById("temp").textContent = await relevant_org_sen_arr.join(' ');
+	document.getElementById("temp").textContent = await relevant_org_sen_arr.join('. ');
 	
 	return await qna.load().then(model => {
 			return model.findAnswers(Q, document.getElementById("temp").textContent).then(output => {
@@ -143,7 +186,7 @@ async function tf_BERT(relevant_org_sen_arr) {
 async function OpenAI_GPT(relevant_org_sen_arr) {
 
 	const Q = document.getElementById("new_sentences").value;
-	relevant_org_sen_str = await relevant_org_sen_arr.join(' ');
+	relevant_org_sen_str = await relevant_org_sen_arr.join('. ');
 	
 	var prompt = `Respond to the following question: ${Q}, using the following information: ${relevant_org_sen_str}.`
 	
