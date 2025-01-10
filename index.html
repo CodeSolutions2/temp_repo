@@ -36,8 +36,13 @@ async function run_similarity_methods() {
 	// Pick top 2 similar original_sentences_array sentences for each new_sentences_array
 	for (let i=0; i<new_sentences_array.length; i++) {
 		
+		var sentence0 = new_sentences_array.at(i);
+		
 		var hf_similarity_temp_org_sen = [];
 		for (let j=0; j<original_sentences_array.length; j++) {
+			
+			var sentence1 = original_sentences_array.at(j);
+			
 			var hf_similarity = await HF_similarity(sentence0, sentence1);
 			hf_similarity_temp_org_sen.push({ind: j, value: hf_similarity});
 		}
