@@ -108,7 +108,7 @@ async function run_similarity_methods() {
 		// --------------------------------
 
 		// cosine similarity
-		var out1 = temp_org_sen.sort((a,b) => a.value - b.value).toReversed();
+		var out1 = temp_org_sen1.sort((a,b) => a.value - b.value).toReversed();
 		var top_2_ind1 = [out1.at(0).ind,  out1.at(1).ind];
 		var top_2_sen1 = top_2_ind1.map((val, ind) => { return original_sentences_array.at(val); });
 		console.log("top_2_sen1: ", top_2_sen1);
