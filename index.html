@@ -26,34 +26,65 @@
 
 
 async function run_similarity_methods() {
+	
+	const original_sentences_array = document.getElementById("original_sentences").value.split('.');
+	const new_sentences_array = document.getElementById("new_sentences").value.split('.');
+
+	var best_org_sens = [];
+	
+	// Goal: which original_sentences_array sentences are similar to each new_sentences_array
+	// Pick top 2 similar original_sentences_array sentences for each new_sentences_array
+	for (let i=0; i<new_sentences_array.length; i++) {
+		
+		var hf_similarity_temp_org_sen = [];
+		for (let j=0; j<original_sentences_array.length; j++) {
+			var hf_similarity = await HF_similarity(sentence0, sentence1);
+			hf_similarity_temp_org_sen.push({ind: j, value: hf_similarity});
+		}
+		// Pick top 2 similar original_sentences_array sentences for each new_sentences_array
+		var out = hf_similarity_temp_org_sen.sort((a,b) => a.value - b.value);
+		console.log("out: ", out);
+		
+		var top_2_ind = [out.at(0).ind,  out.at(1).ind];
+		var top_2_sen = top_2_ind.map((val, ind) => { return original_sentences_array.at(val); });
+		console.log("top_2_sen: ", top_2_sen);
+
+		best_org_sens.push(top_2_sen);
+	}
+
+	// Obtain unique sentences of the original best
+	best_org_sens = best_org_sens.flat(Infinity);
+	var org_sen = [...new Set(best_org_sens)];
+	console.log("org_sen: ", org_sen);
+
+
+
+	// Simple RAG - make request to LLM with text
+
+	
+	
   
-  const original_sentences_array = document.getElementById("original_sentences").value.split('.');
-  const new_sentences_array = document.getElementById("new_sentences").value.split('.');
-
-
-  for (let i=0; i) {
-    
-
-  }
-  
-  var hf_similarity = await HF_similarity(sentence0, sentence1);
-
 }
-  
-
-async function hash_similarity() {
-
-
-
-}
 
 
 
   
-async function cos_sine_similarity() {
 
-   
+// async function hash_similarity() {
+// }
 
+
+
+// async function dot_product()
+// }
+
+
+
+async function cos_sine_similarity(vec0, vec1) {
+
+	// cosine_similarity = (A • B) / (||A|| * ||B||)
+
+	// where (A • B) is the dot product of vectors A and B, and ||A|| and ||B|| are the magnitudes of vectors A and B, respectively.
 
 }
 
