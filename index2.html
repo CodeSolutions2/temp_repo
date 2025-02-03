@@ -25,8 +25,9 @@
 
 async function run_fetch() {
 
+	document.getElementById('output').innerHTML = "";
 	
-  const url = document.getElementById("url").value;
+  	const url = document.getElementById("url").value;
 
 	var data = document.getElementById("data").value;
 	data = JSON.parse(data);
@@ -42,7 +43,7 @@ async function run_fetch() {
 	
 
 	const response = await call_fetch_method(url, data, headers_additional, method);
-	document.getElementById('output').innerHTML = response;
+	document.getElementById('output').innerHTML = JSON.stringify(response);
 	
 }
 
