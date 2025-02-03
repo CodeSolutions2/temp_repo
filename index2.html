@@ -31,19 +31,17 @@ async function run_fetch() {
 
 	var data = document.getElementById("data").value;
 	data = JSON.parse(data);
-	console.log('data: ', data);
-
 	
 	var headers_additional = document.getElementById("headers_additional").value;
 	headers_additional = JSON.parse(headers_additional);
-	console.log('headers_additional: ', headers_additional);
-
 
 	const method = document.getElementById("method").value;
 	
 
 	const response = await call_fetch_method(url, data, headers_additional, method);
 	document.getElementById('output').innerHTML = JSON.stringify(response);
+	
+	console.log('response: ', response);
 	
 }
 
