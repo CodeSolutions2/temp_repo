@@ -8,7 +8,10 @@
 <input id="data" type="text" value="" placeholder="data" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
 	
 <input id="headers_additional" type="text" value="" placeholder="headers_additional" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
-  
+
+<input id="method" type="text" value="" placeholder="Enter GET or POST" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+
+	
 <button id="run_fetch" onclick="run_fetch()" style="display:block">run_fetch</button>
 
 <div id="output"></div>
@@ -33,27 +36,30 @@ async function run_fetch() {
 	var headers_additional = document.getElementById("headers_additional").value;
 	headers_additional = JSON.parse(headers_additional);
 	console.log('headers_additional: ', headers_additional);
+
+
+	const method = document.getElementById("method").value;
 	
 
-	const response = await call_fetch_method(url, data, headers_additional);
+	const response = await call_fetch_method(url, data, headers_additional, method);
 	document.getElementById('output').innerHTML = response;
 	
 }
 
 
 
-async function call_fetch_method(url, data, headers_additional) {
+async function call_fetch_method(url, data, headers_additional, method) {
 	
-	const CORS_method_list = ["jQuery_json_POST", "fetch_json_POST"];
+	const CORS_method_list = ["jQuery_json", "fetch_json"];
 	
 	var response = undefined;
 		
 	for (var i=0; i<CORS_method_list.length; i++) {
 		try {
 			if (i == 0) {
-				response = await fetch_json_POST(url, data, headers_additional);
+				response = await fetch_json(url, data, headers_additional, method);
 			} else {
-				response = await jQuery_json_POST(url, data, headers_additional);
+				response = await jQuery_json(url, data, headers_additional, method);
 			}
 			
 		} catch (error) {
@@ -68,7 +74,7 @@ async function call_fetch_method(url, data, headers_additional) {
 
 // -----------------------------------------------
 
-async function fetch_json_POST(url, data, headers_additional) {
+async function fetch_json(url, data, headers_additional, method) {
 	
 	var headers = {
 		"Content-Type": "application/json",
@@ -82,14 +88,17 @@ async function fetch_json_POST(url, data, headers_additional) {
   headers = Object.assign({}, headers, headers_additional);
 	
 	var options = { 
-		method : "POST",
+		method : method,
 		mode: 'cors',
 		headers: new Headers(headers),
 		cache: "no-cache",
 		crossorigin: 'anonymous',
-		redirect: "follow",
-    body: JSON.stringify(data)
+		redirect: "follow"
 	};
+
+	if (method == 'POST') {
+		options.body = JSON.stringify(data);
+	}
 	
 	return await fetch(url, options)
 		.then(res => res.json())
@@ -100,7 +109,7 @@ async function fetch_json_POST(url, data, headers_additional) {
 
 // -----------------------------------------------
 
-async function jQuery_json_POST(url, data, headers_additional) {
+async function jQuery_json(url, data, headers_additional) {
 	
 	var headers = {
 		"Content-Type": "application/json",
@@ -120,12 +129,15 @@ async function jQuery_json_POST(url, data, headers_additional) {
 		crossDomain: true,
 		beforeSend: function(xhr) {xhr.withCredentials = true;},
 		headers: new Headers(headers),
-    body: JSON.stringify(data),
 		xhrFields: {responseType: 'json'},
 		dataType: 'json',
 		success: function(response) { console.log('Success'); },
 		error: function(xhr, status, error) { console.error("error: ", error); }
 	};
+
+	if (method == 'POST') {
+		settings.body = JSON.stringify(data);
+	}
 	
 	return $.ajax(url, [,settings]).done(function(response) { return response; });
 
