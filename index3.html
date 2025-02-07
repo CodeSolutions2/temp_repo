@@ -49,10 +49,10 @@ async function run_selection() {
 
 
   // [1] Transform xs to a numbered count array.
-  const X = await CountVectorization(text);
-
-  document.getElementById("output").innerHTML += "X row sample: "+X.at(0).toString();
-  document.getElementById("output").innerHTML += "<br>";
+  // const X = await CountVectorization(text);
+ 
+  // document.getElementById("output").innerHTML += "X row sample: "+X.at(0).toString();
+  // document.getElementById("output").innerHTML += "<br>";
 
   // [2] Train an ML model.
   // const result_js1 = await ML_KNN(X, ys);
