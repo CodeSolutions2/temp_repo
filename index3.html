@@ -31,7 +31,7 @@ async function run_selection() {
 
   const data_str = await call_fetch_method(url);
 
-  const headerORnot = "no_header";
+  const headerORnot = "header";
   var [xs, ys] = await parse_text_to_array(data_str, ys_selected_ColNum, headerORnot);	
   document.getElementById("output").innerHTML += "xs and ys row sample: "+xs.at(0).toString()+ys.at(0).toString();
   document.getElementById("output").innerHTML += "<br>";
