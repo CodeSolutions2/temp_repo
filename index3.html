@@ -38,7 +38,8 @@ async function run_selection() {
 
   document.getElementById("output").innerHTML += "xs.length: "+xs.length.toString();
   document.getElementById("output").innerHTML += "<br>";
-
+ console.log("xs: ", xs);
+	console.log("ys: ", ys);
 
   // Remove a '.' in xs, except for separating sentences.
   const text = await xs.map((sen, i) => { return sen.at(0).split('').filter((x) => x != '.').join(''); }).join('.');
@@ -157,13 +158,13 @@ async function parse_text_to_array(text_str, ys_selected_ColNum, headerORnot) {
 	if (headerORnot == "no_header") {
 		row_arr = row_arr.slice(1,row_arr.length-1);
 	}
-	console.log('row_arr: ', row_arr);
+	// console.log('row_arr: ', row_arr);
 	
 	var xs = [];
 	var ys = [];
 	for (let i=0; i<row_arr.length; i++) {
 		var col_arr = row_arr[i].split(',');
-		console.log('col_arr: ', col_arr);
+		// console.log('col_arr: ', col_arr);
 		
 		var c = 0
 		var xs_cols = [];
