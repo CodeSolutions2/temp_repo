@@ -42,9 +42,9 @@ async function run_selection() {
 
   // Remove a '.' in xs, except for separating sentences.
   const text = await xs.map((sen, i) => { 
-	  console.log("sen:", sen);
-	  console.log("sen:", sen.at(0).split(''));
-	  return sen.split('').filter((x) => x != '.').join(''); }).join('.');
+	  // console.log("sen:", sen);
+	  // console.log("sen:", sen.at(0).split(''));
+	  return sen.at(0).split('').filter((x) => x != '.').join(''); }).join('.');
   console.log("text: ", text);
 
   console.log("text.slice: ", [text].slice(0,20));
